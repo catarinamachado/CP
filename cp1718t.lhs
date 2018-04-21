@@ -974,14 +974,24 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 \begin{code}
-inBlockchain = undefined
-outBlockchain = undefined
-recBlockchain = undefined    
-cataBlockchain = undefined     
+inBlockchain :: Either Block (Block, Blockchain) -> Blockchain
+inBlockchain = either Bc Bcs
+
+outBlockchain :: Blockchain -> Either Block (Block, Blockchain)
+outBlockchain (Bc a) = Left (a)
+outBlockchain (Bcs (a,b)) = Right(a,b)
+
+recBlockchain g = id -|- (id >< g)
+
+cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
+
 anaBlockchain = undefined
 hyloBlockchain = undefined
 
-allTransactions = undefined
+allTransactions :: Blockchain -> Transactions 
+allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
+    where joint(x,y) = (p2 (p2 x)) ++ y
+
 ledger = undefined
 isValidMagicNr = undefined
 \end{code}
