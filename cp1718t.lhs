@@ -107,11 +107,11 @@
 \begin{tabular}{ll}
 \textbf{Grupo} nr. & 99 (preencher)
 \\\hline
-a11111 & Nome1 (preencher)	
+a81047 & Catarina Machado	
 \\
-a22222 & Nome2 (preencher)	
+a34900 & Cecilia Soares
 \\
-a33333 & Nome3 (preencher)	
+a82339 & João Vilaça
 \end{tabular}
 \end{center}
 
