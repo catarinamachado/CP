@@ -974,10 +974,8 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 \begin{code}
-inBlockchain :: Either Block (Block, Blockchain) -> Blockchain
 inBlockchain = either Bc Bcs
 
-outBlockchain :: Blockchain -> Either Block (Block, Blockchain)
 outBlockchain (Bc a) = Left (a)
 outBlockchain (Bcs (a,b)) = Right(a,b)
 
@@ -985,14 +983,16 @@ recBlockchain g = id -|- (id >< g)
 
 cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
 
-anaBlockchain = undefined
-hyloBlockchain = undefined
+anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g
 
-allTransactions :: Blockchain -> Transactions 
+hyloBlockchain h g = cataBlockchain h . anaBlockchain g
+
 allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
     where joint(x,y) = (p2 (p2 x)) ++ y
 
-ledger = undefined
+ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+
 isValidMagicNr = undefined
 \end{code}
 
@@ -1100,6 +1100,15 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
+
+\begin{code}
+
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where   mapFst f (a, b) = (f a, b)
+            sums [] = [];
+            sums ((a,b):t) = (a, sum b) : sums t 
+\end{code}
 
 %if False
 \begin{code}
