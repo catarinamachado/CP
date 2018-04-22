@@ -993,7 +993,10 @@ allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
     where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
 
-isValidMagicNr = undefined
+isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
+    where   list x = [p1 x]
+            insert(x,y) = (p1 x) : y
+            
 \end{code}
 
 

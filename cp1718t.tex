@@ -1305,6 +1305,7 @@ outras funções auxiliares que sejam necessárias.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{inBlockchain}\mathrel{=}\alt{\Conid{Bc}}{\Conid{Bcs}}{}\<[E]%
 \\[\blanklineskip]%
@@ -1330,7 +1331,13 @@ outras funções auxiliares que sejam necessárias.
 \>[B]{}\hsindent{5}{}\<[5]%
 \>[5]{}\mathbf{where}\;\Varid{insert}\;(\Varid{x},\Varid{y})\mathrel{=}(\p1\;\Varid{x},\mathbin{-}\p1\;(\p2\;\Varid{x}))\mathbin{:}(\p2\;(\p2\;\Varid{x}),\p1\;(\p2\;\Varid{x}))\mathbin{:}\Varid{y}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{isValidMagicNr}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{isValidMagicNr}\;\Varid{a}\mathrel{=}\Varid{all}\;((\equiv )\;\mathrm{1}\comp \length )\comp \Varid{group}\comp \Varid{sort}\mathbin{\$}\Varid{cataBlockchain}\;\alt{\Varid{list}}{\Varid{insert}}\;\Varid{a}{}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}\;{}\<[13]%
+\>[13]{}\Varid{list}\;\Varid{x}\mathrel{=}[\mskip1.5mu \p1\;\Varid{x}\mskip1.5mu]{}\<[E]%
+\\
+\>[13]{}\Varid{insert}\;(\Varid{x},\Varid{y})\mathrel{=}(\p1\;\Varid{x})\mathbin{:}\Varid{y}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
