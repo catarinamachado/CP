@@ -990,7 +990,9 @@ isValidMagicNr = undefined
 \subsection*{Problema 2}
 
 \begin{code}
-inQTree = undefined
+inQTree = either (uncurryCell Cell) (uncurryBlock Block)
+    where uncurryCell f (e, (n1, n2)) = f e n1 n2
+          uncurryBlock f (q1, (q2, (q3, q4))) = f q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
@@ -1001,14 +1003,12 @@ recQTree g = baseQTree id g
 
 cataQTree g = g . (recQTree (cataQTree g)) . outQTree
 
-anaQTree = undefined
---anaQTree g = inQTree . (recQTree (anaQTree g)) . g
+anaQTree g = inQTree . (recQTree (anaQTree g)) . g
 
-hyloQTree = undefined
---hyloQTree h g = cataQTree h . anaQTree g
+hyloQTree h g = cataQTree h . anaQTree g
 
 instance Functor QTree where
-    fmap f = undefined --cataQTree (inQTree . baseQTree f id)
+    fmap f = cataQTree (inQTree . baseQTree f id)
 
 rotateQTree = undefined
 scaleQTree = undefined
@@ -1028,7 +1028,6 @@ loop = undefined
 
 \begin{code}
 inFTree = undefined
-    --either Unit (reverse . (uncurry (uncurry Comp)) . reverse)
 outFTree = undefined
 baseFTree = undefined
 recFTree = undefined
