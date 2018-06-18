@@ -891,7 +891,7 @@ e
 \\[\blanklineskip]%
 \>[B]{}\Varid{s}\;\mathrm{0}\mathrel{=}\mathrm{1}{}\<[E]%
 \\
-\>[B]{}\Varid{s}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{s}\;\Varid{n}\mathbin{+}\mathrm{1}{}\<[E]%
+\>[B]{}\Varid{s}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{s}\;\Varid{d}\mathbin{+}\mathrm{1}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 A partir daqui alguém derivou a seguinte implementação:
@@ -912,7 +912,7 @@ Verificação que \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop3}\;\Varid{n}\;\Varid{k}\mathrel{=}\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\equiv {\Varid{n}!}\mathbin{/}({\Varid{k}!}\mathbin{*}{(\Varid{n}\mathbin{-}\Varid{k})!}){}\<[E]%
+\>[B]{}\Varid{prop3}\;(\Conid{NonNegative}\;\Varid{n})\;(\Conid{NonNegative}\;\Varid{k})\mathrel{=}\Varid{k}\leq \Varid{n}\Rightarrow\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\equiv {\Varid{n}!}\mathbin{/}({\Varid{k}!}\mathbin{*}{(\Varid{n}\mathbin{-}\Varid{k})!}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{propriedade}
@@ -1377,9 +1377,9 @@ outras funções auxiliares que sejam necessárias.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{base}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{base}\;\Varid{k}\mathrel{=}(\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1},\mathrm{1},\mathrm{1}){}\<[E]%
 \\
-\>[B]{}\Varid{loop}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{loop}\;(\Varid{a},\Varid{b},\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1},\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
