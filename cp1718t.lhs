@@ -1028,7 +1028,6 @@ loop = undefined
 
 \begin{code}
 inFTree = undefined
-    --either Unit (reverse . (uncurry (uncurry Comp)) . reverse)
 outFTree = undefined
 baseFTree = undefined
 recFTree = undefined
@@ -1047,7 +1046,7 @@ drawPTree = undefined
 
 \begin{code}
 singletonbag = undefined
-muB = undefined
+muB (B ((B a, int): as)) = B a
 dist = undefined
 \end{code}
 
