@@ -105,11 +105,9 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 13
 \\\hline
 a81047 & Catarina Machado
-\\
-a34900 & Cecilia Soares
 \\
 a82339 & João Vilaça
 \end{tabular}
