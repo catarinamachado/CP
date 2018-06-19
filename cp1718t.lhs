@@ -988,9 +988,10 @@ isValidMagicNr = undefined
 \subsection*{Problema 2}
 
 \begin{code}
-inQTree = either (uncurryCell Cell) (uncurryBlock Block)
-    where uncurryCell f (e, (n1, n2)) = f e n1 n2
-          uncurryBlock f (q1, (q2, (q3, q4))) = f q1 q2 q3 q4
+inQTree = either (uncurryCell) (uncurryBlock)
+    where uncurryCell (e, (n1, n2)) = Cell e n1 n2
+
+uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
@@ -1009,14 +1010,11 @@ instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 
 rotateQTree = cataQTree (either (trocaCell) (trocaBlock))
-    where trocaBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
-          trocaCell (e, (n1, n2)) = Cell e n2 n1
+    where trocaCell (e, (n1, n2)) = Cell e n2 n1
+          trocaBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
 
-scaleQTree n a = undefined
-
-    -- fmap (aux n) a
-    --where aux n (Cell a b c) = Cell a (b*n) (c*n)
-    --      aux n (Block q1 q2 q3 q4) = Block (aux n q1) (aux n q2) (aux n q3) (aux n q4)
+scaleQTree n a = cataQTree (either (multCell n) (uncurryBlock)) a
+    where multCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
 invertQTree = undefined
 compressQTree = undefined
