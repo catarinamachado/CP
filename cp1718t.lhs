@@ -1008,8 +1008,16 @@ hyloQTree h g = cataQTree h . anaQTree g
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 
-rotateQTree = undefined
-scaleQTree = undefined
+rotateQTree = cataQTree (either (trocaCell) (trocaBlock))
+    where trocaBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
+          trocaCell (e, (n1, n2)) = Cell e n2 n1
+
+scaleQTree n a = undefined
+
+    -- fmap (aux n) a
+    --where aux n (Cell a b c) = Cell a (b*n) (c*n)
+    --      aux n (Block q1 q2 q3 q4) = Block (aux n q1) (aux n q2) (aux n q3) (aux n q4)
+
 invertQTree = undefined
 compressQTree = undefined
 outlineQTree = undefined
