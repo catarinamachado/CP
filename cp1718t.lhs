@@ -1045,9 +1045,17 @@ drawPTree = undefined
 \subsection*{Problema 5}
 
 \begin{code}
-singletonbag = undefined
-muB (B ((B a, int): as)) = B a
-dist = undefined
+singletonbag a = B[(a, 1)]
+
+--muB (B ((B a, int): as)) = B  a
+--muB :: Bag (Bag a) -> Bag a ---> fmap para juntar os elementos direitos fmap id cena acho eu
+--muB (B (B a)) =
+muB = undefined
+
+dist (B a) = map (\(x,y) -> (x, (%) y (number a))) a
+    where number [] = 0
+          number ((_, int): cs) = int + number cs
+
 \end{code}
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
