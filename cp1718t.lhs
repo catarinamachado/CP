@@ -1009,19 +1009,25 @@ hyloQTree h g = cataQTree h . anaQTree g
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 
-rotateQTree = cataQTree (either (trocaCell) (trocaBlock))
-    where trocaCell (e, (n1, n2)) = Cell e n2 n1
-          trocaBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
+rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
+    where rotateCell (e, (n1, n2)) = Cell e n2 n1
+          rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
 
-scaleQTree n a = cataQTree (either (multCell n) (uncurryBlock)) a
-    where multCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
+scaleQTree n a = cataQTree (either (scaleCell n) (uncurryBlock)) a
+    where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
 
 compressQTree = undefined
-outlineQTree = undefined
+
+outlineQTree magic a = cataQTree (either (f magic) g) a
+    where f magic (k,(i,j))
+            | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
+            | otherwise = matrix j i (const False)
+          g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
+
 \end{code}
 
 \subsection*{Problema 3}
