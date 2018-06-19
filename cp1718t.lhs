@@ -1016,7 +1016,10 @@ rotateQTree = cataQTree (either (trocaCell) (trocaBlock))
 scaleQTree n a = cataQTree (either (multCell n) (uncurryBlock)) a
     where multCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
-invertQTree = undefined
+invertQTree = cataQTree (either (invertCell) (uncurryBlock))
+    where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
+                Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
+
 compressQTree = undefined
 outlineQTree = undefined
 \end{code}
