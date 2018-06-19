@@ -974,16 +974,29 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 \begin{code}
-inBlockchain = undefined
-outBlockchain = undefined
-recBlockchain = undefined    
-cataBlockchain = undefined     
-anaBlockchain = undefined
-hyloBlockchain = undefined
+inBlockchain = either Bc Bcs
 
-allTransactions = undefined
-ledger = undefined
-isValidMagicNr = undefined
+outBlockchain (Bc a) = Left (a)
+outBlockchain (Bcs (a,b)) = Right(a,b)
+
+recBlockchain g = id -|- (id >< g)
+
+cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
+
+anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g
+
+hyloBlockchain h g = cataBlockchain h . anaBlockchain g
+
+allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
+    where joint(x,y) = (p2 (p2 x)) ++ y
+
+ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+
+isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
+    where   list x = [p1 x]
+            insert(x,y) = (p1 x) : y
+            
 \end{code}
 
 
@@ -1090,6 +1103,15 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
+
+\begin{code}
+
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where   mapFst f (a, b) = (f a, b)
+            sums [] = [];
+            sums ((a,b):t) = (a, sum b) : sums t 
+\end{code}
 
 %if False
 \begin{code}
