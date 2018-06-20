@@ -988,6 +988,12 @@ hyloBlockchain h g = cataBlockchain h . anaBlockchain g
 allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
     where joint(x,y) = (p2 (p2 x)) ++ y
 
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where mapFst f (a, b) = (f a, b)
+          sums [] = []
+          sums ((a,b):t) = (a, sum b) : sums t
+
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
     where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
 
@@ -1004,6 +1010,7 @@ isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( eith
 inQTree = either (uncurryCell) (uncurryBlock)
     where uncurryCell (e, (n1, n2)) = Cell e n1 n2
 
+uncurryBlock :: (QTree a, (QTree a, (QTree a, QTree a))) -> QTree a
 uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
@@ -1026,20 +1033,86 @@ rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
     where rotateCell (e, (n1, n2)) = Cell e n2 n1
           rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
 
-scaleQTree n a = cataQTree (either (scaleCell n) (uncurryBlock)) a
+scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
 
-compressQTree = undefined
+-- fmap f = anaBTree ( baseBTree f id . outBTree )
+-- compressQTree :: Int -> QTree a -> QTree a
+-- compressQTree n a = undefined
+-- prof: depthQTree
+
+--anaQTree :: (a1 -> Either (a2, (Int, Int)) (a1, (a1, (a1, a1)))) -> a1 -> QTree a2
+compressQTree n a = anaQTree ((compress n) . outQTree) a
+
+compress :: Int -> Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a))) ->
+                   Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))
+compress = undefined
+
+ohmeu quero atual (Block q1 q2 q3 q4)
+        | ((eBlock q1) && (quero == atual + 1)) = eatBlock q1
+        | ((eBlock q2) && (quero == atual + 1)) = eatBlock q2
+        | ((eBlock q3) && (quero == atual + 1)) = eatBlock q3
+        | ((eBlock q4) && (quero == atual + 1)) = eatBlock q4
+        | (eBlock q1) = ohmeu quero (atual + 1) q1
+        | (eBlock q2) = ohmeu quero (atual + 1) q2
+        | (eBlock q3) = ohmeu quero (atual + 1) q3
+        | (eBlock q4) = ohmeu quero (atual + 1) q4
+
+
+-- depthQTree profundida da arvores
+eBlock (Cell _ _ _) = False
+eBlock (Block _ _ _ _) = True
+
+--funcao que comprime os blocks que tem para comprimir
+eatBlock (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =
+    Cell (c1) (n1 + k1) (n2 + k2)
+{-
+-- eat :: Block -> Cell
+-- eat :: QTree a -> QTree a
+eat (Block q1 q2 q3 q4) |
+                        |
+                        |
+                        |
+
+-}
+{-
+toCellAux:: ((a,(Int,Int)),(a,(Int,Int)),(a,(Int,Int)),(a,(Int,Int))) -> (a,(Int,Int))
+toCellAux ((a,(b,c)),(d,(e,f)),(g,(h,i)),(j,(k,l))) = (a,(b+e,c+i)) -- está mal
+
+openQTree:: (QTree a,(QTree a,(QTree a,QTree a))) -> (Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))))
+openQTree (a,(b,(c,d))) = ((outQTree a),(outQTree b),(outQTree c),(outQTree d))
+
+toCell::(Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a))),Either (a,(Int,Int)) (QTree a,(QTree a,(QTree a,QTree a)))) -> (a,(Int,Int))
+toCell ((Left a),(Left b),(Left c),(Left d)) = toCellAux(a,b,c,d)
+toCell ((Right a),(Right b),(Right c),(Right d)) = toCellAux( toCell (openQTree a),toCell (openQTree b), toCell (openQTree c), toCell (openQTree d))
+
+desfoca:: QTree a -> QTree a -> QTree a -> QTree a -> (a,(Int,Int))
+desfoca a b c d = toCell ((outQTree a),(outQTree b),(outQTree c),(outQTree d))
+
+myMax:: Int -> Int -> Int -> Int -> Int
+myMax a b c d = max (max a b) (max c d)
+
+decide:: Int -> (QTree a -> QTree a -> QTree a -> QTree a -> (a,(Int,Int))) -> Either (a,(Int,Int)) ((QTree a,Int),((QTree a,Int),((QTree a,Int),(QTree a,Int)))) ->Either ((a,(Int,Int)),Int) ((QTree a,(QTree a,(QTree a,QTree a))),Int)
+decide x f (Left(a,(b,c))) = i1((a,(b,c)),0)
+decide x f (Right((a,b),((c,d),((e,g),(h,i))))) | x > nivel = i1(f a c e h ,nivel + 1)
+                                                | otherwise = i2((a,(c,(e,h))),nivel + 1)
+                             where nivel = myMax b d g i
+
+compressQTree x = p1 . cataQTree((inQTree >< id) . undistl . (decide x desfoca))
+-}
+
+qt1 = Block (Cell 1 1 1) (Cell 0 1 1) (Cell 0 1 1) (Cell 0 1 1)
 
 outlineQTree magic a = cataQTree (either (f magic) g) a
     where f magic (k,(i,j))
             | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
             | otherwise = matrix j i (const False)
           g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
+
 
 \end{code}
 
@@ -1126,15 +1199,6 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
-
-\begin{code}
-
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where   mapFst f (a, b) = (f a, b)
-            sums [] = [];
-            sums ((a,b):t) = (a, sum b) : sums t
-\end{code}
 
 %if False
 \begin{code}
