@@ -658,7 +658,7 @@ g 0 = 1
 g (d+1) = underbrace ((d+1)) (s d) * g d
 
 s 0 = 1
-s (d+1) = s n + 1
+s (d+1) = s d + 1
 \end{spec}
 A partir daqui alguém derivou a seguinte implementação:
 \begin{code}
@@ -671,7 +671,7 @@ derive as funções |base k| e |loop| que são usadas como auxiliares acima.
 \begin{propriedade}
 Verificação que |bin n k| coincide com a sua especificação (\ref{eq:bin}):
 \begin{code}
-prop3 n k = (bin n k) == (fac n) % (fac k * (fac ((n-k))))
+prop3 (NonNegative n) (NonNegative k) = k <= n ==> (bin n k) == (fac n) % (fac k * (fac ((n-k))))
 \end{code}
 \end{propriedade}
 
@@ -972,16 +972,29 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 \begin{code}
-inBlockchain = undefined
-outBlockchain = undefined
-recBlockchain = undefined
-cataBlockchain = undefined
-anaBlockchain = undefined
-hyloBlockchain = undefined
+inBlockchain = either Bc Bcs
 
-allTransactions = undefined
-ledger = undefined
-isValidMagicNr = undefined
+outBlockchain (Bc a) = Left (a)
+outBlockchain (Bcs (a,b)) = Right(a,b)
+
+recBlockchain g = id -|- (id >< g)
+
+cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
+
+anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g
+
+hyloBlockchain h g = cataBlockchain h . anaBlockchain g
+
+allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
+    where joint(x,y) = (p2 (p2 x)) ++ y
+
+ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+
+isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
+    where   list x = [p1 x]
+            insert(x,y) = (p1 x) : y
+
 \end{code}
 
 
@@ -1033,8 +1046,9 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
 \subsection*{Problema 3}
 
 \begin{code}
-base = undefined
-loop = undefined
+base k = (1, k + 1, 1, 1)
+
+loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \end{code}
 
 \subsection*{Problema 4}
@@ -1112,6 +1126,15 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
+
+\begin{code}
+
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where   mapFst f (a, b) = (f a, b)
+            sums [] = [];
+            sums ((a,b):t) = (a, sum b) : sums t
+\end{code}
 
 %if False
 \begin{code}
@@ -1315,7 +1338,7 @@ invertBMP from to = withBMP from to invertbm
 
 depthQTree :: QTree a -> Int
 depthQTree = cataQTree (either (const 0) f)
-    where f (a,(b,(c,d))) = maximum [a,b,c,d]
+    where f (a,(b,(c,d))) = 1 + maximum [a,b,c,d]
 
 compressbm :: Eq a => Int -> Matrix a -> Matrix a
 compressbm n = qt2bm . compressQTree n . bm2qt
