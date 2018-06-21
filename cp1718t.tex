@@ -1390,13 +1390,13 @@ outras funções auxiliares que sejam necessárias.
 
 O objetivo deste problema é derivar as funções \ensuremath{\Varid{base}\;\Varid{k}} e \ensuremath{\Varid{loop}} de modo a
 podermos calcular as combinações de \ensuremath{\Varid{n}} \ensuremath{\Varid{k}}-a-\ensuremath{\Varid{k}},
-\begin{eqnarray}
+\begin{eqnarray*}
 	\ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\frac{{\Varid{n}!}}{{\Varid{k}!}\mathbin{*}{(\Varid{n}\mathbin{-}\Varid{k})!}}}
-\end{eqnarray}
+\end{eqnarray*}
 recorrendo a um ciclo-for onde apenas se fazem multiplicações e somas:
-\begin{eqnarray}
+\begin{eqnarray*}
     \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\Varid{h}\;\Varid{k}\;(\Varid{n}\mathbin{-}\Varid{k})\;\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )\mathrel{=}\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}\;\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}}
-\end{eqnarray}
+\end{eqnarray*}
 
 Tendo em conta o \ensuremath{\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}} e o \ensuremath{\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}} da função acima apresentada
 e comparando com a definição de \ensuremath{\Varid{h}\;\Varid{k}} do enunciado,
@@ -1515,7 +1515,7 @@ Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}}{\suc
 \vspace{0.5cm}
 
 Deste modo, após encontrarmos a definição de \ensuremath{\Varid{o}} e de \ensuremath{\Varid{p}} conseguimos determinar
-a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos constatado que
+a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos concluido que
 \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}.
 
 Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}}.
@@ -1643,7 +1643,7 @@ e
 \end{eqnarray*}
 
 
-Assim, aplicando então a lei temos:
+Assim, retomando o resultado anterior e aplicando a lei temos:
 \begin{eqnarray*}
 \start
 \ensuremath{\conj{\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}}{\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}}}}
@@ -1662,7 +1662,7 @@ a um \ensuremath{\cata{\alt{\Varid{b}}{\Varid{i}}}} para podermos aplicar a defi
 
 \vspace{0.5cm}
 
-Retomando então o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
+Retomando o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
 \begin{eqnarray*}
 \start
 \ensuremath{\cata{(\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}\times\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}})\comp \conj{\Conid{F}\;\p1}{\Conid{F}\;\p2}}}
@@ -1731,7 +1731,7 @@ O tipo de \ensuremath{\conj{\conj{\Varid{id}}{\Varid{id}}}{\conj{\Varid{id}}{\Va
 \hfill \break
 \xymatrix@C=20cm{
     \ensuremath{\Conid{A}}
-           \ar[d]_-{\ensuremath{\conj{\Varid{id}}{\Varid{id}}}}
+           \ar[d]_-{\ensuremath{\conj{\conj{\Varid{id}}{\Varid{id}}}{\conj{\Varid{id}}{\Varid{id}}}}}
 \\
     \ensuremath{(\Conid{A}\times\Conid{A})\times(\Conid{A}\times\Conid{A})}
 }
@@ -1747,15 +1747,15 @@ Logo, continuando a derivação:
 %
 \just\equiv{ Igualdade extensional : (73)  }
 %
-\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))}
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}\;\Varid{a}}
 %
 \just\equiv{ Def split : (78) }
 %
-\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}(\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}\;(\Varid{a},\Varid{b}),\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}\;(\Varid{c},\Varid{d}))}
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}(\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}\;\Varid{a},\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}\;\Varid{a})}
 %
 \just\equiv{ Def split : (78) x2 }
 %
-\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}((\underline{\mathrm{1}}\;\Varid{a},\underline{(\succ \;\Varid{k})}\;\Varid{b}),(\underline{\mathrm{1}}\;\Varid{c},\underline{\mathrm{1}}\;\Varid{d}))}
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}((\underline{\mathrm{1}}\;\Varid{a},\underline{(\succ \;\Varid{k})}\;\Varid{a}),(\underline{\mathrm{1}}\;\Varid{a},\underline{\mathrm{1}}\;\Varid{a}))}
 %
 \just\equiv{ Def const : (76) x4 ; Definição de succ: succ k = k + 1 }
 %
@@ -1764,28 +1764,100 @@ Logo, continuando a derivação:
 \end{eqnarray*}
 
 Porém, tendo em consideração a implementação desejada:
-\begin{eqnarray}
+\begin{eqnarray*}
     \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\Varid{h}\;\Varid{k}\;(\Varid{n}\mathbin{-}\Varid{k})\;\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )\mathrel{=}\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}\;\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}}
-\end{eqnarray}
+\end{eqnarray*}
 
-Vemos que em \ensuremath{\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )} que os tipos de \ensuremath{\Varid{loop}} e \ensuremath{\Varid{base}\;\Varid{k}}, mais especificamente
-o tipo de retorno, terão que ser um quádruplo uma vez que o \ensuremath{\mathsf{for}\ \cdot \ \cdot } deverá retornar
-também um quádruplo.
+Vemos que em \ensuremath{\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )} o tipo de dados é um quádruplo o que implica que
+os tipos de \ensuremath{\Varid{loop}} e \ensuremath{\Varid{base}\;\Varid{k}}, mais especificamente
+o tipo de retorno, terão que ser também um quádruplo (o \ensuremath{\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}}, por sua vez,
+também deverá retornar um quádruplo).
 
 Deste modo, através da aplicação de uma simples função que nos altere o tipo de dados, por exemplo:
-\begin{eqnarray}
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{altera}\mathbin{::}((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))\to (\Varid{a},\Varid{b},\Varid{c},\Varid{d})}
+\more
 \ensuremath{\Varid{altera}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))\mathrel{=}(\Varid{a},\Varid{b},\Varid{c},\Varid{d})}
-\end{eqnarray}
+\end{eqnarray*}
 
 Conseguimos ter a derivação desejada da função \ensuremath{\Varid{base}\;\Varid{k}}:
-\begin{eqnarray}
+\begin{eqnarray*}
 \ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}(\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1},\mathrm{1},\mathrm{1})}
-\end{eqnarray}
+\end{eqnarray*}
 
+\item Derivar a definição de loop
+
+Por último, para derivar a definição de \ensuremath{\Varid{loop}} teremos que pensar da mesma forma, ou seja,
+inserir variáveis. Porém, ao contrário da função \ensuremath{\Varid{base}\;\Varid{k}}, as variáveis a inserir terão que ser
+do tipo ((a, b), (c, d)) uma vez que temos um split com projeções \ensuremath{\p1} e \ensuremath{\p2}.
+Nos diagramas abaixo pode-se verificar o motivo desta diferença de domínio:
+
+Tendo em conta o primeiro split do split maior, temos:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)\times(\mathit C\times\Conid{D})}
+           \ar[d]_-{\ensuremath{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}}
+\\
+    \ensuremath{\Conid{Z}\times\mathit B}
+}
+\hfill \break
+
+É de salientar que o tipo mul (a, b) = a * b, ou seja, o tipo desta função é:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)}
+           \ar[d]_-{\ensuremath{\Varid{mul}}}
+\\
+    \ensuremath{\Conid{Z}}
+}
+\hfill \break
+
+
+Tendo agora em consideração o segundo split do split maior, temos:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)\times(\mathit C\times\Conid{D})}
+           \ar[d]_-{\ensuremath{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}
+\\
+    \ensuremath{(\Conid{Z}\times\Conid{D}}
+}
+\hfill \break
+
+
+Temos então,
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{loop}\mathrel{=}\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}
+%
+\just\equiv{ Igualdade extensional : (73)  }
+%
+\ensuremath{\Varid{loop}\mathrel{=}\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))}
+%
+\just\equiv{ Def split : (78) }
+%
+\ensuremath{\Varid{loop}\mathrel{=}(\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d})),\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d})))}
+%
+\just\equiv{ Def split : (78) x2 ; Def comp : (74) x6 ; Def proj : (81) x6 }
+%
+\ensuremath{\Varid{loop}\mathrel{=}((\Varid{mul}\;(\Varid{a},\Varid{b}),\succ \;\Varid{b}),(\Varid{mul}\;(\Varid{c},\Varid{d}),\succ \;\Varid{d}))}
+%
+\just\equiv{ Definição de succ : succ k = k + 1  x2 ; Definição de mul : mul (m,n) = m * n x2 }
+%
+\ensuremath{\Varid{loop}\mathrel{=}((\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1}),(\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1}))}
+%
+\end{eqnarray*}
+
+Deparámo-nos com o mesmo problema da função \ensuremath{\Varid{base}\;\Varid{k}} e por isso vamos aplicar novamente a função
+\ensuremath{\Varid{altera}} para reparar o tipo de dados de retorno. Temos então:
+\begin{eqnarray*}
+\ensuremath{\Varid{loop}\;(\Varid{a},\Varid{b},\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1},\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1})}
+\end{eqnarray*}
 
 \end{enumerate}
 
 
+Deste modo, obtemos os dois resultados pretendidos:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%

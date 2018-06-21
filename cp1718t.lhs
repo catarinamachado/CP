@@ -1032,13 +1032,13 @@ outlineQTree = undefined
 
 O objetivo deste problema é derivar as funções |base k| e |loop| de modo a
 podermos calcular as combinações de |n| |k|-a-|k|,
-\begin{eqnarray}
+\begin{eqnarray*}
 	|bin n k = frac (fac n)(fac k * (fac ((n-k))))|
-\end{eqnarray}
+\end{eqnarray*}
 recorrendo a um ciclo-for onde apenas se fazem multiplicações e somas:
-\begin{eqnarray}
+\begin{eqnarray*}
     |bin n k = h k (n-k) where h k n = let (a,_,b,_) = for loop (base k) n in a % b|
-\end{eqnarray}
+\end{eqnarray*}
 
 Tendo em conta o |where h k n| e o |in a % b| da função acima apresentada
 e comparando com a definição de |h k| do enunciado,
@@ -1193,7 +1193,7 @@ Logo, |p =  (either (const (succ k)) (succ . p2))|.
 \vspace{0.5cm}
 
 Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determinar
-a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
+a definição de |split (f k) (l k)| uma vez que já haviamos concluido que
 |split (f k) (l k) = cataNat (split o p)|.
 
 Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))|.
@@ -1357,7 +1357,7 @@ e
 \end{eqnarray*}
 
 
-Assim, aplicando então a lei temos:
+Assim, retomando o resultado anterior e aplicando a lei temos:
 \begin{eqnarray*}
 \start
 |split (cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))) (cataNat (split (either (const 1) (mul)) (either (const 1) (succ . p2))))|
@@ -1376,7 +1376,7 @@ a um |cataNat (either b i)| para podermos aplicar a definição de ciclo for:
 
 \vspace{0.5cm}
 
-Retomando então o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
+Retomando o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
 \begin{eqnarray*}
 \start
 |cataNat ( ((split (either (const 1) (mul)) (either (const (succ k)) (succ . p2))) >< (split (either (const 1) (mul)) (either (const 1) (succ . p2)))) . split (F p1) (F p2) )|
@@ -1445,7 +1445,7 @@ O tipo de |split (split (id) (id)) (split (id) (id))| será:
 \hfill \break
 \xymatrix@@C=20cm{
     |A|
-           \ar[d]_-{|split (id) (id)|}
+           \ar[d]_-{|split (split (id) (id)) (split (id) (id))|}
 \\
     |(A >< A) >< (A >< A)|
 }
@@ -1461,15 +1461,15 @@ Logo, continuando a derivação:
 %
 \just\equiv{ Igualdade extensional : (73)  }
 %
-| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) ((a, b), (c, d)) |
+| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) a |
 %
 \just\equiv{ Def split : (78) }
 %
-| base k = ((split (const 1) (const (succ k))) (a, b), (split (const 1) (const 1)) (c, d)) |
+| base k = ((split (const 1) (const (succ k))) a, (split (const 1) (const 1)) a) |
 %
 \just\equiv{ Def split : (78) x2 }
 %
-| base k = ( ((const 1) a, (const (succ k)) b), ((const 1) c, (const 1) d) ) |
+| base k = ( ((const 1) a, (const (succ k)) a), ((const 1) a, (const 1) a) ) |
 %
 \just\equiv{ Def const : (76) x4 ; Definição de succ: succ k = k + 1 }
 %
@@ -1478,42 +1478,100 @@ Logo, continuando a derivação:
 \end{eqnarray*}
 
 Porém, tendo em consideração a implementação desejada:
-\begin{eqnarray}
+\begin{eqnarray*}
     |bin n k = h k (n-k) where h k n = let (a,_,b,_) = for loop (base k) n in a % b|
-\end{eqnarray}
+\end{eqnarray*}
 
 Vemos que em |let (a,_,b,_)| o tipo de dados é um quádruplo o que implica que
 os tipos de |loop| e |base k|, mais especificamente
-o tipo de retorno, terão que ser também um quádruplo (o |for|, por sua vez,
+o tipo de retorno, terão que ser também um quádruplo (o |for loop (base k) n|, por sua vez,
 também deverá retornar um quádruplo).
 
 Deste modo, através da aplicação de uma simples função que nos altere o tipo de dados, por exemplo:
-\begin{eqnarray}
+\begin{eqnarray*}
 \start
 |altera :: ((a, b), (c, d)) -> (a, b, c, d)|
 \more
 |altera ((a, b), (c, d)) = (a, b, c, d)|
-\end{eqnarray}
+\end{eqnarray*}
 
 Conseguimos ter a derivação desejada da função |base k|:
-\begin{eqnarray}
+\begin{eqnarray*}
 |base k = (1, k + 1, 1, 1)|
-\end{eqnarray}
+\end{eqnarray*}
 
+\item Derivar a definição de loop
+
+Por último, para derivar a definição de |loop| teremos que pensar da mesma forma, ou seja,
+inserir variáveis. Porém, ao contrário da função |base k|, as variáveis a inserir terão que ser
+do tipo ((a, b), (c, d)) uma vez que temos um split com projeções |p1| e |p2|.
+Nos diagramas abaixo pode-se verificar o motivo desta diferença de domínio:
+
+Tendo em conta o primeiro split do split maior, temos:
+\hfill \break
+\xymatrix@@C=5cm{
+    |(A >< B) >< (C >< D)|
+           \ar[d]_-{|split (mul . p1) (succ . p2 . p1)|}
+\\
+    |Z >< B|
+}
+\hfill \break
+
+É de salientar que o tipo mul (a, b) = a * b, ou seja, o tipo desta função é:
+\hfill \break
+\xymatrix@@C=5cm{
+    |(A >< B)|
+           \ar[d]_-{|mul|}
+\\
+    |Z|
+}
+\hfill \break
+
+
+Tendo agora em consideração o segundo split do split maior, temos:
+\hfill \break
+\xymatrix@@C=5cm{
+    |(A >< B) >< (C >< D)|
+           \ar[d]_-{|split (mul . p2) (succ . p2 . p2)|}
+\\
+    |(Z >< D|
+}
+\hfill \break
+
+
+Temos então,
+\begin{eqnarray*}
+\start
+| loop = split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2)) |
+%
+\just\equiv{ Igualdade extensional : (73)  }
+%
+| loop = split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2)) ((a, b), (c, d)) |
+%
+\just\equiv{ Def split : (78) }
+%
+| loop = ((split (mul . p1) (succ . p2 . p1)) ((a, b), (c, d)), (split (mul . p2) (succ . p2 . p2)) ((a, b), (c, d))) |
+%
+\just\equiv{ Def split : (78) x2 ; Def comp : (74) x6 ; Def proj : (81) x6 }
+%
+| loop = ( (mul (a, b), succ b), (mul (c, d), succ d) ) |
+%
+\just\equiv{ Definição de succ : succ k = k + 1  x2 ; Definição de mul : mul (m,n) = m * n x2 }
+%
+| loop = ( (a * b, b + 1), (c * d, d + 1) ) |
+%
+\end{eqnarray*}
+
+Deparámo-nos com o mesmo problema da função |base k| e por isso vamos aplicar novamente a função
+|altera| para reparar o tipo de dados de retorno. Temos então:
+\begin{eqnarray*}
+|loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)|
+\end{eqnarray*}
 
 \end{enumerate}
 
 
-
-
-
-
-
-
-
-
-
-Deste modo temos então o resultado pretendido:
+Deste modo, obtemos os dois resultados pretendidos:
 
 \begin{code}
 base k = (1, k + 1, 1, 1)
