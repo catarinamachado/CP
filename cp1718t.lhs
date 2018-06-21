@@ -1047,12 +1047,9 @@ drawPTree = undefined
 \begin{code}
 singletonbag a = B[(a, 1)]
 
---muB (B ((B a, int): as)) = B  a
---muB :: Bag (Bag a) -> Bag a ---> fmap para juntar os elementos direitos fmap id cena acho eu
---muB (B (B a)) =
 muB = undefined
 
-dist (B a) = map (\(x,y) -> (x, (%) y (number a))) a
+dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
     where number [] = 0
           number ((_, int): cs) = int + number cs
 
