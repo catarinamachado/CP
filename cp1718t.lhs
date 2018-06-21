@@ -1086,17 +1086,41 @@ individualmente para cada uma das funções |f k| e |l k|, apresentadas no
 enunciado:
 
 \begin{enumerate}
-\item Descobrir |o|:
+\item Descobrir |o| (com a ajuda da função |f k|):
 
 \begin{eqnarray*}
 \start
     |lcbr(
-    f k 0 = 1
+        f k 0 = 1
     )(
-    f k (d+1) = (l k d) * (f k d)
+        f k (d+1) = (l k d) * (f k d)
     )|
 %
-\just\equiv{ CENAS 73 }
+\just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
+%
+    |lcbr(
+		f k . 0 = 1
+	)(
+		f k . (d + 1) = (*) (l k d) (f k d)
+	)|
+%
+\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+%
+    |lcbr(
+		f k . (const 0) = (const 1)
+	)(
+		f k . (d + 1) = (*) (l k d) (f k d)
+	)|
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    |lcbr(
+        f k . (const 0) = (const 1)
+    )(
+        f k . (d + 1) = mul (f k d, l k d)
+    )|
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
 %
     |lcbr(
 		f k . (const 0) = (const 1)
@@ -1112,7 +1136,7 @@ enunciado:
 %
 |f k . (either (const 0) ((succ))) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
 %
-\just\equiv{ Definição naturais de in e functor: |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
 %
 |f k . in = (either (const 1) (mul)) . F (split (f k) (l k) |
 %
@@ -1121,42 +1145,50 @@ enunciado:
 Logo, |o = (either (const 1) (mul))|.
 
 
-\item Descobrir |p|:
+\item Descobrir |p| (com a ajuda da função |l k|):
 \begin{eqnarray*}
 \start
     |lcbr(
-    l k 0 = k + 1
+        l k 0 = k + 1
     )(
-    l k (d+1) = (l k d) + 1
+        l k (d+1) = (l k d) + 1
     )|
 %
-\just\equiv{ CENAS 73 }
+\just\equiv{ Def comp: (74) }
 %
     |lcbr(
-		l k . (const 0) = (const 1)
+		l k . 0 =  k + 1
 	)(
-		l k . (succ) = mul . split (f k) (l k)
+		l k . (d + 1) = (l k d) + 1
+	)|
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    |lcbr(
+		l k . (const 0) =  const (succ . k)
+	)(
+		l k . (succ) = succ . (l k)
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (succ . k) (succ . l k)|
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k)) (succ . l k)|
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (succ . k . id) (succ . p2 . split (f k) (l k))|
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k) . id) (succ . p2 . split (f k) (l k))|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|l k . (either (const 0) ((succ))) = (either (succ . k) (succ . p2)) . (id + split (f k) (l k)) |
+|l k . (either (const 0) ((succ))) = (either (const (succ . k)) (succ . p2)) . (id + split (f k) (l k)) |
 %
-\just\equiv{ Definição naturais de in e functor: |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
 %
-|l k . in = (either (succ . k) (succ . p2)) . F (split (f k) (l k) |
+|l k . in = (either (const (succ . k)) (succ . p2)) . F (split (f k) (l k) |
 %
 \end{eqnarray*}
 
-Logo, |p =  (either (succ . k) (succ . p2))|.
+Logo, |p =  (either (const (succ . k)) (succ . p2))|.
 
 \vspace{0.5cm}
 
@@ -1164,7 +1196,7 @@ Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determi
 a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
 |split (f k) (l k) = cataNat (split o p)|
 
-Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (succ . k) (succ . p2)))|.
+Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ . k)) (succ . p2)))|.
 \end{enumerate}
 
 
@@ -1178,7 +1210,7 @@ descobrir um |v| e um |j| de modo a podermos aplicar a lei da recursividade múl
     |lcbr(
 		g . in = v . F (split g s)
 	)(
-		s. in = j . F (split g s)
+		s . in = j . F (split g s)
 	)|
 %
 \just\equiv{ Fokkinga: (50) }
@@ -1186,6 +1218,124 @@ descobrir um |v| e um |j| de modo a podermos aplicar a lei da recursividade múl
 |split g s = cataNat (split v j)|
 %
 \end{eqnarray*}
+
+\begin{enumerate}
+\item Descobrir |v| (com a ajuda da função |g|):
+
+\begin{eqnarray*}
+\start
+    |lcbr(
+        g 0 = 1
+    )(
+        g (d+1) = (s g) * (g d)
+    )|
+%
+\just\equiv{ A PARTIR DAQUI Def comp: (74) ; (*) escrita como função prefixo }
+%
+    |lcbr(
+		g . 0 = 1
+	)(
+		g . (d + 1) = (*) (l k d) (f k d)
+	)|
+%
+\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+%
+    |lcbr(
+		f k . (const 0) = (const 1)
+	)(
+		f k . (d + 1) = (*) (l k d) (f k d)
+	)|
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    |lcbr(
+        f k . (const 0) = (const 1)
+    )(
+        f k . (d + 1) = mul (f k d, l k d)
+    )|
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
+%
+    |lcbr(
+		f k . (const 0) = (const 1)
+	)(
+		f k . (succ) = mul . split (f k) (l k)
+	)|
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+|either (f k . (const 0)) (f k . (succ)) = either ((const 1) . id) (mul . split (f k) (l k))|
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+|f k . (either (const 0) ((succ))) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
+%
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+%
+|f k . in = (either (const 1) (mul)) . F (split (f k) (l k) |
+%
+\end{eqnarray*}
+
+Logo, |o = (either (const 1) (mul))|.
+
+
+\item Descobrir |p| (com a ajuda da função |l k|):
+\begin{eqnarray*}
+\start
+    |lcbr(
+        l k 0 = k + 1
+    )(
+        l k (d+1) = (l k d) + 1
+    )|
+%
+\just\equiv{ Def comp: (74) }
+%
+    |lcbr(
+		l k . 0 =  k + 1
+	)(
+		l k . (d + 1) = (l k d) + 1
+	)|
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    |lcbr(
+		l k . (const 0) =  const (succ . k)
+	)(
+		l k . (succ) = succ . (l k)
+	)|
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k)) (succ . l k)|
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k) . id) (succ . p2 . split (f k) (l k))|
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+|l k . (either (const 0) ((succ))) = (either (const (succ . k)) (succ . p2)) . (id + split (f k) (l k)) |
+%
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+%
+|l k . in = (either (const (succ . k)) (succ . p2)) . F (split (f k) (l k) |
+%
+\end{eqnarray*}
+
+Logo, |p =  (either (const (succ . k)) (succ . p2))|.
+
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determinar
+a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
+|split (f k) (l k) = cataNat (split o p)|
+
+Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ . k)) (succ . p2)))|.
+\end{enumerate}
+
+
+
+
 
 
 

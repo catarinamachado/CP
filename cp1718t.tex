@@ -1440,13 +1440,25 @@ individualmente para cada uma das funções \ensuremath{\Varid{f}\;\Varid{k}} e 
 enunciado:
 
 \begin{enumerate}
-\item Descobrir \ensuremath{\Varid{o}}:
+\item Descobrir \ensuremath{\Varid{o}} (com a ajuda da função \ensuremath{\Varid{f}\;\Varid{k}}):
 
 \begin{eqnarray*}
 \start
     \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{f}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{*}(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
 %
-\just\equiv{ CENAS 73 }
+\just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{mul}\;(\Varid{f}\;\Varid{k}\;\Varid{d},\Varid{l}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
 %
     \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
 %
@@ -1458,7 +1470,7 @@ enunciado:
 %
 \ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
 %
-\just\equiv{ Definição naturais de in e functor: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
 %
 \ensuremath{\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
 %
@@ -1467,34 +1479,38 @@ enunciado:
 Logo, \ensuremath{\Varid{o}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}.
 
 
-\item Descobrir \ensuremath{\Varid{p}}:
+\item Descobrir \ensuremath{\Varid{p}} (com a ajuda da função \ensuremath{\Varid{l}\;\Varid{k}}):
 \begin{eqnarray*}
 \start
     \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\;\mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{+}\mathrm{1}\end{lcbr}}
 %
-\just\equiv{ CENAS 73 }
+\just\equiv{ Def comp: (74) }
 %
-    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{l}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{(\succ \comp \Varid{k})}\\\Varid{l}\;\Varid{k}\comp (\succ )\mathrel{=}\succ \comp (\Varid{l}\;\Varid{k})\end{lcbr}}
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \Varid{l}\;\Varid{k}}}
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \Varid{l}\;\Varid{k}}}
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
 %
-\just\equiv{ Definição naturais de in e functor: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
 %
-\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
 %
 \end{eqnarray*}
 
-Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}}.
+Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}}.
 
 \vspace{0.5cm}
 
@@ -1502,7 +1518,7 @@ Deste modo, após encontrarmos a definição de \ensuremath{\Varid{o}} e de \ens
 a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos constatado que
 \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}
 
-Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\succ \comp \Varid{k}}{\succ \comp \p2}}}}.
+Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}}}}.
 \end{enumerate}
 
 
@@ -1520,6 +1536,92 @@ descobrir um \ensuremath{\Varid{v}} e um \ensuremath{\Varid{j}} de modo a poderm
 \ensuremath{\conj{\Varid{g}}{\Varid{s}}\mathrel{=}\cata{\conj{\Varid{v}}{\Varid{j}}}}
 %
 \end{eqnarray*}
+
+\begin{enumerate}
+\item Descobrir \ensuremath{\Varid{v}} (com a ajuda da função \ensuremath{\Varid{g}}):
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{g}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{g}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{s}\;\Varid{g})\mathbin{*}(\Varid{g}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ A PARTIR DAQUI Def comp: (74) ; (*) escrita como função prefixo }
+%
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{g}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{mul}\;(\Varid{f}\;\Varid{k}\;\Varid{d},\Varid{l}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{f}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{o}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}.
+
+
+\item Descobrir \ensuremath{\Varid{p}} (com a ajuda da função \ensuremath{\Varid{l}\;\Varid{k}}):
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\;\mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Def comp: (74) }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{(\succ \comp \Varid{k})}\\\Varid{l}\;\Varid{k}\comp (\succ )\mathrel{=}\succ \comp (\Varid{l}\;\Varid{k})\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \Varid{l}\;\Varid{k}}}
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}}.
+
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de \ensuremath{\Varid{o}} e de \ensuremath{\Varid{p}} conseguimos determinar
+a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos constatado que
+\ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}
+
+Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \comp \Varid{k})}}{\succ \comp \p2}}}}.
+\end{enumerate}
+
+
+
+
 
 
 
