@@ -105,7 +105,7 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 13
 \\\hline
 a81047 & Catarina Machado
 \\
@@ -1030,10 +1030,163 @@ outlineQTree = undefined
 
 \subsection*{Problema 3}
 
+O objetivo deste problema é derivar as funções |base k| e |loop| de modo a
+podermos calcular as combinações de |n| |k|-a-|k|,
+\begin{eqnarray}
+	|bin n k = frac (fac n)(fac k * (fac ((n-k))))|
+\end{eqnarray}
+recorrendo a um ciclo-for onde apenas se fazem multiplicações e somas:
+\begin{eqnarray}
+    |bin n k = h k (n-k) where h k n = let (a,_,b,_) = for loop (base k) n in a % b|
+\end{eqnarray}
+
+Tendo em conta o |where h k n| e o |in a % b| da função acima apresentada
+e comparando com a definição de |h k| do enunciado,
+\begin{eqnarray*}
+\start
+       |h k n = frac (f k n) (g n)|
+\more
+       |f k n = frac (fac ((n+k))) (fac k)|
+\more
+       |g n = fac n|
+\end{eqnarray*}
+constatamos que o nosso \material{a} em |in a % b| terá que ser a função
+|f k| e o \material{b} será a função |g|.
+
+Assim, para podermos descobrir a definição das funções pedidas (|base k| e |loop|)
+teremos que, a partir da definição de |f k| (e consequentemente de |l k|) e da definição
+de |g| (e consequentemente de |s|), descobrirmos a definição de |split (f k) (l k)|
+e de |split g s| (com recurso à lei da recursividade múltipla)
+e posteriormente combinarmos os seus resultados com a lei de banana-split.
+
+Para tal, dividimos o nosso problema em diferentes partes:
+
+\begin{enumerate}
+\item Determinar |split (f k) (l k)|:
+
+Para isso, tirando partido da indicação do enunciado, ou seja, com o intuito
+de aplicar a lei da recursividade múltipla, temos:
+
+\begin{eqnarray*}
+\start
+    |lcbr(
+		f k . in = o . F (split (f k) (l k))
+	)(
+		l k . in = p . F (split (f k) (l k))
+	)|
+%
+\just\equiv{ Fokkinga: (50) }
+%
+|split (f k) (l k) = cataNat (split o p)|
+%
+\end{eqnarray*}
+
+O objetivo será então determinar |o| e |p| e, para isso, teremos que olhar
+individualmente para cada uma das funções |f k| e |l k|, apresentadas no
+enunciado:
+
+\begin{enumerate}
+\item Descobrir |o|:
+
+\begin{eqnarray*}
+\start
+    |lcbr(
+    f k 0 = 1
+    )(
+    f k (d+1) = (l k d) * (f k d)
+    )|
+%
+\just\equiv{ CENAS 73 }
+%
+    |lcbr(
+		f k . (const 0) = (const 1)
+	)(
+		f k . TODO = mul . split (f k) (l k)
+	)|
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+|either (f k . (const 0)) (f k . TODO) = either ((const 1) . id) (mul . split (f k) (l k))|
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+|f k . (either (const 0) (TODO)) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
+%
+\just\equiv{ Definição in naturais ; Definição Functor dos naturais |split (f k) (l k)|}
+%
+|f k . in = (either (const 1) (mul)) . F (split (f k) (l k) |
+%
+\end{eqnarray*}
+
+Logo, |o =  (either (const 1) (mul))|.
+
+
+\item Descobrir |p|:
+\begin{eqnarray*}
+\start
+    |lcbr(
+    l k 0 = k + 1
+    )(
+    l k (d+1) = (l k d) + 1
+    )|
+%
+\just\equiv{ CENAS 73 }
+%
+    |lcbr(
+		l k . (const 0) = (const 1)
+	)(
+		l k . TODO = mul . split (f k) (l k)
+	)|
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+|either (l k . (const 0)) (l k . TODO) = either (TODO . k) (TODO . l k)|
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+|either (l k . (const 0)) (l k . TODO) = either (TODO . k . id) (TODO . p2 . split (f k) (l k))|
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+|l k . (either (const 0) (TODO)) = (either (TODO . k) (TODO . p2)) . (id + split (f k) (l k)) |
+%
+\just\equiv{ Definição naturais: |in = either (const 0) (TODO)| ; |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+%
+|l k . in = (either (TODO . k) (TODO . p2)) . F (split (f k) (l k) |
+%
+\end{eqnarray*}
+
+Logo, |p =  (either (TODO . k) (TODO . p2))|.
+
+\end{enumerate}
+
+
+
+
+
+
+
+\item Determinar |split g s|:
+
+...
+
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
 \begin{code}
 base k = (1, k + 1, 1, 1)
-loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 
+loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \end{code}
 
 \subsection*{Problema 4}

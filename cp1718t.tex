@@ -295,11 +295,9 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 13
 \\\hline
 a81047 & Catarina Machado
-\\
-a34900 & Cecilia Soares
 \\
 a82339 & João Vilaça
 \end{tabular}
@@ -1390,11 +1388,144 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 3}
 
+O objetivo deste problema é derivar as funções \ensuremath{\Varid{base}\;\Varid{k}} e \ensuremath{\Varid{loop}} de modo a
+podermos calcular as combinações de \ensuremath{\Varid{n}} \ensuremath{\Varid{k}}-a-\ensuremath{\Varid{k}},
+\begin{eqnarray}
+	\ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\frac{{\Varid{n}!}}{{\Varid{k}!}\mathbin{*}{(\Varid{n}\mathbin{-}\Varid{k})!}}}
+\end{eqnarray}
+recorrendo a um ciclo-for onde apenas se fazem multiplicações e somas:
+\begin{eqnarray}
+    \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\Varid{h}\;\Varid{k}\;(\Varid{n}\mathbin{-}\Varid{k})\;\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )\mathrel{=}\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}\;\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}}
+\end{eqnarray}
+
+Tendo em conta o \ensuremath{\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}} e o \ensuremath{\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}} da função acima apresentada
+e comparando com a definição de \ensuremath{\Varid{h}\;\Varid{k}} do enunciado,
+\begin{eqnarray*}
+\start
+       \ensuremath{\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\frac{\Varid{f}\;\Varid{k}\;\Varid{n}}{\Varid{g}\;\Varid{n}}}
+\more
+       \ensuremath{\Varid{f}\;\Varid{k}\;\Varid{n}\mathrel{=}\frac{{(\Varid{n}\mathbin{+}\Varid{k})!}}{{\Varid{k}!}}}
+\more
+       \ensuremath{\Varid{g}\;\Varid{n}\mathrel{=}{\Varid{n}!}}
+\end{eqnarray*}
+constatamos que o nosso \material{a} em \ensuremath{\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}} terá que ser a função
+\ensuremath{\Varid{f}\;\Varid{k}} e o \material{b} será a função \ensuremath{\Varid{g}}.
+
+Assim, para podermos descobrir a definição das funções pedidas (\ensuremath{\Varid{base}\;\Varid{k}} e \ensuremath{\Varid{loop}})
+teremos que, a partir da definição de \ensuremath{\Varid{f}\;\Varid{k}} (e consequentemente de \ensuremath{\Varid{l}\;\Varid{k}}) e da definição
+de \ensuremath{\Varid{g}} (e consequentemente de \ensuremath{\Varid{s}}), descobrirmos a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+e de \ensuremath{\conj{\Varid{g}}{\Varid{s}}} (com recurso à lei da recursividade múltipla)
+e posteriormente combinarmos os seus resultados com a lei de banana-split.
+
+Para tal, dividimos o nosso problema em diferentes partes:
+
+\begin{enumerate}
+\item Determinar \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}:
+
+Para isso, tirando partido da indicação do enunciado, ou seja, com o intuito
+de aplicar a lei da recursividade múltipla, temos:
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\Varid{o}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\\\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\Varid{p}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Fokkinga: (50) }
+%
+\ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}
+%
+\end{eqnarray*}
+
+O objetivo será então determinar \ensuremath{\Varid{o}} e \ensuremath{\Varid{p}} e, para isso, teremos que olhar
+individualmente para cada uma das funções \ensuremath{\Varid{f}\;\Varid{k}} e \ensuremath{\Varid{l}\;\Varid{k}}, apresentadas no
+enunciado:
+
+\begin{enumerate}
+\item Descobrir \ensuremath{\Varid{o}}:
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{f}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{*}(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ CENAS 73 }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp \Conid{TODO}\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{f}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{\Conid{TODO}}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição in naturais ; Definição Functor dos naturais \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{o}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}.
+
+
+\item Descobrir \ensuremath{\Varid{p}}:
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\;\mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ CENAS 73 }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{l}\;\Varid{k}\comp \Conid{TODO}\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \Varid{l}\;\Varid{k}}}
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}\comp \Varid{id}}{\Conid{TODO}\comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{\Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição naturais: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{\Conid{TODO}}} ; \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}}.
+
+\end{enumerate}
+
+
+
+
+
+
+
+\item Determinar \ensuremath{\conj{\Varid{g}}{\Varid{s}}}:
+
+...
+
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{base}\;\Varid{k}\mathrel{=}(\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1},\mathrm{1},\mathrm{1}){}\<[E]%
-\\
+\\[\blanklineskip]%
 \>[B]{}\Varid{loop}\;(\Varid{a},\Varid{b},\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1},\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
