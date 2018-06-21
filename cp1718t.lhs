@@ -1062,7 +1062,7 @@ e posteriormente combinarmos os seus resultados com a lei de banana-split.
 Para tal, dividimos o nosso problema em diferentes partes:
 
 \begin{enumerate}
-\item Determinar |split (f k) (l k)|:
+\item Determinar |split (f k) (l k)|
 
 Para isso, tirando partido da indicação do enunciado, ou seja, com o intuito
 de aplicar a lei da recursividade múltipla, temos:
@@ -1086,14 +1086,14 @@ individualmente para cada uma das funções |f k| e |l k|, apresentadas no
 enunciado:
 
 \begin{enumerate}
-\item Descobrir |o| (com a ajuda da função |f k|):
+\item Descobrir |o| (com a ajuda da função |f k|)
 
 \begin{eqnarray*}
 \start
     |lcbr(
         f k 0 = 1
     )(
-        f k (d+1) = (l k d) * (f k d)
+        f k (d + 1) = (l k d) * (f k d)
     )|
 %
 \just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
@@ -1104,7 +1104,7 @@ enunciado:
 		f k . (d + 1) = (*) (l k d) (f k d)
 	)|
 %
-\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+\just\equiv{ Igualdade extencional: (73) ; Def const: (76) }
 %
     |lcbr(
 		f k . (const 0) = (const 1)
@@ -1145,13 +1145,13 @@ enunciado:
 Logo, |o = (either (const 1) (mul))|.
 
 
-\item Descobrir |p| (com a ajuda da função |l k|):
+\item Descobrir |p| (com a ajuda da função |l k|)
 \begin{eqnarray*}
 \start
     |lcbr(
         l k 0 = k + 1
     )(
-        l k (d+1) = (l k d) + 1
+        l k (d + 1) = l k d + 1
     )|
 %
 \just\equiv{ Def comp: (74) }
@@ -1159,48 +1159,48 @@ Logo, |o = (either (const 1) (mul))|.
     |lcbr(
 		l k . 0 =  k + 1
 	)(
-		l k . (d + 1) = (l k d) + 1
+		l k . (d + 1) = l k d + 1
 	)|
 %
 \just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
 %
     |lcbr(
-		l k . (const 0) =  const (succ . k)
+		l k . (const 0) =  const (succ k)
 	)(
 		l k . (succ) = succ . (l k)
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k)) (succ . l k)|
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ k)) (succ . l k)|
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k) . id) (succ . p2 . split (f k) (l k))|
+|either (l k . (const 0)) (l k . (succ)) = either (const (succ k) . id) (succ . p2 . split (f k) (l k))|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|l k . (either (const 0) ((succ))) = (either (const (succ . k)) (succ . p2)) . (id + split (f k) (l k)) |
+|l k . (either (const 0) ((succ))) = (either (const (succ k)) (succ . p2)) . (id + split (f k) (l k)) |
 %
 \just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
 %
-|l k . in = (either (const (succ . k)) (succ . p2)) . F (split (f k) (l k) |
+|l k . in = (either (const (succ k)) (succ . p2)) . F (split (f k) (l k))|
 %
 \end{eqnarray*}
 
-Logo, |p =  (either (const (succ . k)) (succ . p2))|.
+Logo, |p =  (either (const (succ k)) (succ . p2))|.
 
 \vspace{0.5cm}
 
 Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determinar
 a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
-|split (f k) (l k) = cataNat (split o p)|
+|split (f k) (l k) = cataNat (split o p)|.
 
-Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ . k)) (succ . p2)))|.
+Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))|.
 \end{enumerate}
 
 
-\item Determinar |split g s|:
+\item Determinar |split g s|
 
 Para descobrir |split g s| seguimos o mesmo raciocínio, isto é, tentamos
 descobrir um |v| e um |j| de modo a podermos aplicar a lei da recursividade múltipla:
@@ -1220,117 +1220,287 @@ descobrir um |v| e um |j| de modo a podermos aplicar a lei da recursividade múl
 \end{eqnarray*}
 
 \begin{enumerate}
-\item Descobrir |v| (com a ajuda da função |g|):
+\item Descobrir |v| (com a ajuda da função |g|)
 
 \begin{eqnarray*}
 \start
     |lcbr(
         g 0 = 1
     )(
-        g (d+1) = (s g) * (g d)
+        g (d+1) = (g d) * (s d)
     )|
 %
-\just\equiv{ A PARTIR DAQUI Def comp: (74) ; (*) escrita como função prefixo }
+\just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
 %
     |lcbr(
 		g . 0 = 1
 	)(
-		g . (d + 1) = (*) (l k d) (f k d)
+		g . (d + 1) = (*) (g d) (s d)
 	)|
 %
-\just\equiv{ Def const: (76) ; Igualdade extencional: (73) }
+\just\equiv{ Igualdade extencional: (73) ; Def const: (76) }
 %
     |lcbr(
-		f k . (const 0) = (const 1)
+		g . (const 0) = (const 1)
 	)(
-		f k . (d + 1) = (*) (l k d) (f k d)
+		g . (d + 1) = (*) (g d) (s d)
 	)|
 %
 \just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
 %
     |lcbr(
-        f k . (const 0) = (const 1)
+        g . (const 0) = (const 1)
     )(
-        f k . (d + 1) = mul (f k d, l k d)
+        g . (d + 1) = mul (g d, s d)
     )|
 %
 \just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
 %
     |lcbr(
-		f k . (const 0) = (const 1)
+		g . (const 0) = (const 1)
 	)(
-		f k . (succ) = mul . split (f k) (l k)
+		g . (succ) = mul . split (g) (s)
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (f k . (const 0)) (f k . (succ)) = either ((const 1) . id) (mul . split (f k) (l k))|
+|either (g . (const 0)) (g . (succ)) = either ((const 1) . id) (mul . split g s)|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|f k . (either (const 0) ((succ))) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
+|g . (either (const 0) ((succ))) = (either (const 1) (mul)) . (id + split g s)|
 %
-\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split g s) = (id + split g s| }
 %
-|f k . in = (either (const 1) (mul)) . F (split (f k) (l k) |
+|g . in = (either (const 1) (mul)) . F (split g s)|
 %
 \end{eqnarray*}
 
-Logo, |o = (either (const 1) (mul))|.
+Logo, |v = (either (const 1) (mul))|.
 
 
-\item Descobrir |p| (com a ajuda da função |l k|):
+\item Descobrir |j| (com a ajuda da função |s|)
 \begin{eqnarray*}
 \start
     |lcbr(
-        l k 0 = k + 1
+        s 0 = 1
     )(
-        l k (d+1) = (l k d) + 1
+        s (d + 1) = s d + 1
     )|
 %
 \just\equiv{ Def comp: (74) }
 %
     |lcbr(
-		l k . 0 =  k + 1
+		s . 0 =  1
 	)(
-		l k . (d + 1) = (l k d) + 1
+		s . (d + 1) = s d + 1
 	)|
 %
 \just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
 %
     |lcbr(
-		l k . (const 0) =  const (succ . k)
+		s . (const 0) =  const 1
 	)(
-		l k . (succ) = succ . (l k)
+		s . (succ) = succ . s
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k)) (succ . l k)|
+|either (s . (const 0)) (s . (succ)) = either (const 1) (succ . s)|
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-|either (l k . (const 0)) (l k . (succ)) = either (const (succ . k) . id) (succ . p2 . split (f k) (l k))|
+|either (s. (const 0)) (s . (succ)) = either (const 1 . id) (succ . p2 . split g s)|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|l k . (either (const 0) ((succ))) = (either (const (succ . k)) (succ . p2)) . (id + split (f k) (l k)) |
+|s . (either (const 0) ((succ))) = (either (const 1) (succ . p2)) . (id + split s g) |
 %
-\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+\just\equiv{ Definição de in e functor (dos naturais): |in = either (const 0) ((succ))| , |F (split s g = (id + split s g)| }
 %
-|l k . in = (either (const (succ . k)) (succ . p2)) . F (split (f k) (l k) |
+|s . in = (either (const 1) (succ . p2)) . F (split s g) |
 %
 \end{eqnarray*}
 
-Logo, |p =  (either (const (succ . k)) (succ . p2))|.
+Logo, |j =  (either (const 1) (succ . p2))|.
 
 \vspace{0.5cm}
 
-Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determinar
-a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
-|split (f k) (l k) = cataNat (split o p)|
+Deste modo, após encontrarmos a definição de |v| e de |j| conseguimos determinar
+a definição de |split g s| uma vez que já haviamos constatado que
+|split g s = cataNat (split v j)|.
 
-Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (const (succ . k)) (succ . p2)))|.
+Logo, |split g s = cataNat (split (either (const 1) (mul)) (either (const 1) (succ . p2)))|.
+\end{enumerate}
+
+
+\item Aplicar a lei de banana split à definição de |split (f k) (l k)| e |split g s|
+
+A lei de banana split (51) é a seguinte:
+\begin{eqnarray*}
+\start
+|split (cataNat i) (cataNat j)|
+%
+\just\equiv{ Banana-split : (51) }
+%
+|cataNat ((i >< j) . (split (F p1) (F p2)))|
+%
+\end{eqnarray*}
+
+Assim, podemos constatar que, no nosso caso:
+\begin{eqnarray*}
+|cataNat i = cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))|
+\end{eqnarray*}
+e
+\begin{eqnarray*}
+|cataNat j = cataNat (split (either (const 1) (mul)) (either (const 1) (succ . p2)))|
+\end{eqnarray*}
+
+
+Assim, aplicando então a lei temos:
+\begin{eqnarray*}
+\start
+|split (cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))) (cataNat (split (either (const 1) (mul)) (either (const 1) (succ . p2))))|
+%
+\just\equiv{ Banana-split : (51) }
+%
+|cataNat ( ((cataNat (split (either (const 1) (mul)) (either (const (succ k)) (succ . p2)))) >< (cataNat (split (either (const 1) (mul)) (either (const 1) (succ . p2))))) . split (F p1) (F p2) )|
+%
+\end{eqnarray*}
+
+Agora podemos então continuar a resolver o problema, sempre com o intuito de chegar
+a um |cataNat (either b i)| para podermos aplicar a definição de ciclo for:
+\begin{eqnarray*}
+|for b (const i) = cataNat (either i b)|
+\end{eqnarray*}
+
+\vspace{0.5cm}
+
+Retomando então o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
+\begin{eqnarray*}
+\start
+|cataNat ( ((split (either (const 1) (mul)) (either (const (succ k)) (succ . p2))) >< (split (either (const 1) (mul)) (either (const 1) (succ . p2)))) . split (F p1) (F p2) )|
+%
+\just\equiv{ Absorção x : (11) ; Lei da troca : (28) }
+%
+|cataNat ( split ((either ( split (const 1) (const (succ k)) ) ( split (mul) (succ . p2) )) . F p1) ((either ( split (const 1) (const 1) ) ( split (mul) (succ . p2) )) . F p2)   )|
+%
+\just\equiv{ Definição do Functor (dos naturais): |F p1 = id + p1|, |F p2 = id + p2| }
+%
+|cataNat ( split ((either ( split (const 1) (const (succ k)) ) ( split (mul) (succ . p2) )) . (id + p1)) ((either ( split (const 1) (const 1) ) ( split (mul) (succ . p2) )) . (id + p2))   )|
+%
+\just\equiv{ Absorção + : (22) x2 ; Fusão x : (10) x2 ; Natural id : (1) x2 }
+%
+|cataNat ( split (either ( split (const 1) (const (succ k)) ) ( split (mul . p1) (succ . p2 . p1) )) (either ( split (const 1) (const 1) ) ( split (mul . p2) (succ . p2 . p2) ))  )|
+%
+\just\equiv{ Lei da troca : (28) }
+%
+|cataNat ( either ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) ( split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2)) ) ) |
+%
+\just\equiv{ Definição de for: |for b (const i) = cataNat (either i b)| }
+%
+|for ( split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2))) ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
+\end{eqnarray*}
+
+
+Assim, tendo em conta a definição do enunciado:
+\begin{eqnarray*}
+| for loop (base k) |
+\end{eqnarray*}
+
+E comparando com o nosso resultado:
+\begin{eqnarray*}
+|for ( split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2))) ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
+\end{eqnarray*}
+
+Temos que:
+\begin{eqnarray*}
+\start
+| loop = ( split (split (mul . p1) (succ . p2 . p1)) (split (mul . p2) (succ . p2 . p2))) |
+\more
+| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
+\end{eqnarray*}
+
+\item Derivar a definição de base k
+
+Focando em |base k|:
+\begin{eqnarray*}
+| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
+\end{eqnarray*}
+
+Vamos agora introduzir variáveis à definição |pointfree| para
+podermos ter o resultado da função |base k| em haskell.
+
+Uma vez que o tipo de split, por exemplo, |split (id) (id)| é:
+\hfill \break
+\xymatrix@@C=20cm{
+    |A|
+           \ar[d]_-{|split (id) (id)|}
+\\
+    |A >< A|
+}
+\hfill \break
+
+O tipo de |split (split (id) (id)) (split (id) (id))| será:
+\hfill \break
+\xymatrix@@C=20cm{
+    |A|
+           \ar[d]_-{|split (id) (id)|}
+\\
+    |(A >< A) >< (A >< A)|
+}
+\hfill \break
+
+Assim, conseguimos perceber qual é o tipo da variável que temos que adicionar
+uma vez que no nosso caso também se trata de um split de split.
+
+Logo, continuando a derivação:
+\begin{eqnarray*}
+\start
+| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
+%
+\just\equiv{ Igualdade extensional : (73)  }
+%
+| base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) ((a, b), (c, d)) |
+%
+\just\equiv{ Def split : (78) }
+%
+| base k = ((split (const 1) (const (succ k))) (a, b), (split (const 1) (const 1)) (c, d)) |
+%
+\just\equiv{ Def split : (78) x2 }
+%
+| base k = ( ((const 1) a, (const (succ k)) b), ((const 1) c, (const 1) d) ) |
+%
+\just\equiv{ Def const : (76) x4 ; Definição de succ: succ k = k + 1 }
+%
+| base k = ( (1, k + 1), (1, 1) ) |
+%
+\end{eqnarray*}
+
+Porém, tendo em consideração a implementação desejada:
+\begin{eqnarray}
+    |bin n k = h k (n-k) where h k n = let (a,_,b,_) = for loop (base k) n in a % b|
+\end{eqnarray}
+
+Vemos que em |let (a,_,b,_)| o tipo de dados é um quádruplo o que implica que
+os tipos de |loop| e |base k|, mais especificamente
+o tipo de retorno, terão que ser também um quádruplo (o |for|, por sua vez,
+também deverá retornar um quádruplo).
+
+Deste modo, através da aplicação de uma simples função que nos altere o tipo de dados, por exemplo:
+\begin{eqnarray}
+\start
+|altera :: ((a, b), (c, d)) -> (a, b, c, d)|
+\more
+|altera ((a, b), (c, d)) = (a, b, c, d)|
+\end{eqnarray}
+
+Conseguimos ter a derivação desejada da função |base k|:
+\begin{eqnarray}
+|base k = (1, k + 1, 1, 1)|
+\end{eqnarray}
+
+
 \end{enumerate}
 
 
@@ -1342,17 +1512,8 @@ Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (cons
 
 
 
-\end{enumerate}
 
-
-
-
-
-
-
-
-
-
+Deste modo temos então o resultado pretendido:
 
 \begin{code}
 base k = (1, k + 1, 1, 1)
