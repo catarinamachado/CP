@@ -1101,24 +1101,24 @@ enunciado:
     |lcbr(
 		f k . (const 0) = (const 1)
 	)(
-		f k . TODO = mul . split (f k) (l k)
+		f k . (succ) = mul . split (f k) (l k)
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (f k . (const 0)) (f k . TODO) = either ((const 1) . id) (mul . split (f k) (l k))|
+|either (f k . (const 0)) (f k . (succ)) = either ((const 1) . id) (mul . split (f k) (l k))|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|f k . (either (const 0) (TODO)) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
+|f k . (either (const 0) ((succ))) = (either (const 1) (mul)) . (id + split (f k) (l k)) |
 %
-\just\equiv{ Definição in naturais ; Definição Functor dos naturais |split (f k) (l k)|}
+\just\equiv{ Definição naturais de in e functor: |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
 %
 |f k . in = (either (const 1) (mul)) . F (split (f k) (l k) |
 %
 \end{eqnarray*}
 
-Logo, |o =  (either (const 1) (mul))|.
+Logo, |o = (either (const 1) (mul))|.
 
 
 \item Descobrir |p|:
@@ -1135,40 +1135,61 @@ Logo, |o =  (either (const 1) (mul))|.
     |lcbr(
 		l k . (const 0) = (const 1)
 	)(
-		l k . TODO = mul . split (f k) (l k)
+		l k . (succ) = mul . split (f k) (l k)
 	)|
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-|either (l k . (const 0)) (l k . TODO) = either (TODO . k) (TODO . l k)|
+|either (l k . (const 0)) (l k . (succ)) = either (succ . k) (succ . l k)|
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-|either (l k . (const 0)) (l k . TODO) = either (TODO . k . id) (TODO . p2 . split (f k) (l k))|
+|either (l k . (const 0)) (l k . (succ)) = either (succ . k . id) (succ . p2 . split (f k) (l k))|
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-|l k . (either (const 0) (TODO)) = (either (TODO . k) (TODO . p2)) . (id + split (f k) (l k)) |
+|l k . (either (const 0) ((succ))) = (either (succ . k) (succ . p2)) . (id + split (f k) (l k)) |
 %
-\just\equiv{ Definição naturais: |in = either (const 0) (TODO)| ; |F (split (f k) (l k)) = (id + split (f k) (l k))| }
+\just\equiv{ Definição naturais de in e functor: |in = either (const 0) ((succ))| , |F (split (f k) (l k)) = (id + split (f k) (l k))| }
 %
-|l k . in = (either (TODO . k) (TODO . p2)) . F (split (f k) (l k) |
+|l k . in = (either (succ . k) (succ . p2)) . F (split (f k) (l k) |
 %
 \end{eqnarray*}
 
-Logo, |p =  (either (TODO . k) (TODO . p2))|.
+Logo, |p =  (either (succ . k) (succ . p2))|.
 
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de |o| e de |p| conseguimos determinar
+a definição de |split (f k) (l k)| uma vez que já haviamos constatado que
+|split (f k) (l k) = cataNat (split o p)|
+
+Logo, |split (f k) (l k) = cataNat (split (either (const 1) (mul)) (either (succ . k) (succ . p2)))|.
 \end{enumerate}
-
-
-
-
-
 
 
 \item Determinar |split g s|:
 
-...
+Para descobrir |split g s| seguimos o mesmo raciocínio, isto é, tentamos
+descobrir um |v| e um |j| de modo a podermos aplicar a lei da recursividade múltipla:
+
+\begin{eqnarray*}
+\start
+    |lcbr(
+		g . in = v . F (split g s)
+	)(
+		s. in = j . F (split g s)
+	)|
+%
+\just\equiv{ Fokkinga: (50) }
+%
+|split g s = cataNat (split v j)|
+%
+\end{eqnarray*}
+
+
+
+
 
 
 \end{enumerate}

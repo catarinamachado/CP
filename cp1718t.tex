@@ -1448,17 +1448,17 @@ enunciado:
 %
 \just\equiv{ CENAS 73 }
 %
-    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp \Conid{TODO}\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-\ensuremath{\alt{\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{f}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+\ensuremath{\alt{\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{f}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-\ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{\Conid{TODO}}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+\ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
 %
-\just\equiv{ Definição in naturais ; Definição Functor dos naturais \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+\just\equiv{ Definição naturais de in e functor: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
 %
 \ensuremath{\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
 %
@@ -1474,39 +1474,56 @@ Logo, \ensuremath{\Varid{o}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}
 %
 \just\equiv{ CENAS 73 }
 %
-    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{l}\;\Varid{k}\comp \Conid{TODO}\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{l}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
 %
 \just\equiv{ Eq + : (27) ; Natural id : (1) }
 %
-\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \Varid{l}\;\Varid{k}}}
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \Varid{l}\;\Varid{k}}}
 %
 \just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
 %
-\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp \Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}\comp \Varid{id}}{\Conid{TODO}\comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
 %
 \just\equiv{ Fusão + : (20) ; Absorção x : (11) }
 %
-\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{\Conid{TODO}}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
 %
-\just\equiv{ Definição naturais: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{\Conid{TODO}}} ; \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+\just\equiv{ Definição naturais de in e functor: \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
 %
-\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
 %
 \end{eqnarray*}
 
-Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\Conid{TODO}\comp \Varid{k}}{\Conid{TODO}\comp \p2}}.
+Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\succ \comp \Varid{k}}{\succ \comp \p2}}.
 
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de \ensuremath{\Varid{o}} e de \ensuremath{\Varid{p}} conseguimos determinar
+a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos constatado que
+\ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}
+
+Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\succ \comp \Varid{k}}{\succ \comp \p2}}}}.
 \end{enumerate}
-
-
-
-
-
 
 
 \item Determinar \ensuremath{\conj{\Varid{g}}{\Varid{s}}}:
 
-...
+Para descobrir \ensuremath{\conj{\Varid{g}}{\Varid{s}}} seguimos o mesmo raciocínio, isto é, tentamos
+descobrir um \ensuremath{\Varid{v}} e um \ensuremath{\Varid{j}} de modo a podermos aplicar a lei da recursividade múltipla:
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \mathbf{in}\mathrel{=}\Varid{v}\comp \Conid{F}\;\conj{\Varid{g}}{\Varid{s}}\\\Varid{s}\comp \mathbf{in}\mathrel{=}\Varid{j}\comp \Conid{F}\;\conj{\Varid{g}}{\Varid{s}}\end{lcbr}}
+%
+\just\equiv{ Fokkinga: (50) }
+%
+\ensuremath{\conj{\Varid{g}}{\Varid{s}}\mathrel{=}\cata{\conj{\Varid{v}}{\Varid{j}}}}
+%
+\end{eqnarray*}
+
+
+
+
 
 
 \end{enumerate}
