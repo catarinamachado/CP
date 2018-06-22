@@ -1038,7 +1038,31 @@ Relativamente às funções |recBlockchain|, |cataBlockchain|,
 |anaBlockchain| e |hyloBlockchain|, os seus tipos já estavam presentes
 no enunciado e o significado e intuito de cada uma delas também já era sabido.
 
-TODOO
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |A*|
+          \ar[d]_-{|anaBlockchain h|}
+           \ar[r]^-{|lsplitBGene|}
+&
+   |1 + A* >< (A >< A above) above|
+          \ar[d]^{|id +((ana lsplitBGene) >< map(id >< ana lsplitBGene))|}
+\\
+    |Blockchain|
+       \ar[d]_-{|cataBlockchain g|}
+       \ar[r]^-{|outBlockchain|}
+&
+    |Block + (Block >< Blockchain)|
+          \ar[l]^-{|inBlockchain|}
+           \ar[d]^{|id +((cata inordBGene) >< map(id >< cata inordBGene))|}
+\\
+   |Blockchain|
+&
+   |Block + (Block >< Blockchain)|
+       \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+TODOOO PENSAR SOBRE ISTO
 
 \vspace{0.2cm}
 
@@ -1049,9 +1073,9 @@ TODOO
 
 
 \begin{enumerate}
-\item allTransactions
+\item Função allTransactions
 
-O objetivo da função allTransactions é calcular a lista com todas as transações
+O objetivo da função |allTransactions| é calcular a lista com todas as transações
 numa dada block chain, utilizando um catamorfismo.
 
 O diagrama desta função será:
@@ -1072,20 +1096,81 @@ O diagrama desta função será:
 \end{eqnarray*}
 
 
-O objetivo é descobrir o gene g, para assim termos a definição final de 
+O objetivo é descobrir o gene |g|, para assim termos a definição final de
+|allTransactions = cataBlockchain g|.
 
-
-
-
+Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
-|allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
-    where joint(x,y) = (p2 (p2 x)) ++ y|
+|type Block = (MagicNo, (Time, Transactions))|
+\end{eqnarray*}
+
+E o tipo de Blockchain já apresentado, deduzimos que o |g| terá que ser um ``either'',
+|g = either b0 joint|,
+onde de um lado irá tratar o |Block| e do outro o |Block >< Transactions|.
+
+\begin{enumerate}
+\item Descobrir b0
+
+Para tratar o lado em que o domínio é |Block|, e sabendo que o resultado terá que
+ser |Transactions|, o objetivo desta função será "retirar" do |Block| as |Transactions|.
+
+Assim, teremos que definir |b0| com projeções |p2| como podemos verificar no diagrama
+em seguida:
+\hfill \break
+\xymatrix@@C=20cm{
+    |MagicNo >< (Time >< Transactions)|
+           \ar[d]_-{|p2 . p2|}
+\\
+    |Transactions|
+}
+\hfill \break
+
+Deste modo, fica definido |b0| como:
+\begin{eqnarray*}
+|b0 = p2 . p2|
 \end{eqnarray*}
 
 
+\item Descobrir joint
+
+Tendo em conta o domínio da função |joint|, isto é, |Block >< Transactions|,
+percebemos que o objetivo desta função será retirar de |Block| as suas
+|Transactions| e juntá-las às |Transactions| já acumuladas (passadas como
+parâmetro).
+
+Assim, uma definição de |joint| |pointwise| é:
+\begin{eqnarray*}
+|joint (block, transac) = (p2 (p2 block)) ++ transac|
+\end{eqnarray*}
+
+Esta função cumpre os requisitos a que a proposemos.
+
+\end{enumerate}
+
+Temos então a definição de |b0| e |joint|, pelo que ficamos a saber qual é o gene g:
+\begin{eqnarray*}
+\start
+|g = either b0 joint|
+%
+\just\equiv{ Definição de b0 ; Definição de joint }
+%
+|g = either (p2 . p2) joint|
+\more
+|   where joint(x,y) = (p2 (p2 x)) ++ y|
+%
+\end{eqnarray*}
+
+
+Deste modo, está definida a função |allTransactions| pedida:
+\begin{code}
+allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
+    where joint(x,y) = (p2 (p2 x)) ++ y
+\end{code}
 
 
 
+
+\item Função ledger
 
 
 
@@ -1139,9 +1224,6 @@ O objetivo é descobrir o gene g, para assim termos a definição final de
 \end{eqnarray*}
 
 \begin{code}
-allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
-    where joint(x,y) = (p2 (p2 x)) ++ y
-
 groupL :: Ledger -> Ledger
 groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
     where   mapFst f (a, b) = (f a, b)
