@@ -295,11 +295,9 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 13
 \\\hline
 a81047 & Catarina Machado
-\\
-a34900 & Cecilia Soares
 \\
 a82339 & João Vilaça
 \end{tabular}
@@ -1390,11 +1388,482 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 3}
 
+O objetivo deste problema é derivar as funções \ensuremath{\Varid{base}\;\Varid{k}} e \ensuremath{\Varid{loop}} de modo a
+podermos calcular as combinações de \ensuremath{\Varid{n}} \ensuremath{\Varid{k}}-a-\ensuremath{\Varid{k}},
+\begin{eqnarray*}
+	\ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\frac{{\Varid{n}!}}{{\Varid{k}!}\mathbin{*}{(\Varid{n}\mathbin{-}\Varid{k})!}}}
+\end{eqnarray*}
+recorrendo a um ciclo-for onde apenas se fazem multiplicações e somas:
+\begin{eqnarray*}
+    \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\Varid{h}\;\Varid{k}\;(\Varid{n}\mathbin{-}\Varid{k})\;\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )\mathrel{=}\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}\;\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}}
+\end{eqnarray*}
+
+Tendo em conta o \ensuremath{\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}} e o \ensuremath{\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}} da função acima apresentada
+e comparando com a definição de \ensuremath{\Varid{h}\;\Varid{k}} do enunciado,
+\begin{eqnarray*}
+\start
+       \ensuremath{\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\frac{\Varid{f}\;\Varid{k}\;\Varid{n}}{\Varid{g}\;\Varid{n}}}
+\more
+       \ensuremath{\Varid{f}\;\Varid{k}\;\Varid{n}\mathrel{=}\frac{{(\Varid{n}\mathbin{+}\Varid{k})!}}{{\Varid{k}!}}}
+\more
+       \ensuremath{\Varid{g}\;\Varid{n}\mathrel{=}{\Varid{n}!}}
+\end{eqnarray*}
+constatamos que o nosso \material{a} em \ensuremath{\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}} terá que ser a função
+\ensuremath{\Varid{f}\;\Varid{k}} e o \material{b} será a função \ensuremath{\Varid{g}}.
+
+Assim, para podermos descobrir a definição das funções pedidas (\ensuremath{\Varid{base}\;\Varid{k}} e \ensuremath{\Varid{loop}})
+teremos que, a partir da definição de \ensuremath{\Varid{f}\;\Varid{k}} (e consequentemente de \ensuremath{\Varid{l}\;\Varid{k}}) e da definição
+de \ensuremath{\Varid{g}} (e consequentemente de \ensuremath{\Varid{s}}), descobrirmos a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+e de \ensuremath{\conj{\Varid{g}}{\Varid{s}}} (com recurso à lei da recursividade múltipla)
+e posteriormente combinarmos os seus resultados com a lei de banana-split.
+
+Para tal, dividimos o nosso problema em diferentes partes:
+
+\begin{enumerate}
+\item Determinar \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+
+Para isso, tirando partido da indicação do enunciado, ou seja, com o intuito
+de aplicar a lei da recursividade múltipla, temos:
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\Varid{o}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\\\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\Varid{p}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Fokkinga: (50) }
+%
+\ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}
+%
+\end{eqnarray*}
+
+O objetivo será então determinar \ensuremath{\Varid{o}} e \ensuremath{\Varid{p}} e, para isso, teremos que olhar
+individualmente para cada uma das funções \ensuremath{\Varid{f}\;\Varid{k}} e \ensuremath{\Varid{l}\;\Varid{k}}, apresentadas no
+enunciado:
+
+\begin{enumerate}
+\item Descobrir \ensuremath{\Varid{o}} (com a ajuda da função \ensuremath{\Varid{f}\;\Varid{k}})
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{f}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{l}\;\Varid{k}\;\Varid{d})\mathbin{*}(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Igualdade extencional: (73) ; Def const: (76) }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{l}\;\Varid{k}\;\Varid{d})\;(\Varid{f}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{mul}\;(\Varid{f}\;\Varid{k}\;\Varid{d},\Varid{l}\;\Varid{k}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{f}\;\Varid{k}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{f}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{f}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+%
+\ensuremath{\Varid{f}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{o}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}.
+
+
+\item Descobrir \ensuremath{\Varid{p}} (com a ajuda da função \ensuremath{\Varid{l}\;\Varid{k}})
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\;\mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{l}\;\Varid{k}\;\Varid{d}\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Def comp: (74) }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \mathrm{0}\mathrel{=}\Varid{k}\mathbin{+}\mathrm{1}\\\Varid{l}\;\Varid{k}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{l}\;\Varid{k}\;\Varid{d}\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}\mathrel{=}\underline{(\succ \;\Varid{k})}\\\Varid{l}\;\Varid{k}\comp (\succ )\mathrel{=}\succ \comp (\Varid{l}\;\Varid{k})\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \Varid{l}\;\Varid{k}}}
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+\ensuremath{\alt{\Varid{l}\;\Varid{k}\comp \underline{\mathrm{0}}}{\Varid{l}\;\Varid{k}\comp (\succ )}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}})} }
+%
+\ensuremath{\Varid{l}\;\Varid{k}\comp \mathbf{in}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{p}\mathrel{=}\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}.
+
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de \ensuremath{\Varid{o}} e de \ensuremath{\Varid{p}} conseguimos determinar
+a definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} uma vez que já haviamos concluido que
+\ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\Varid{o}}{\Varid{p}}}}.
+
+Logo, \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}}.
+\end{enumerate}
+
+
+\item Determinar \ensuremath{\conj{\Varid{g}}{\Varid{s}}}
+
+Para descobrir \ensuremath{\conj{\Varid{g}}{\Varid{s}}} seguimos o mesmo raciocínio, isto é, tentamos
+descobrir um \ensuremath{\Varid{v}} e um \ensuremath{\Varid{j}} de modo a podermos aplicar a lei da recursividade múltipla:
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \mathbf{in}\mathrel{=}\Varid{v}\comp \Conid{F}\;\conj{\Varid{g}}{\Varid{s}}\\\Varid{s}\comp \mathbf{in}\mathrel{=}\Varid{j}\comp \Conid{F}\;\conj{\Varid{g}}{\Varid{s}}\end{lcbr}}
+%
+\just\equiv{ Fokkinga: (50) }
+%
+\ensuremath{\conj{\Varid{g}}{\Varid{s}}\mathrel{=}\cata{\conj{\Varid{v}}{\Varid{j}}}}
+%
+\end{eqnarray*}
+
+\begin{enumerate}
+\item Descobrir \ensuremath{\Varid{v}} (com a ajuda da função \ensuremath{\Varid{g}})
+
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{g}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{g}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\Varid{g}\;\Varid{d})\mathbin{*}(\Varid{s}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def comp: (74) ; (*) escrita como função prefixo }
+%
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{g}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{g}\;\Varid{d})\;(\Varid{s}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Igualdade extencional: (73) ; Def const: (76) }
+%
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{g}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}(\mathbin{*})\;(\Varid{g}\;\Varid{d})\;(\Varid{s}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Definição de mul: mul (a, b) = (*) a b ;  }
+%
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{g}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{mul}\;(\Varid{g}\;\Varid{d},\Varid{s}\;\Varid{d})\end{lcbr}}
+%
+\just\equiv{ Def split: (78) ; Def comp: (74) ; Definição de succ: succ d = d + 1 ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{g}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{g}\comp (\succ )\mathrel{=}\Varid{mul}\comp \conj{\Varid{g}}{\Varid{s}}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{g}\comp \underline{\mathrm{0}}}{\Varid{g}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\Varid{mul}\comp \conj{\Varid{g}}{\Varid{s}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{g}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp (\Varid{id}\mathbin{+}\conj{\Varid{g}}{\Varid{s}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;\conj{\Varid{g}}{\Varid{s}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{g}}{\Varid{s}}} }
+%
+\ensuremath{\Varid{g}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}\comp \Conid{F}\;\conj{\Varid{g}}{\Varid{s}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{v}\mathrel{=}\alt{\underline{\mathrm{1}}}{\Varid{mul}}}.
+
+
+\item Descobrir \ensuremath{\Varid{j}} (com a ajuda da função \ensuremath{\Varid{s}})
+\begin{eqnarray*}
+\start
+    \ensuremath{\begin{lcbr}\Varid{s}\;\mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{s}\;(\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{s}\;\Varid{d}\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Def comp: (74) }
+%
+    \ensuremath{\begin{lcbr}\Varid{s}\comp \mathrm{0}\mathrel{=}\mathrm{1}\\\Varid{s}\comp (\Varid{d}\mathbin{+}\mathrm{1})\mathrel{=}\Varid{s}\;\Varid{d}\mathbin{+}\mathrm{1}\end{lcbr}}
+%
+\just\equiv{ Definição de succ: succ d = d + 1 ; Def const: (76) ; Igualdade extencional: (73) }
+%
+    \ensuremath{\begin{lcbr}\Varid{s}\comp \underline{\mathrm{0}}\mathrel{=}\underline{\mathrm{1}}\\\Varid{s}\comp (\succ )\mathrel{=}\succ \comp \Varid{s}\end{lcbr}}
+%
+\just\equiv{ Eq + : (27) ; Natural id : (1) }
+%
+\ensuremath{\alt{\Varid{s}\comp \underline{\mathrm{0}}}{\Varid{s}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\succ \comp \Varid{s}}}
+%
+\just\equiv{ Natural id : (1) ; Cancelamento x : (7) }
+%
+\ensuremath{\alt{\Varid{s}\comp \underline{\mathrm{0}}}{\Varid{s}\comp (\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}\comp \Varid{id}}{\succ \comp \p2\comp \conj{\Varid{g}}{\Varid{s}}}}
+%
+\just\equiv{ Fusão + : (20) ; Absorção x : (11) }
+%
+\ensuremath{\Varid{s}\comp \alt{\underline{\mathrm{0}}}{(\succ )}\mathrel{=}\alt{\underline{\mathrm{1}}}{\succ \comp \p2}\comp (\Varid{id}\mathbin{+}\conj{\Varid{s}}{\Varid{g}})}
+%
+\just\equiv{ Definição de in e functor (dos naturais): \ensuremath{\mathbf{in}\mathrel{=}\alt{\underline{\mathrm{0}}}{(\succ )}} , \ensuremath{\Conid{F}\;(\conj{\Varid{s}}{\Varid{g}}\mathrel{=}(\Varid{id}\mathbin{+}\conj{\Varid{s}}{\Varid{g}})} }
+%
+\ensuremath{\Varid{s}\comp \mathbf{in}\mathrel{=}\alt{\underline{\mathrm{1}}}{\succ \comp \p2}\comp \Conid{F}\;\conj{\Varid{s}}{\Varid{g}}}
+%
+\end{eqnarray*}
+
+Logo, \ensuremath{\Varid{j}\mathrel{=}\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}.
+
+\vspace{0.5cm}
+
+Deste modo, após encontrarmos a definição de \ensuremath{\Varid{v}} e de \ensuremath{\Varid{j}} conseguimos determinar
+a definição de \ensuremath{\conj{\Varid{g}}{\Varid{s}}} uma vez que já haviamos constatado que
+\ensuremath{\conj{\Varid{g}}{\Varid{s}}\mathrel{=}\cata{\conj{\Varid{v}}{\Varid{j}}}}.
+
+Logo, \ensuremath{\conj{\Varid{g}}{\Varid{s}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}}}.
+\end{enumerate}
+
+
+\item Aplicar a lei de banana split à definição de \ensuremath{\conj{\Varid{f}\;\Varid{k}}{\Varid{l}\;\Varid{k}}} e \ensuremath{\conj{\Varid{g}}{\Varid{s}}}
+
+A lei de banana split (51) é a seguinte:
+\begin{eqnarray*}
+\start
+\ensuremath{\conj{\cata{\Varid{i}}}{\cata{\Varid{j}}}}
+%
+\just\equiv{ Banana-split : (51) }
+%
+\ensuremath{\cata{(\Varid{i}\times\Varid{j})\comp \conj{\Conid{F}\;\p1}{\Conid{F}\;\p2}}}
+%
+\end{eqnarray*}
+
+Assim, podemos constatar que, no nosso caso:
+\begin{eqnarray*}
+\ensuremath{\cata{\Varid{i}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}}
+\end{eqnarray*}
+e
+\begin{eqnarray*}
+\ensuremath{\cata{\Varid{j}}\mathrel{=}\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}}}
+\end{eqnarray*}
+
+
+Assim, retomando o resultado anterior e aplicando a lei temos:
+\begin{eqnarray*}
+\start
+\ensuremath{\conj{\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}}{\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}}}}
+%
+\just\equiv{ Banana-split : (51) }
+%
+\ensuremath{\cata{(\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}}\times\cata{\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}}})\comp \conj{\Conid{F}\;\p1}{\Conid{F}\;\p2}}}
+%
+\end{eqnarray*}
+
+Agora podemos então continuar a resolver o problema, sempre com o intuito de chegar
+a um \ensuremath{\cata{\alt{\Varid{b}}{\Varid{i}}}} para podermos aplicar a definição de ciclo for:
+\begin{eqnarray*}
+\ensuremath{\mathsf{for}\ \Varid{b}\ \underline{\Varid{i}}\mathrel{=}\cata{\alt{\Varid{i}}{\Varid{b}}}}
+\end{eqnarray*}
+
+\vspace{0.5cm}
+
+Retomando o resultado anterior e continuando a aplicar as leis do cálculo de programas, temos:
+\begin{eqnarray*}
+\start
+\ensuremath{\cata{(\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{(\succ \;\Varid{k})}}{\succ \comp \p2}}\times\conj{\alt{\underline{\mathrm{1}}}{\Varid{mul}}}{\alt{\underline{\mathrm{1}}}{\succ \comp \p2}})\comp \conj{\Conid{F}\;\p1}{\Conid{F}\;\p2}}}
+%
+\just\equiv{ Absorção x : (11) ; Lei da troca : (28) }
+%
+\ensuremath{\cata{\conj{\alt{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\Varid{mul}}{\succ \comp \p2}}\comp \Conid{F}\;\p1}{\alt{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}{\conj{\Varid{mul}}{\succ \comp \p2}}\comp \Conid{F}\;\p2}}}
+%
+\just\equiv{ Definição do Functor (dos naturais): \ensuremath{\Conid{F}\;\p1\mathrel{=}\Varid{id}\mathbin{+}\p1}, \ensuremath{\Conid{F}\;\p2\mathrel{=}\Varid{id}\mathbin{+}\p2} }
+%
+\ensuremath{\cata{\conj{\alt{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\Varid{mul}}{\succ \comp \p2}}\comp (\Varid{id}\mathbin{+}\p1)}{\alt{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}{\conj{\Varid{mul}}{\succ \comp \p2}}\comp (\Varid{id}\mathbin{+}\p2)}}}
+%
+\just\equiv{ Absorção + : (22) x2 ; Fusão x : (10) x2 ; Natural id : (1) x2 }
+%
+\ensuremath{\cata{\conj{\alt{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}}{\alt{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}}}
+%
+\just\equiv{ Lei da troca : (28) }
+%
+\ensuremath{\cata{\alt{\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}{\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}}}
+%
+\just\equiv{ Definição de for: \ensuremath{\mathsf{for}\ \Varid{b}\ \underline{\Varid{i}}\mathrel{=}\cata{\alt{\Varid{i}}{\Varid{b}}}} }
+%
+\ensuremath{\mathsf{for}\ \conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}\ \conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}
+\end{eqnarray*}
+
+
+Assim, tendo em conta a definição do enunciado:
+\begin{eqnarray*}
+\ensuremath{\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})}
+\end{eqnarray*}
+
+E comparando com o nosso resultado:
+\begin{eqnarray*}
+\ensuremath{\mathsf{for}\ \conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}\ \conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}
+\end{eqnarray*}
+
+Temos que:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{loop}\mathrel{=}\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}
+\more
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}
+\end{eqnarray*}
+
+\item Derivar a definição de base k
+
+Focando em \ensuremath{\Varid{base}\;\Varid{k}}:
+\begin{eqnarray*}
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}
+\end{eqnarray*}
+
+Vamos agora introduzir variáveis à definição \ensuremath{\Varid{pointfree}} para
+podermos ter o resultado da função \ensuremath{\Varid{base}\;\Varid{k}} em haskell.
+
+Uma vez que o tipo de split, por exemplo, \ensuremath{\conj{\Varid{id}}{\Varid{id}}} é:
+\hfill \break
+\xymatrix@C=20cm{
+    \ensuremath{\Conid{A}}
+           \ar[d]_-{\ensuremath{\conj{\Varid{id}}{\Varid{id}}}}
+\\
+    \ensuremath{\Conid{A}\times\Conid{A}}
+}
+\hfill \break
+
+O tipo de \ensuremath{\conj{\conj{\Varid{id}}{\Varid{id}}}{\conj{\Varid{id}}{\Varid{id}}}} será:
+\hfill \break
+\xymatrix@C=20cm{
+    \ensuremath{\Conid{A}}
+           \ar[d]_-{\ensuremath{\conj{\conj{\Varid{id}}{\Varid{id}}}{\conj{\Varid{id}}{\Varid{id}}}}}
+\\
+    \ensuremath{(\Conid{A}\times\Conid{A})\times(\Conid{A}\times\Conid{A})}
+}
+\hfill \break
+
+Assim, conseguimos perceber qual é o tipo da variável que temos que adicionar
+uma vez que no nosso caso também se trata de um split de split.
+
+Logo, continuando a derivação:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}}
+%
+\just\equiv{ Igualdade extensional : (73)  }
+%
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}\conj{\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}}{\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}}\;\Varid{a}}
+%
+\just\equiv{ Def split : (78) }
+%
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}(\conj{\underline{\mathrm{1}}}{\underline{(\succ \;\Varid{k})}}\;\Varid{a},\conj{\underline{\mathrm{1}}}{\underline{\mathrm{1}}}\;\Varid{a})}
+%
+\just\equiv{ Def split : (78) x2 }
+%
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}((\underline{\mathrm{1}}\;\Varid{a},\underline{(\succ \;\Varid{k})}\;\Varid{a}),(\underline{\mathrm{1}}\;\Varid{a},\underline{\mathrm{1}}\;\Varid{a}))}
+%
+\just\equiv{ Def const : (76) x4 ; Definição de succ: succ k = k + 1 }
+%
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}((\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1}),(\mathrm{1},\mathrm{1}))}
+%
+\end{eqnarray*}
+
+Porém, tendo em consideração a implementação desejada:
+\begin{eqnarray*}
+    \ensuremath{\Big(\vcenter{\xymatrix@R=1pt{\Varid{n}\\\Varid{k}}}\Big)\mathrel{=}\Varid{h}\;\Varid{k}\;(\Varid{n}\mathbin{-}\Varid{k})\;\mathbf{where}\;\Varid{h}\;\Varid{k}\;\Varid{n}\mathrel{=}\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )\mathrel{=}\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}\;\mathbf{in}\;\Varid{a}\mathbin{/}\Varid{b}}
+\end{eqnarray*}
+
+Vemos que em \ensuremath{\mathbf{let}\;(\Varid{a},\anonymous ,\Varid{b},\anonymous )} o tipo de dados é um quádruplo o que implica que
+os tipos de \ensuremath{\Varid{loop}} e \ensuremath{\Varid{base}\;\Varid{k}}, mais especificamente
+o tipo de retorno, terão que ser também um quádruplo (o \ensuremath{\mathsf{for}\ \Varid{loop}\ (\Varid{base}\;\Varid{k})\;\Varid{n}}, por sua vez,
+também deverá retornar um quádruplo).
+
+Deste modo, através da aplicação de uma simples função que nos altere o tipo de dados, por exemplo:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{altera}\mathbin{::}((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))\to (\Varid{a},\Varid{b},\Varid{c},\Varid{d})}
+\more
+\ensuremath{\Varid{altera}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))\mathrel{=}(\Varid{a},\Varid{b},\Varid{c},\Varid{d})}
+\end{eqnarray*}
+
+Conseguimos ter a derivação desejada da função \ensuremath{\Varid{base}\;\Varid{k}}:
+\begin{eqnarray*}
+\ensuremath{\Varid{base}\;\Varid{k}\mathrel{=}(\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1},\mathrm{1},\mathrm{1})}
+\end{eqnarray*}
+
+\item Derivar a definição de loop
+
+Por último, para derivar a definição de \ensuremath{\Varid{loop}} teremos que pensar da mesma forma, ou seja,
+inserir variáveis. Porém, ao contrário da função \ensuremath{\Varid{base}\;\Varid{k}}, as variáveis a inserir terão que ser
+do tipo ((a, b), (c, d)) uma vez que temos um split com projeções \ensuremath{\p1} e \ensuremath{\p2}.
+Nos diagramas abaixo pode-se verificar o motivo desta diferença de domínio:
+
+Tendo em conta o primeiro split do split maior, temos:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)\times(\mathit C\times\Conid{D})}
+           \ar[d]_-{\ensuremath{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}}
+\\
+    \ensuremath{\Conid{Z}\times\mathit B}
+}
+\hfill \break
+
+É de salientar que o tipo mul (a, b) = a * b, ou seja, o tipo desta função é:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)}
+           \ar[d]_-{\ensuremath{\Varid{mul}}}
+\\
+    \ensuremath{\Conid{Z}}
+}
+\hfill \break
+
+
+Tendo agora em consideração o segundo split do split maior, temos:
+\hfill \break
+\xymatrix@C=5cm{
+    \ensuremath{(\Conid{A}\times\mathit B)\times(\mathit C\times\Conid{D})}
+           \ar[d]_-{\ensuremath{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}
+\\
+    \ensuremath{(\Conid{Z}\times\Conid{D}}
+}
+\hfill \break
+
+
+Temos então,
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{loop}\mathrel{=}\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}}
+%
+\just\equiv{ Igualdade extensional : (73)  }
+%
+\ensuremath{\Varid{loop}\mathrel{=}\conj{\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}}{\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d}))}
+%
+\just\equiv{ Def split : (78) }
+%
+\ensuremath{\Varid{loop}\mathrel{=}(\conj{\Varid{mul}\comp \p1}{\succ \comp \p2\comp \p1}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d})),\conj{\Varid{mul}\comp \p2}{\succ \comp \p2\comp \p2}\;((\Varid{a},\Varid{b}),(\Varid{c},\Varid{d})))}
+%
+\just\equiv{ Def split : (78) x2 ; Def comp : (74) x6 ; Def proj : (81) x6 }
+%
+\ensuremath{\Varid{loop}\mathrel{=}((\Varid{mul}\;(\Varid{a},\Varid{b}),\succ \;\Varid{b}),(\Varid{mul}\;(\Varid{c},\Varid{d}),\succ \;\Varid{d}))}
+%
+\just\equiv{ Definição de succ : succ k = k + 1  x2 ; Definição de mul : mul (m,n) = m * n x2 }
+%
+\ensuremath{\Varid{loop}\mathrel{=}((\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1}),(\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1}))}
+%
+\end{eqnarray*}
+
+Deparámo-nos com o mesmo problema da função \ensuremath{\Varid{base}\;\Varid{k}} e por isso vamos aplicar novamente a função
+\ensuremath{\Varid{altera}} para reparar o tipo de dados de retorno. Temos então:
+\begin{eqnarray*}
+\ensuremath{\Varid{loop}\;(\Varid{a},\Varid{b},\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1},\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1})}
+\end{eqnarray*}
+
+\end{enumerate}
+
+
+Deste modo, obtemos os dois resultados pretendidos:
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{base}\;\Varid{k}\mathrel{=}(\mathrm{1},\Varid{k}\mathbin{+}\mathrm{1},\mathrm{1},\mathrm{1}){}\<[E]%
-\\
+\\[\blanklineskip]%
 \>[B]{}\Varid{loop}\;(\Varid{a},\Varid{b},\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{b},\Varid{b}\mathbin{+}\mathrm{1},\Varid{c}\mathbin{*}\Varid{d},\Varid{d}\mathbin{+}\mathrm{1}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
