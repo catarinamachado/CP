@@ -1922,6 +1922,11 @@ drawPTree = undefined
 
 \subsection*{Problema 5}
 
+Para a resolução do quinto e último problema
+
+
+
+
 \begin{code}
 
 singletonbag a = B[(a, 1)]
