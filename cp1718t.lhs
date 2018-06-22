@@ -1047,7 +1047,10 @@ drawPTree = undefined
 \begin{code}
 singletonbag a = B[(a, 1)]
 
-muB = undefined
+muB b = B (concat (fmap unB (junta (unB b))))
+    where junta ((ba, int) : bas) = (fmapSpecial (*int) ba) : (junta bas)
+          junta [] = []
+          fmapSpecial f = B . map (id >< f) . unB
 
 dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
     where number [] = 0
