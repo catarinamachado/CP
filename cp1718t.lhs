@@ -1347,17 +1347,17 @@ E o diagrama da função |outQTree| é o seguinte:
 \end{eqnarray*}
 
 
-No caso da função |inQTree| o retorno deverá ser uma |QTree|, logo, no
-caso da |Cell| temos que ajustar o parâmetro recebido |(a, (Int, Int))|
+No caso da função |inQTree|, que "fecha" a |QTree|, o retorno deverá ser uma |QTree|, logo, no
+caso da |Cell| (lado esquerdo do |+|) temos que ajustar o parâmetro recebido |(a, (Int, Int))|
 devolvendo |Cell a Int Int|, para assim a função devolver a informação
 no tipo de dados correto. No caso do |Block|, recebendo
-|(q1, (q2, (q3, q4)))| teremos então que retornar |Block q1 q2 q3 q4|.
+|(q1, (q2, (q3, q4)))| teremos que retornar |Block q1 q2 q3 q4|.
 Esta função é definida como um ``either'' porque temos estas duas "hipóteses"
 de tipo de dados dentro do tipo de dados |QTree|.
 
 \vspace{0.2cm}
 
-No caso da função |outQTree| o raciocínio é inverso. Uma vez que esta função
+No caso da função |outQTree| o raciocínio é o inverso. Uma vez que esta função
 recebe uma |QTree| podemos definir a função com dois casos diferentes, tal como
 se pode ver na solução por nós proposta.
 
@@ -1406,22 +1406,136 @@ hyloQTree h g = cataQTree h . anaQTree g
 \end{code}
 
 
+Para melhor compreensão do intuito de cada uma delas desenhamos dois diagramas:
 
+O primeiro, mostra a função |baseQTree|. Atendendo ao seu tipo,
+já contido no enunciado, conseguimos perceber qual é o objetivo desta função.
+A título de exemplo, vamos considerar que f tem um tipo: |f :: A -> E|
+e que g tem um tipo: |g :: C -> D|:
 
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+           \ar[d]_-{baseQTree f g}
+\\
+    |Either (e, b) (d, (d, (d, d)))|
+}
+\hfill \break
 
+Assim, percebemos de imediata que a função |baseQTree| terá que ser definida como
+|(f >< id) + (g >< (g >< (g >< g)))|:
 
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+           \ar[d]_-{|(f >< id) + (g >< (g >< (g >< g)))|}
+\\
+    |Either (e, b) (d, (d, (d, d)))|
+}
+\hfill \break
 
+\vspace{0.4cm}
 
+O segundo, que é um pouco mais complexo, é apenas um exemplo do que se pode
+fazer com a combinação destas funções, nomedamente |inQTree|, |outQTree|,
+|recQTree|, |cataQTree|, |anaQTree| e |hyloQTree|. Vamos assumir que neste nosso diagrama
+as funções |g| e |h| mencionadas são funções que devolvem a identidade, ou seja,
+não alteram o conteúdo da |QTree|, mas respeitam os tipos de dados ideais:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |QTree a|
+          \ar[d]_-{|anaQTree g|}
+           \ar[r]^-{|g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+          \ar[d]^{|recQTree(anaQTree g)|}
+\\
+    |QTree a|
+       \ar[d]_-{|cataQTree h|}
+       \ar[r]^-{|outQTree|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+          \ar[l]^-{|inQTree|}
+           \ar[d]^{|recQTree(cataQTree h)|}
+\\
+   |QTree a|
+&
+   |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
 
+A função |hyloQTree| é definida como sendo |hyloQTree h g = cataQTree h . anaQTree g|,
+ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
+argumento da função |anaQTree| até ao retorno da função |cataQTree|.
+
+Assim, com a ajuda destes diagramas, encontramos as definições procuradas.
+
+\vspace{0.5cm}
+
+Por fim, temos |fmap|, que tem como objetivo aplicar a função |f| a todas
+as |Cell| da |QTree|, mais especificamente ao conteúdo da |Cell| que diz respeito ao
+valor/ objeto da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
+a função |f|.
+
+Assim, decidimos definir a nossa função |fmap| da seguinte forma:
 \begin{code}
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 \end{code}
 
+No seguinte diagrama conseguimos perceber o que é que as funções
+|inQTree . baseQTree f id| fazem, considerando que f é uma função
+do tipo: |f :: A -> E|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+       \ar[d]_-{|baseQTree f id|}
+\\
+    |Either (e, b) (c, (c, (c, c)))|
+       \ar[d]_-{|inQTree|}
+\\
+    |QTree e|
+}
+
+Ou seja, numa primeira fase a função |baseQTree f id| aplica a função |f| ao
+conteúdo da |Cell| e numa segunda fase a função |inQTree| junta o resultado
+da aplicação da função |baseQTree f id| numa |QTree|.
 
 
-AGORA PODEMOS BLABLA TODO
+Assim, aplicando um |cataQTree| a esta composição de funções construímos:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+    |QTree a|
+           \ar[d]_-{|cataQTree g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]^{|recQTree(cataQTree g)|}
+           \ar[l]_-{|inQTree|}
+\\
+     |QTree e|
+&
+     |Either (a, (Int, Int)) (QTree e, (QTree e, (QTree e, QTree e)))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
 
+Sendo |g f = inQTree . baseQTree f id|.
+
+Em suma, tal como nos diz a própria definição de
+catamorfismo, na seta vertical mais à direita o mesmo é aplicado recursivamente
+à parte direita do |+| (o |Functor|, ou seja, |recQTree| encarrega-se disso) e,
+depois disso, temos então a "cauda" processada, tal como podemos ver no diagrama.
+O nosso gene |g|
+responsabiliza-se pelo último passo de transformar na |Cell| (lado
+esquerdo do |+| inferior) o seu conteúdo (através da função |f|) e de juntar tudo numa só
+|QTree|.
+
+\vspace{0.3cm}
+
+Agora reunimos todas as condições para nos concentrarmos no desenvolvimento das
+alíneas deste problema.
 
 \begin{enumerate}
 
@@ -1435,9 +1549,11 @@ Tendo em conta a definição de |cataQTree| podemos definir |g|
 como um ``either'', onde um dos lados irá tratar a |Cell| e o outro
 o |Block|.
 
-Assim, para perceber que impacto esta função
+Consequentemente, para perceber que impacto esta função |rotateQTree|
 terá na |QTree| analisamos a matriz de bits (Figura~\ref{fig:bm}) e a
 respetiva codificação em quadtrees (Figura~\ref{fig:qt}).
+
+Vamos agora exemplificar o nosso raciocínio com alguns exemplos:
 
 Numa primeira fase iremos analisar o que acontecerá numa |Cell|.
 Por exemplo, se tivermos a |Cell|:
@@ -1464,13 +1580,13 @@ Definimos então a função |rotateCell| que roda uma |Cell|:
 \end{eqnarray*}
 
 O tipo desta função terá que ser o acima apresentado tendo em consideração
-os tipos da função |cataQTree|.
+os tipos da função |cataQTree| e |inQTree|.
 
 \vspace{0.5cm}
 
 Numa segunda fase analisamos o que acontece num |Block|.
 
-Procedendo da mesma forma, definimos uma |Block| de exemplo:
+Procedendo da mesma forma, definimos um |Block| de exemplo:
 \begin{verbatim}
 ( 0 0 0 0 )
 ( 0 0 0 0 )
@@ -1514,13 +1630,13 @@ O diagrama desta função é o seguinte:
     |QTree a|
            \ar[d]_-{|cataQTree g|}
 &
-    |(Cell a) + (Block (QTree a) (QTree a) (QTree a) (QTree a))|
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
            \ar[d]^{|recQTree (cataQTree g)|}
            \ar[l]_-{|inQTree|}
 \\
      |QTree a|
 &
-     |(Cell a) + (Block (QTree a) (QTree a) (QTree a) (QTree a))|
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
            \ar[l]^-{|g|}
 }
 \end{eqnarray}
@@ -1544,7 +1660,7 @@ como parâmetro.
 Assim, intuitivamente percebemos que teremos que multiplicar o fator passado
 como parâmetro pela dimensão da matriz.
 
-Mais uma vez, recorremos a um |cataQTree| para definir a função |scaleQTree|.
+Mais uma vez recorremos a um |cataQTree| para definir a função |scaleQTree|.
 Deste modo, utilizando o mesmo raciocínio da função anterior, precisamos de definir
 o gene |g| como um ``either'' onde a |Cell| e o |Block| serão tratados
 individualmente.
@@ -1571,7 +1687,7 @@ no tipo de dados correto:
 O diagrama desta função é o mesmo da função anterior, diagrama (3),
 variando somente o gene |g|, que neste caso é o anteriormente referido.
 
-Assim, temos então definida a função |scaleQTree|:
+Assim, temos definida a função |scaleQTree|:
 \begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
@@ -1582,7 +1698,7 @@ scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
 \item Função |invertQTree|
 
 O intuito da função |invertQTree| é inverter as cores de uma quadtree. Assim,
-terá obrigatoriamente tratar-se de uma matriz de pixeis, neste caso de |PixelRGBA8|.
+terá obrigatoriamente de se tratar de uma matriz de píxeis, neste caso de |PixelRGBA8|.
 É nos também dito que o pixel pode ser invertido calculando (255 - w), sendo w
 a componente de cor RGB.
 
