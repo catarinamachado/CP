@@ -988,6 +988,12 @@ hyloBlockchain h g = cataBlockchain h . anaBlockchain g
 allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
     where joint(x,y) = (p2 (p2 x)) ++ y
 
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where mapFst f (a, b) = (f a, b)
+          sums [] = []
+          sums ((a,b):t) = (a, sum b) : sums t
+
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
     where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
 
@@ -1001,9 +1007,11 @@ isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( eith
 \subsection*{Problema 2}
 
 \begin{code}
-inQTree = either (uncurryCell Cell) (uncurryBlock Block)
-    where uncurryCell f (e, (n1, n2)) = f e n1 n2
-          uncurryBlock f (q1, (q2, (q3, q4))) = f q1 q2 q3 q4
+inQTree = either (uncurryCell) (uncurryBlock)
+    where uncurryCell (e, (n1, n2)) = Cell e n1 n2
+
+uncurryBlock :: (QTree a, (QTree a, (QTree a, QTree a))) -> QTree a
+uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
@@ -1021,11 +1029,35 @@ hyloQTree h g = cataQTree h . anaQTree g
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 
-rotateQTree = undefined
-scaleQTree = undefined
-invertQTree = undefined
-compressQTree = undefined
-outlineQTree = undefined
+rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
+    where rotateCell (e, (n1, n2)) = Cell e n2 n1
+          rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
+
+scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
+    where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
+
+invertQTree = cataQTree (either (invertCell) (uncurryBlock))
+    where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
+                Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
+
+corta :: QTree a -> QTree a
+corta (Cell a b c) = Cell a b c
+corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =
+                              Cell (c1) (n1 + m1) (n2 + k2)
+corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))
+
+compressQTree n a = anaQTree ((compress n) . outQTree) a
+    where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta (inQTree a))
+                       | otherwise = a
+          tam a = depthQTree (inQTree a)
+
+outlineQTree magic a = cataQTree (either (f magic) g) a
+    where f magic (k,(i,j))
+            | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
+            | otherwise = matrix j i (const False)
+          g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
+
+
 \end{code}
 
 \subsection*{Problema 3}
@@ -1654,15 +1686,6 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
-
-\begin{code}
-
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where   mapFst f (a, b) = (f a, b)
-            sums [] = [];
-            sums ((a,b):t) = (a, sum b) : sums t
-\end{code}
 
 %if False
 \begin{code}
