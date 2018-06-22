@@ -971,6 +971,10 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
+De modo a resolver este primeiro problema, antes de procedermos ao desenvolvimento
+das 3 alíneas do problema, tivemos que definir algumas funções que nos ajudarão
+a implementar as soluções requeridas.
+
 \begin{code}
 inBlockchain = either Bc Bcs
 
@@ -984,9 +988,166 @@ cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
 anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g
 
 hyloBlockchain h g = cataBlockchain h . anaBlockchain g
+\end{code}
 
+Estas funções, nomeadamente |inBlockchain|, |outBlockchain|,
+|recBlockchain|, |cataBlockchain|, |anaBlockchain| e |hyloBlockchain|, podem ser
+deduzidas tendo em consideração o Tipo de Dados do problema, a matéria de Cálculo
+de Programas e com a ajuda de alguns diagramas.
+
+\vspace{0.2cm}
+
+Uma vez que o tipo de Blockchain é
+|Bc {bc :: Block}|
+ou
+|Bcs {bcs :: (Block, Blockchain)}|
+
+Sabemos que o |inBlockchain| e o |outBlockchain| deverão "fechar" e "abrir"
+a Blockchain, respetivamente, logo, conseguimos representar os diagramas:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Blockchain|
+&
+     |Block + (Block >< Blockchain)|
+           \ar[l]^-{|inBlockchain|}
+}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Blockchain|
+           \ar[r]_-{|outBlockchain|}
+&
+     |Block + (Block >< Blockchain)|
+}
+\end{eqnarray*}
+
+Assim, conseguimos perceber de imediato a definição de ambas as funções:
+\begin{eqnarray*}
+\start
+|inBlockchain = either Bc Bcs|
+\end{eqnarray*}
+\begin{eqnarray*}
+\start
+|outBlockchain (Bc a) = Left (a)|
+\more
+|outBlockchain (Bcs (a,b)) = Right(a,b)|
+\end{eqnarray*}
+
+Relativamente às funções |recBlockchain|, |cataBlockchain|,
+|anaBlockchain| e |hyloBlockchain|, os seus tipos já estavam presentes
+no enunciado e o significado e intuito de cada uma delas também já era sabido.
+
+TODOO
+
+\vspace{0.2cm}
+
+Na resolução das alíneas recorremos a alguns diagramas onde também fica
+implícito o porquê da definição de cada uma destas funções.
+
+TODOO
+
+
+\begin{enumerate}
+\item allTransactions
+
+O objetivo da função allTransactions é calcular a lista com todas as transações
+numa dada block chain, utilizando um catamorfismo.
+
+O diagrama desta função será:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Blockchain|
+           \ar[d]_-{|cataBlockchain g|}
+&
+    |Block + (Block >< Blockchain)|
+           \ar[d]^{|recBlockchain (cataBlockchain g)|}
+           \ar[l]_-{|inBlockchain|}
+\\
+     |Transactions|
+&
+     |Block + (Block >< Transactions)|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+O objetivo é descobrir o gene g, para assim termos a definição final de 
+
+
+
+
+\begin{eqnarray*}
+|allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
+    where joint(x,y) = (p2 (p2 x)) ++ y|
+\end{eqnarray*}
+
+
+
+
+
+
+
+
+
+
+\end{enumerate}
+
+----
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Nat0|
+           \ar[d]_-{|cataNat g|}
+&
+    |1 + Nat0|
+           \ar[d]^{|id + (cataNat g)|}
+           \ar[l]_-{|inNat|}
+\\
+     |B|
+&
+     |1 + B|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |A*|
+          \ar[d]_-{|ana lsplitBGene|}
+           \ar[r]^-{|lsplitBGene|}
+&
+   |1 + A* >< (A >< A above) above|
+          \ar[d]^{|id +((ana lsplitBGene) >< map(id >< ana lsplitBGene))|}
+\\
+    |B|
+       \ar[d]_-{|cata inordBGene|}
+       \ar[r]^-{|outB|}
+&
+    |1 + B >< (A >< B) above|
+          \ar[l]^-{|inB|}
+           \ar[d]^{|id +((cata inordBGene) >< map(id >< cata inordBGene))|}
+\\
+   |A above|
+&
+   |1 + A above >< (A >< A above) above|
+       \ar[l]^-{|inordBGene|}
+}
+\end{eqnarray*}
+
+\begin{code}
 allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
     where joint(x,y) = (p2 (p2 x)) ++ y
+
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where   mapFst f (a, b) = (f a, b)
+            sums [] = [];
+            sums ((a,b):t) = (a, sum b) : sums t
+
 
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
     where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
@@ -1654,15 +1815,6 @@ Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
 \printindex
 
 %----------------- Outras definições auxiliares -------------------------------------------%
-
-\begin{code}
-
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where   mapFst f (a, b) = (f a, b)
-            sums [] = [];
-            sums ((a,b):t) = (a, sum b) : sums t
-\end{code}
 
 %if False
 \begin{code}
