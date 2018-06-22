@@ -1732,16 +1732,177 @@ invertQTree = cataQTree (either (invertCell) (uncurryBlock))
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
 \end{code}
 
-
-
-
-
-
-
-
-
-
 \item Função |compressQTree|
+
+O objetivo desta função é comprimir a |QTree| cortando folhas da árvore de modo
+a reduzir a sua profundidade num dado número de níveis, passado como parâmetro na função.
+Basicamente, o que irá acontecer à imagem é perder informação e por isso ``desfocar''.
+
+Para o desenvolvimento desta função recorremos a uma |anaQTree| uma vez que
+consideramos que seria mais simples de tratar o problema usando esse
+conceito/ definição.
+
+De uma forma mais concreta, pensamos em utilizar uma |anaQTree| uma vez que sabiamos que
+ela se iria concentrar em cada nível da árvore gradualmente, começando
+da raiz até às folhas. Assim, de uma forma geral, pensamos
+que a nossa |anaQTree| deveria ter um gene que averigua-se se estamos no
+nível desejado e em caso afirmativa eliminasse toda a |QTree| a partir desse nível.
+
+
+Assim, passamos para o chamado desenvolvimento do problema:
+
+Temos por exemplo |QTree| da Figura~\ref{fig:qt},
+que é representada pela |QTree qt|, que já vinha também no enunciado:
+\begin{eqnarray*}
+\start
+|qt = Block|
+\more
+|(Cell 0 4 4)|
+\more
+|(Block (Cell 0 2 2) (Cell 0 2 2) (Cell 1 2 2) (Block (Cell 1 1 1) (Cell 0 1 1) (Cell 0 1 1) (Cell 0 1 1)))|
+\more
+|(Cell 1 4 4)|
+\more
+|(Block (Cell 1 2 2) (Cell 0 2 2) (Cell 0 2 2) (Block (Cell 0 1 1) (Cell 0 1 1) (Cell 0 1 1) (Cell 1 1 1)))|
+\end{eqnarray*}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{imgs/qt.png}
+\end{center}
+\caption{Esquema da |QTree qt|.}
+\label{fig:qt}
+\end{figure}
+
+
+Se quisermos aplicar a função |compressQTree 2|, ou seja, comprimir
+dois níveis, o esquema da |QTree| de retorno deverá ser o seguinte
+o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
+\begin{eqnarray*}
+\start
+|qt_compress2 = Block|
+\more
+|(Cell 0 4 4)|
+\more
+|(Cell 0 4 4)|
+\more
+|(Cell 1 4 4)|
+\more
+|(Cell 1 4 4)|
+\end{eqnarray*}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{imgs/qtcompress2.png}
+\end{center}
+\caption{Esquema da |QTree qt| comprimida em 2 níveis.}
+\label{fig:qtcompress2}
+\end{figure}
+
+Deste modo, apercebemo-nos que teriamos que ter uma função que nos ``cortasse'' todos
+os ramos da |QTree| a abolir. Percebemos através da Figura~\ref{fig:qt}
+e da Figura~\ref{fig:qtcompress2} que
+se essa função, que poderá chamar-se |corta|, receber como parâmetro a parte da
+|Qtree| a eliminar deveremos transforma-la numa única |Cell|.
+
+Nesta fase, tivemos que perceber quais as dimensões da |Cell|
+resultado pelo que, por exemplo, se tivermos:
+\begin{eqnarray*}
+|Block (Cell 0 3 2) (Cell 1 2 2) (Cell 1 4 2) (Cell 0 1 2)|
+\end{eqnarray*}
+
+Representado por:
+\begin{verbatim}
+( 0 0 0 1 1 )
+( 0 0 0 1 1 )
+( 1 1 1 1 0 )
+( 1 1 1 1 0 )
+\end{verbatim}
+
+
+A |Cell| resultado deverá ser:
+\begin{eqnarray*}
+\start
+|Cell 0 5 4|
+\end{eqnarray*}
+
+E em modo matriz:
+Representado por:
+\begin{verbatim}
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+\end{verbatim}
+
+Assim, percebemos que se o |Block a b c d| for então constítuido apenas com |Cell|,
+ou seja, |a, b, c, d :: Cell|, as dimensões resultado deverão ser calculadas da seguinte
+forma:
+\begin{eqnarray*}
+\start
+       |corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =|
+\more
+        |Cell (c1) (n1 + m1) (n2 + k2)|
+\end{eqnarray*}
+
+Optamos por dar como resultado o valor da primeira |Cell|, que no nosso caso é c1.
+
+
+No caso de o |Block| ainda não ser constituído por apenas |Cell|, tal como referimos
+anteriormente, aplicamos recursivamente a função |corta| a cada um dos "argumentos"
+de |Block|, e ao próprio |Block|, até conseguirmos chegar a um |Block| só com
+|Cell| e o convertermos para |Cell| da forma já referida.
+A recursividade irá tratar de nos fornecer a solução que desejamos.
+Para esta hipótese a função |corta| será então:
+\begin{eqnarray*}
+       |corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))|
+\end{eqnarray*}
+
+Pensando no caso de quando esta função é aplicada a somente uma |Cell| isolada a função deverá
+retornar a |Cell| argumento exatamente igual:
+\begin{eqnarray*}
+       |corta (Cell a b c) = Cell a b c|
+\end{eqnarray*}
+
+Juntando estas 3 hipóteses, temos então a função |corta| definida:
+\begin{eqnarray*}
+\start
+        |corta (Cell a b c) = Cell a b c|
+\more
+        |corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =|
+\more
+        |Cell (c1) (n1 + m1) (n2 + k2)|
+\more
+        |corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))|
+\end{eqnarray*}
+
+Assim, precisamos apenas de definir concretamente, e através de código,
+em que momento esta função será aplicada.
+
+Aproveitando a função |depthQTree|, que calcula a profundidade de uma |QTree|,
+podemos então contruir uma função auxiliar, por exemplo chamada |compress|,
+que irá receber o número de níveis a eliminar. Como sabemos que o nosso
+|anaQTree| irá olhar individualmente para cada nível, a nossa |compress n|
+averiguará se a profundidade do ramo atual é igual ao número de níveis a cortar.
+
+Podemos utilizar esta técnica pois o anamorfismo percorre cada ramo de cima (raiz)
+para baixo e não volta para cima, por isso, quando o sub-ramo tiver uma profundidade
+igual ao número de níveis a cortar sabemos que é esse o nível que procuramos,
+para podermos aplicar a nossa função |corta|. Se ainda não tivermos chegado
+ao nível que procuramos, a função |compress| deverá devolver a |QTree|, ou seja,
+o ramo, intacto.
+
+Tivemos que ter em consideração o caso em que o número de níveis a cortar
+é maior que toda a profundidade da árvore, sendo que neste caso toda a |QTree|
+deverá ser cortada (é aplicada à função |cortar|) ficando somente a |Cell|
+comprimida.
+
+É ainda mencionar que, tendo em conta o tipo de |anaQTree|, a nossa |compress|
+deverá retornar sempre uma |QTree| ``aberta'' e, assim, aplicamos
+a função |outQTree|.
+
+
+Finalmente, juntando todos estes passos, temos a função |compressQTree| definida:
 
 \begin{code}
 corta :: QTree a -> QTree a
@@ -1750,11 +1911,71 @@ corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =
                               Cell (c1) (n1 + m1) (n2 + k2)
 corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))
 
-compressQTree n a = anaQTree ((compress n) . outQTree) a
-    where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta (inQTree a))
-                       | otherwise = a
-          tam a = depthQTree (inQTree a)
+compressQTree n = anaQTree (compress n)
+    where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta a)
+                       | otherwise = outQTree a
+          tam a = depthQTree a
 \end{code}
+
+O anamorfismo que representa esta função é o seguinte:
+\begin{eqnarray}
+\xymatrix@@C=2cm{
+    |QTree a|
+        \ar[d]_-{|anaQTree g|}
+        \ar[r]^-{|g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]^{|recQTree (anaQTree g)|}
+\\
+     |QTree a|
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[l]^-{|inQTree|}
+}
+\end{eqnarray}
+
+
+Tal como dizia no enunciado, contruímos as |QTrees| com compressões 1, 2, 3 e 4,
+obtendo então, respetivamente, a Figura~\ref{fig:compress1},
+a Figura~\ref{fig:compress2}, a Figura~\ref{fig:compress3}
+e a Figura~\ref{fig:compress4}.
+
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{imgs/compress1.png}
+    \end{center}
+    \caption{Figura Person comprimida em 1 nível.}
+    \label{fig:compress1}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{imgs/compress2.png}
+    \end{center}
+    \caption{Figura Person comprimida em 2 níveis.}
+    \label{fig:compress2}
+\end{subfigure}
+\end{figure}
+
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{imgs/compress3.png}
+    \end{center}
+    \caption{Figura Person comprimida em 3 níveis.}
+    \label{fig:compress3}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{imgs/compress4.png}
+    \end{center}
+    \caption{Figura Person comprimida em 4 níveis.}
+    \label{fig:compress4}
+\end{subfigure}
+\end{figure}
+
+
+
 
 
 \item Função |outlineQTree|
@@ -1772,7 +1993,8 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
 
 
 
-
+É ainda de salientar que todas as funções do problema passaram em todos os testes
+do QuickCheck e nos Testes Unitários.
 
 \subsection*{Problema 3}
 
