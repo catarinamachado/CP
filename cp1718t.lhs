@@ -1044,10 +1044,6 @@ generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
         m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
 
-resizer n   | n == 0 = 0
-            | odd n  = 50 * ((sqrt(2) / 2) ^ n )
-            | even n = 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
-
 drawPTree a = toListP 1 (depthFTree a) (translates 1 (rotates ( bmap pol pol a )) )
 
 pol a = polygon [(-a/2,0), (-a/2,a), (a/2,a), (a/2,0)]
@@ -1057,12 +1053,16 @@ rotates (Comp a (b,c)) = Comp a ( bmap (rotate(-45)) id (rotates b) , bmap (rota
 
 translates _ (Unit a) = Unit a
 translates n (Comp a (b,c)) = Comp a
-                            ( bmap (translate (-((resizing n))/2) (resizing n) ) id (translates (n+1) b) ,
-                              bmap (translate   ((resizing n)/2)  (resizing n) ) id (translates (n+1) c) )
+                            ( bmap (translate (-((resizing n 0))/2)  (resizing n 1) ) id (translates (n+1) b) ,
+                              bmap (translate   ((resizing n 0) /2)  (resizing n 1) ) id (translates (n+1) c) )
 
-resizing n  | n == 0 = 0
-            | odd n  = 50 * ((sqrt(2) / 2) ^ n )
-            | even n = 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
+resizing n i | n == 0 = 0
+             | odd n  = if i == 0
+                            then fromIntegral(n) * 50 * ((sqrt(2) / 2) ^ n ) / 2
+                            else 50 * ((sqrt(2) / 2) ^ n ) * 5 / 4
+             | even n = if i == 0
+                            then (fromIntegral(n)/1.75) * 50 * (((sqrt(2) / 2) ^ n ) * (sqrt(2)/2) + ((sqrt(2) / 2) ^ n ))
+                            else (fromIntegral(n)/1.75) * 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
 
 toListP n max a = if n > max
                     then []
