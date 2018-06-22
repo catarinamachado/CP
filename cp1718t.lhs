@@ -1039,19 +1039,38 @@ loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \subsection*{Problema 4}
 
 \begin{code}
-inFTree = undefined
-outFTree = undefined
-baseFTree = undefined
-recFTree = undefined
-cataFTree = undefined
-anaFTree = undefined
-hyloFTree = undefined
 
-instance Bifunctor FTree where
-    bimap = undefined
+generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
+    where
+        m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
 
-generatePTree = undefined
-drawPTree = undefined
+resizer n   | n == 0 = 0
+            | odd n  = 50 * ((sqrt(2) / 2) ^ n )
+            | even n = 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
+
+drawPTree a = toListP 1 (depthFTree a) (translates 1 (rotates ( bmap pol pol a )) )
+
+pol a = polygon [(-a/2,0), (-a/2,a), (a/2,a), (a/2,0)]
+
+rotates (Unit a) = Unit a
+rotates (Comp a (b,c)) = Comp a ( bmap (rotate(-45)) id (rotates b) , bmap (rotate(45)) id (rotates c) )
+
+translates _ (Unit a) = Unit a
+translates n (Comp a (b,c)) = Comp a
+                            ( bmap (translate (-((resizing n))/2) (resizing n) ) id (translates (n+1) b) ,
+                              bmap (translate   ((resizing n)/2)  (resizing n) ) id (translates (n+1) c) )
+
+resizing n  | n == 0 = 0
+            | odd n  = 50 * ((sqrt(2) / 2) ^ n )
+            | even n = 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
+
+toListP n max a = if n > max
+                    then []
+                    else pictures (m n a) : toListP (n+1) max a
+
+m 0 _ = []
+m n (Comp a (b,c)) = a : m (n-1) b ++ m (n-1) c
+
 \end{code}
 
 \subsection*{Problema 5}
@@ -1372,17 +1391,24 @@ qt = bm2qt bm
 
 -- * pergunta 4
 
-data FTree a b = Unit b | Comp a (FTree a b) (FTree a b) deriving (Eq,Show)
+data FTree a c = Unit c | Comp a (FTree a c, FTree a c) deriving Show
+
 type PTree = FTree Square Square
 type Square = Float
 
-inFTree :: Either b (a, (FTree a b, FTree a b)) -> FTree a b
-outFTree :: FTree a1 a2 -> Either a2 (a1, (FTree a1 a2, FTree a1 a2))
-baseFTree :: (a1 -> b1) -> (a2 -> b2) -> (a3 -> d) -> Either a2 (a1, (a3, a3)) -> Either b2 (b1, (d, d))
-recFTree :: (a -> d) -> Either b1 (b2, (a, a)) -> Either b1 (b2, (d, d))
-cataFTree :: (Either b1 (b2, (d, d)) -> d) -> FTree b2 b1 -> d
-anaFTree :: (a1 -> Either b (a2, (a1, a1))) -> a1 -> FTree a2 b
-hyloFTree :: (Either b1 (b2, (c, c)) -> c) -> (a -> Either b1 (b2, (a, a))) -> a -> c
+inFTree = either Unit (uncurry Comp)
+
+outFTree (Unit c)         = Left c
+outFTree (Comp a (t1,t2)) = Right(a,(t1,t2))
+
+baseFTree f g h  = f -|- (g  >< (h >< h))
+recFTree f = baseFTree id id f
+cataFTree a = a . (recFTree (cataFTree a)) . outFTree
+anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
+hyloFTree a c = cataFTree a . anaFTree c
+
+instance BiFunctor FTree where
+    bmap f g = cataFTree ( inFTree . baseFTree g f id )
 
 depthFTree :: FTree a b -> Int
 depthFTree = cataFTree (either (const 0) g)
