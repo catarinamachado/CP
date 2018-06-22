@@ -1480,17 +1480,50 @@ scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
 \end{code}
 
 
-
-
-
-
 \item Função |invertQTree|
 
+O intuito da função |invertQTree| é inverter as cores de uma quadtree. Assim,
+terá obrigatoriamente tratar-se de uma matriz de pixeis, neste caso de |PixelRGBA8|.
+É nos também dito que o pixel pode ser invertido calculando (255 - w), sendo w
+a componente de cor RGB.
+
+Logo, utilizando o mesmo raciocínio da função |scaleQTree|, vamos definir
+a função |invertQTree| como um |cataQTree| onde também somente a |Cell|
+precisa de ser modificada, tendo em conta que é a |Cell| que possui o contéudo
+da |QTree|, ou seja, o parâmetro que nos interessa alterar.
+
+Logo, teremos um gene |g| com a seguinte definição:
+\begin{eqnarray*}
+|g = either invertCell uncurryBlock|
+\end{eqnarray*}
+
+Precisamos então somente de definir a função |invertCell|, que poderá
+ser definida como:
+\begin{eqnarray*}
+\start
+|invertCell ((PixelRGBA8 a b c d), (n1, n2)) =|
+\more
+|Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2|
+\end{eqnarray*}
+
+Esta função pode também ser ilustrada através do diagrama (3), mas com um gene |g|
+definido como o mencionado anteriormente.
+
+Consequentemente, temos todas as condições necessárias para definir
+a função |invertQTree|:
 \begin{code}
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
 \end{code}
+
+
+
+
+
+
+
+
 
 
 \item Função |compressQTree|
