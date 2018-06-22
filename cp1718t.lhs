@@ -1086,7 +1086,7 @@ implícito o porquê da definição de cada uma destas funções.
 
 
 \begin{enumerate}
-\item Função allTransactions
+\item Função |allTransactions|
 
 O objetivo da função |allTransactions| é calcular a lista com todas as transações
 numa dada block chain, utilizando um catamorfismo.
@@ -1126,7 +1126,7 @@ para abolir o |+|.
 
 
 \begin{enumerate}
-\item Descobrir b0
+\item Descobrir |b0|
 
 Para tratar o lado em que o domínio é |Block|, e sabendo que o resultado terá que
 ser |Transactions|, o objetivo desta função será "retirar" do |Block| as |Transactions|.
@@ -1148,7 +1148,7 @@ Deste modo, fica definido |b0| como:
 \end{eqnarray*}
 
 
-\item Descobrir joint
+\item Descobrir |joint|
 
 Tendo em conta o domínio da função |joint|, ou seja, |Block >< Transactions|,
 percebemos que o objetivo desta função será retirar de |Block| as suas
@@ -1187,7 +1187,7 @@ allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
 
 
 
-\item Função ledger
+\item Função |ledger|
 
 O objetivo desta função é calcular o valor disponível de cada entidade numa
 dada block chain.
@@ -1231,7 +1231,7 @@ TODOOOO
 
 
 
-\item Função isValidMagicNr
+\item Função |isValidMagicNr|
 
 \end{enumerate}
 
@@ -1320,11 +1320,129 @@ hyloQTree h g = cataQTree h . anaQTree g
 
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
+\end{code}
 
+----------
+
+\begin{enumerate}
+
+\item Função |rotateQTree|
+
+O objetivo desta função é rodar uma |QTree|.
+
+Optamos por utilizar um catamorfismo para definir
+esta função. Assim, temos que |rotateQTree = cataQTree g|.
+Tendo em conta a definição de |cataQTree| podemos definir |g|
+como um ``either'', onde um dos lados irá tratar a |Cell| e o outro
+o |Block|.
+
+Assim, para perceber que impacto esta função
+terá na |QTree| analisamos a matriz de bits (Figura~\ref{fig:bm}) e a
+respetiva codificação em quadtrees (Figura~\ref{fig:qt}).
+
+Numa primeira fase iremos analisar o que acontecerá numa |Cell|.
+Por exemplo, se tivermos a |Cell|:
+\begin{verbatim}
+( 0 0 0 0 )
+( 0 0 0 0 )
+\end{verbatim}
+
+Que é representada por |Cell 0 4 2|, rodando-a $90º$ fica:
+\begin{verbatim}
+( 0 0 )
+( 0 0 )
+( 0 0 )
+( 0 0 )
+\end{verbatim}
+Que é representada por |Cell 0 2 4|.
+
+Logo, fica implícito que no que diz respeito a rodar uma |Cell| o que
+acontece é que as suas dimensões verticais e horizontais trocam.
+
+Definimos então a função |rotateCell| que roda uma |Cell|:
+\begin{eqnarray*}
+|rotateCell (e, (n1, n2)) = Cell e n2 n1|
+\end{eqnarray*}
+
+O tipo desta função terá que ser o acima apresentado tendo em consideração
+os tipos da função |cataQTree|.
+
+\vspace{0.5cm}
+
+Numa segunda fase analisamos o que acontece num |Block|.
+
+Procedendo da mesma forma, definimos uma |Block| de exemplo:
+\begin{verbatim}
+( 0 0 0 0 )
+( 0 0 0 0 )
+( 1 1 1 1 )
+( 1 1 1 1 )
+\end{verbatim}
+
+Que é definida por |Block (Cell 0 2 2) (Cell 0 2 2) (Cell 1 2 2) (Cell 1 2 2)|.
+
+Rodando o |Block| $90º$:
+\begin{verbatim}
+( 1 1 0 0 )
+( 1 1 0 0 )
+( 1 1 0 0 )
+( 1 1 0 0 )
+\end{verbatim}
+
+Ficamos com uma |Block (Cell 1 2 2) (Cell 0 2 2) (Cell 1 2 2) (Cell 0 2 2)|.
+
+Assim, percebemos que os quatro parâmetros de |Block| rodam entre si.
+O primeiro parâmetro passará a ser o segundo parâmetro, o segundo passará
+a ser o último, o terceiro fica em primeiro e, por fim, o último parâmetro
+fica a ser o terceiro.
+
+Conseguimos então perceber a definição que trata o |Block|:
+\begin{eqnarray*}
+|rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2|
+\end{eqnarray*}
+
+Assim, temos todas as condições necessárias para definir a função
+pedida, |rotateQTree|:
+\begin{code}
 rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
     where rotateCell (e, (n1, n2)) = Cell e n2 n1
           rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
+\end{code}
 
+O diagrama desta função é o seguinte:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |QTree a|
+           \ar[d]_-{|cataQTree g|}
+&
+    |(Cell a) + (Block (QTree a) (QTree a) (QTree a) (QTree a))|
+           \ar[d]^{|recQTree (cataQTree g)|}
+           \ar[l]_-{|inQTree|}
+\\
+     |QTree a|
+&
+     |(Cell a) + (Block (QTree a) (QTree a) (QTree a) (QTree a))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+Onde:
+\begin{eqnarray*}
+\start
+|g = (either (rotateCell) (rotateBlock))|
+\more
+|where rotateCell (e, (n1, n2)) = Cell e n2 n1|
+\more
+|rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2|
+\end{eqnarray*}
+
+
+
+
+
+
+
+\begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
@@ -1350,6 +1468,12 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
           g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
 
 \end{code}
+
+\end{enumerate}
+
+
+
+
 
 \subsection*{Problema 3}
 
@@ -1744,7 +1868,7 @@ Temos que:
 | base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
 \end{eqnarray*}
 
-\item Derivar a definição de base k
+\item Derivar a definição de |base k|
 
 Focando em |base k|:
 \begin{eqnarray*}
@@ -1823,7 +1947,7 @@ Conseguimos ter a derivação desejada da função |base k|:
 |base k = (1, k + 1, 1, 1)|
 \end{eqnarray*}
 
-\item Derivar a definição de loop
+\item Derivar a definição de |loop|
 
 Por último, para derivar a definição de |loop| teremos que pensar da mesma forma, ou seja,
 inserir variáveis. Porém, ao contrário da função |base k|, as variáveis a inserir terão que ser
