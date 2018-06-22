@@ -1410,7 +1410,7 @@ rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
 \end{code}
 
 O diagrama desta função é o seguinte:
-\begin{eqnarray*}
+\begin{eqnarray}
 \xymatrix@@C=2cm{
     |QTree a|
            \ar[d]_-{|cataQTree g|}
@@ -1424,7 +1424,7 @@ O diagrama desta função é o seguinte:
      |(Cell a) + (Block (QTree a) (QTree a) (QTree a) (QTree a))|
            \ar[l]^-{|g|}
 }
-\end{eqnarray*}
+\end{eqnarray}
 
 Onde:
 \begin{eqnarray*}
@@ -1437,19 +1437,65 @@ Onde:
 \end{eqnarray*}
 
 
+\item Função |scaleQTree|
 
+Esta função redimensiona uma |Qtree| tendo em consideração o |Int| passado
+como parâmetro.
 
+Assim, intuitivamente percebemos que teremos que multiplicar o fator passado
+como parâmetro pela dimensão da matriz.
 
+Mais uma vez, recorremos a um |cataQTree| para definir a função |scaleQTree|.
+Deste modo, utilizando o mesmo raciocínio da função anterior, precisamos de definir
+o gene |g| como um ``either'' onde a |Cell| e o |Block| serão tratados
+individualmente.
 
+O gene |g| terá a seguinte definição:
+\begin{eqnarray*}
+|g n = either (scaleCell n) (uncurryBlock)|
+\end{eqnarray*}
 
+Uma vez que as dimensões da matriz são somente responsabilidade da |Cell|
+não teremos que alterar nada no |Block|.
+
+De forma a respeitar os tipos, no que diz respeito a tratar o |Block|, utilizamos
+a função |uncurryBlock| já definida por nós, que apenas altera a forma como
+o |Block| é mostrado, não alterando o seu conteúdo.
+
+Para tratar a |Cell| vamos recorrer a uma função auxiliar, |scaleCell|,
+cujo único objetivo será multiplicar as dimensões da |Cell| pelo fator e devolvê-la
+no tipo de dados correto:
+\begin{eqnarray*}
+|scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)|
+\end{eqnarray*}
+
+O diagrama desta função é o mesmo da função anterior, diagrama (3),
+variando somente o gene |g|, que neste caso é o anteriormente referido.
+
+Assim, temos então definida a função |scaleQTree|:
 \begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
+\end{code}
+
+
+
+
+
+
+\item Função |invertQTree|
+
+\begin{code}
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
+\end{code}
 
+
+\item Função |compressQTree|
+
+\begin{code}
 corta :: QTree a -> QTree a
 corta (Cell a b c) = Cell a b c
 corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =
@@ -1460,7 +1506,12 @@ compressQTree n a = anaQTree ((compress n) . outQTree) a
     where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta (inQTree a))
                        | otherwise = a
           tam a = depthQTree (inQTree a)
+\end{code}
 
+
+\item Função |outlineQTree|
+
+\begin{code}
 outlineQTree magic a = cataQTree (either (f magic) g) a
     where f magic (k,(i,j))
             | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
