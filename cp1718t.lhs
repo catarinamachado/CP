@@ -1187,14 +1187,56 @@ allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
 
 
 
-
 \item Função ledger
 
+O objetivo desta função é calcular o valor disponível de cada entidade numa
+dada block chain.
+
+
+\begin{code}
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where   mapFst f (a, b) = (f a, b)
+            sums [] = [];
+            sums ((a,b):t) = (a, sum b) : sums t
+
+
+ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+\end{code}
 
 
 
+
+TODOOOO
+
+|type Transaction = (Entity, (Value, Entity))|
+|type Transactions = [Transaction]|
+
+|type Ledger = [(Entity, Value)]|
+
+|type Block = (MagicNo, (Time, Transactions))|
+
+
+
+
+
+
+
+
+
+\item Função isValidMagicNr
 
 \end{enumerate}
+
+
+
+
+
+
+
+
+
 
 ----
 
@@ -1242,20 +1284,9 @@ allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
 \end{eqnarray*}
 
 \begin{code}
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where   mapFst f (a, b) = (f a, b)
-            sums [] = [];
-            sums ((a,b):t) = (a, sum b) : sums t
-
-
-ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
-    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
-
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where   list x = [p1 x]
             insert(x,y) = (p1 x) : y
-
 \end{code}
 
 
