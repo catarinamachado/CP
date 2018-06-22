@@ -108,11 +108,6 @@
 \textbf{Grupo} nr. & 13
 \\\hline
 a81047 & Catarina Machado
-<<<<<<< HEAD
-\\
-a34900 & Cecilia Soares
-=======
->>>>>>> bbfd715389e629d022f378769593063f0ced1473
 \\
 a82339 & João Vilaça
 \end{tabular}
@@ -977,18 +972,6 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 \begin{code}
-<<<<<<< HEAD
-inBlockchain = undefined
-outBlockchain = undefined
-recBlockchain = undefined
-cataBlockchain = undefined
-anaBlockchain = undefined
-hyloBlockchain = undefined
-
-allTransactions = undefined
-ledger = undefined
-isValidMagicNr = undefined
-=======
 inBlockchain = either Bc Bcs
 
 outBlockchain (Bc a) = Left (a)
@@ -1017,23 +1000,17 @@ ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where   list x = [p1 x]
             insert(x,y) = (p1 x) : y
-
->>>>>>> bbfd715389e629d022f378769593063f0ced1473
 \end{code}
 
 
 \subsection*{Problema 2}
 
 \begin{code}
-<<<<<<< HEAD
-inQTree = undefined
-=======
 inQTree = either (uncurryCell) (uncurryBlock)
     where uncurryCell (e, (n1, n2)) = Cell e n1 n2
 
 uncurryBlock :: (QTree a, (QTree a, (QTree a, QTree a))) -> QTree a
 uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
->>>>>>> bbfd715389e629d022f378769593063f0ced1473
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
@@ -1044,16 +1021,6 @@ recQTree g = baseQTree id g
 
 cataQTree g = g . (recQTree (cataQTree g)) . outQTree
 
-<<<<<<< HEAD
-anaQTree = undefined
---anaQTree g = inQTree . (recQTree (anaQTree g)) . g
-
-hyloQTree = undefined
---hyloQTree h g = cataQTree h . anaQTree g
-
-instance Functor QTree where
-    fmap f = undefined --cataQTree (inQTree . baseQTree f id)
-=======
 anaQTree g = inQTree . (recQTree (anaQTree g)) . g
 
 hyloQTree h g = cataQTree h . anaQTree g
@@ -1088,8 +1055,6 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
             | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
             | otherwise = matrix j i (const False)
           g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
-
->>>>>>> bbfd715389e629d022f378769593063f0ced1473
 
 \end{code}
 
