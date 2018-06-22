@@ -971,7 +971,10 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
-De modo a resolver este primeiro problema, antes de procedermos ao desenvolvimento
+O primeiro problema tem como tema uma block chain, ou seja, uma coleção de blocos
+que registam movimentos da moeda.
+
+De modo a resolvê-lo, antes de procedermos ao desenvolvimento
 das suas 3 alíneas, tivemos que definir algumas funções que nos ajudarão
 a implementar as soluções requeridas.
 
@@ -1196,13 +1199,6 @@ dada block chain.
 \begin{code}
 groupL :: Ledger -> Ledger
 groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where   mapFst f (a, b) = (f a, b)
-            sums [] = [];
-            sums ((a,b):t) = (a, sum b) : sums t
-
-
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
     where mapFst f (a, b) = (f a, b)
           sums [] = []
           sums ((a,b):t) = (a, sum b) : sums t
@@ -1298,6 +1294,27 @@ isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( eith
 
 \subsection*{Problema 2}
 
+O segundo problema tem como tema uma estrutura de dados que é muito utilizada para
+representação e processamento de imagens- quadtrees. Tal como é referido no
+enunciado do problema, uma quadtree é uma árvore quaternária em
+que cada nodo tem quatro sub-árvores e cada folha representa um valor bi-dimensional.
+
+Antes de procedermos ao desenvolvimento das funções propostas neste problema
+definimos algumas funções que nos serão muito úteis.
+
+\vspace{0.5cm}
+
+Uma |QTree| poderá ser:
+\begin{eqnarray*}
+|Cell a Int Int|
+\end{eqnarray*}
+Ou
+\begin{eqnarray*}
+|Block (QTree a) (QTree a) (QTree a) (QTree a)|
+\end{eqnarray*}
+
+Em consequência, as definições de |inQTree| e |outQTree| terão que ser as seguintes:
+
 \begin{code}
 inQTree = either (uncurryCell) (uncurryBlock)
     where uncurryCell (e, (n1, n2)) = Cell e n1 n2
@@ -1307,7 +1324,76 @@ uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
+\end{code}
 
+O diagrama da função |inQTree| é o seguinte:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |QTree a|
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[l]^-{|inQTree|}
+}
+\end{eqnarray*}
+
+E o diagrama da função |outQTree| é o seguinte:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |QTree a|
+           \ar[r]_-{|outQTree|}
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\end{eqnarray*}
+
+
+No caso da função |inQTree| o retorno deverá ser uma |QTree|, logo, no
+caso da |Cell| temos que ajustar o parâmetro recebido |(a, (Int, Int))|
+devolvendo |Cell a Int Int|, para assim a função devolver a informação
+no tipo de dados correto. No caso do |Block|, recebendo
+|(q1, (q2, (q3, q4)))| teremos então que retornar |Block q1 q2 q3 q4|.
+Esta função é definida como um ``either'' porque temos estas duas "hipóteses"
+de tipo de dados dentro do tipo de dados |QTree|.
+
+\vspace{0.2cm}
+
+No caso da função |outQTree| o raciocínio é inverso. Uma vez que esta função
+recebe uma |QTree| podemos definir a função com dois casos diferentes, tal como
+se pode ver na solução por nós proposta.
+
+Os dois diagramas em seguida ajudam-nos a perceber melhor como tratar os dois
+casos de |QTree| na função |outQTree|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |(a, (Int, Int))|
+           \ar[d]_-{|i1|}
+\\
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\hfill \break
+
+e
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |(QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]_-{|i2|}
+\\
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\hfill \break
+
+Assim, quando recebemos uma |Cell e n1 n2| o objetivo será
+injetá-la à esquerda de modo a respeitar o tipo de dados, devolvendo
+então: |Left (e, (n1, n2))|. No caso de |Block q1 q2 q3 q4|, injetamos
+à direita retornando: |Right (q1, (q2, (q3, q4)))|.
+
+\vspace{0.5cm}
+
+Outras funções cruciais para a resolução deste problema são as seguintes:
+
+\begin{code}
 baseQTree f g = (f >< id) -|- (g >< (g >< (g >< g)))
 
 recQTree g = baseQTree id g
@@ -1317,12 +1403,25 @@ cataQTree g = g . (recQTree (cataQTree g)) . outQTree
 anaQTree g = inQTree . (recQTree (anaQTree g)) . g
 
 hyloQTree h g = cataQTree h . anaQTree g
+\end{code}
 
+
+
+
+
+
+
+
+
+\begin{code}
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
 \end{code}
 
-----------
+
+
+AGORA PODEMOS BLABLA TODO
+
 
 \begin{enumerate}
 
