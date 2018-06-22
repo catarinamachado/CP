@@ -1301,7 +1301,7 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 De modo a resolver este primeiro problema, antes de procedermos ao desenvolvimento
-das 3 alíneas do problema, tivemos que definir algumas funções que nos ajudarão
+das suas 3 alíneas, tivemos que definir algumas funções que nos ajudarão
 a implementar as soluções requeridas.
 
 \begin{hscode}\SaveRestoreHook
@@ -1333,9 +1333,8 @@ de Programas e com a ajuda de alguns diagramas.
 Uma vez que o tipo de Blockchain é
 \ensuremath{\Conid{Bc}\;\{\mskip1.5mu \Varid{bc}\mathbin{::}\Conid{Block}\mskip1.5mu\}}
 ou
-\ensuremath{\Conid{Bcs}\;\{\mskip1.5mu \Varid{bcs}\mathbin{::}(\Conid{Block},\Conid{Blockchain})\mskip1.5mu\}}
-
-Sabemos que o \ensuremath{\Varid{inBlockchain}} e o \ensuremath{\Varid{outBlockchain}} deverão "fechar" e "abrir"
+\ensuremath{\Conid{Bcs}\;\{\mskip1.5mu \Varid{bcs}\mathbin{::}(\Conid{Block},\Conid{Blockchain})\mskip1.5mu\}},
+sabemos que o \ensuremath{\Varid{inBlockchain}} e o \ensuremath{\Varid{outBlockchain}} deverão "fechar" e "abrir"
 a Blockchain, respetivamente, logo, conseguimos representar os diagramas:
 \begin{eqnarray*}
 \xymatrix@C=2cm{
@@ -1371,36 +1370,52 @@ Relativamente às funções \ensuremath{\Varid{recBlockchain}}, \ensuremath{\Var
 \ensuremath{\Varid{anaBlockchain}} e \ensuremath{\Varid{hyloBlockchain}}, os seus tipos já estavam presentes
 no enunciado e o significado e intuito de cada uma delas também já era sabido.
 
+A título de exemplo, através do diagrama em seguida conseguimos ter uma
+melhor perceção de qual deverá ser a definição de cada uma destas funções.
+
+Assumimos que as funções \ensuremath{\Varid{g}} e \ensuremath{\Varid{h}} mencionadas são funções que devolvem
+a identidade.
+
+
 \begin{eqnarray*}
 \xymatrix@C=3cm{
-   \ensuremath{\Conid{A}\mathbin{*}}
-          \ar[d]_-{\ensuremath{\Varid{anaBlockchain}\;\Varid{h}}}
-           \ar[r]^-{\ensuremath{\Varid{lsplitBGene}}}
+   \ensuremath{\Conid{Blockchain}}
+          \ar[d]_-{\ensuremath{\Varid{anaBlockchain}\;\Varid{g}}}
+           \ar[r]^-{\ensuremath{\Varid{g}}}
 &
-   \ensuremath{\mathrm{1}\mathbin{+}\Conid{A}\mathbin{*}\times(\Conid{A}\times\Conid{A}\;\Varid{above})\;\Varid{above}}
-          \ar[d]^{\ensuremath{\Varid{id}\mathbin{+}((\Varid{ana}\;\Varid{lsplitBGene})\times\map \;(\Varid{id}\times\Varid{ana}\;\Varid{lsplitBGene}))}}
+   \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times\Conid{Blockchain})}
+          \ar[d]^{\ensuremath{\Varid{recBlockchain}\;(\Varid{anaBlockchain}\;\Varid{g})}}
 \\
     \ensuremath{\Conid{Blockchain}}
-       \ar[d]_-{\ensuremath{\Varid{cataBlockchain}\;\Varid{g}}}
+       \ar[d]_-{\ensuremath{\Varid{cataBlockchain}\;\Varid{h}}}
        \ar[r]^-{\ensuremath{\Varid{outBlockchain}}}
 &
     \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times\Conid{Blockchain})}
           \ar[l]^-{\ensuremath{\Varid{inBlockchain}}}
-           \ar[d]^{\ensuremath{\Varid{id}\mathbin{+}((\Varid{cata}\;\Varid{inordBGene})\times\map \;(\Varid{id}\times\Varid{cata}\;\Varid{inordBGene}))}}
+           \ar[d]^{\ensuremath{\Varid{recBlockchain}\;(\Varid{cataBlockchain}\;\Varid{h})}}
 \\
    \ensuremath{\Conid{Blockchain}}
 &
    \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times\Conid{Blockchain})}
-       \ar[l]^-{\ensuremath{\Varid{g}}}
+       \ar[l]^-{\ensuremath{\Varid{h}}}
 }
 \end{eqnarray*}
 
-\vspace{0.2cm}
+Assim, intuitivamente conseguimos perceber a definição de cada uma delas.
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{recBlockchain}\;\Varid{g}\mathrel{=}\Varid{id}\mathbin{+}(\Varid{id}\times\Varid{g})}
+\more
+\ensuremath{\Varid{cataBlockchain}\;\Varid{h}\mathrel{=}\Varid{h}\comp (\Varid{recBlockchain}\;(\Varid{cataBlockchain}\;\Varid{h}))\comp \Varid{outBlockchain}}
+\more
+\ensuremath{\Varid{anaBlockchain}\;\Varid{g}\mathrel{=}\Varid{inBlockchain}\comp (\Varid{recBlockchain}\;(\Varid{anaBlockchain}\;\Varid{g}))\comp \Varid{g}}
+\more
+\ensuremath{\Varid{hyloBlockchain}\;\Varid{h}\;\Varid{g}\mathrel{=}\Varid{cataBlockchain}\;\Varid{h}\comp \Varid{anaBlockchain}\;\Varid{g}}
+\end{eqnarray*}
+
 
 Na resolução das alíneas recorremos a alguns diagramas onde também fica
 implícito o porquê da definição de cada uma destas funções.
-
-TODOO
 
 
 \begin{enumerate}
@@ -1427,8 +1442,8 @@ O diagrama desta função será:
 \end{eqnarray*}
 
 
-O objetivo é descobrir o gene \ensuremath{\Varid{g}}, para assim termos a definição final de
-\ensuremath{\Varid{allTransactions}\mathrel{=}\Varid{cataBlockchain}\;\Varid{g}}.
+O objetivo é descobrir o gene \ensuremath{\Varid{g}}, para assim termos a definição final de como
+algo do género \ensuremath{\Varid{allTransactions}\mathrel{=}\Varid{cataBlockchain}\;\Varid{g}}
 
 Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
@@ -1437,7 +1452,11 @@ Assim, tendo em atenção o tipo de Block:
 
 E o tipo de Blockchain já apresentado, deduzimos que o \ensuremath{\Varid{g}} terá que ser um ``either'',
 \ensuremath{\Varid{g}\mathrel{=}\alt{\Varid{b0}}{\Varid{joint}}},
-onde de um lado irá tratar o \ensuremath{\Conid{Block}} e do outro o \ensuremath{\Conid{Block}\times\Conid{Transactions}}.
+onde de um lado irá tratar o \ensuremath{\Conid{Block}} e do outro o \ensuremath{\Conid{Block}\times\Conid{Transactions}}. Isso deve-se
+ao facto de \ensuremath{\Varid{g}} receber como parâmetro: \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times\Conid{Transactions})}, ou seja, uma
+"soma", e devolver: \ensuremath{\Conid{Transactions}}, logo, obrigatoriamente a função terá que ser ``either''
+para abolir o \ensuremath{\mathbin{+}}.
+
 
 \begin{enumerate}
 \item Descobrir b0
@@ -1464,7 +1483,7 @@ Deste modo, fica definido \ensuremath{\Varid{b0}} como:
 
 \item Descobrir joint
 
-Tendo em conta o domínio da função \ensuremath{\Varid{joint}}, isto é, \ensuremath{\Conid{Block}\times\Conid{Transactions}},
+Tendo em conta o domínio da função \ensuremath{\Varid{joint}}, ou seja, \ensuremath{\Conid{Block}\times\Conid{Transactions}},
 percebemos que o objetivo desta função será retirar de \ensuremath{\Conid{Block}} as suas
 \ensuremath{\Conid{Transactions}} e juntá-las às \ensuremath{\Conid{Transactions}} já acumuladas (passadas como
 parâmetro).
@@ -1474,7 +1493,8 @@ Assim, uma definição de \ensuremath{\Varid{joint}} \ensuremath{\Varid{pointwis
 \ensuremath{\Varid{joint}\;(\Varid{block},\Varid{transac})\mathrel{=}(\p2\;(\p2\;\Varid{block}))\plus \Varid{transac}}
 \end{eqnarray*}
 
-Esta função cumpre os requisitos a que a proposemos.
+Esta função cumpre os requisitos a que a proposemos, uma vez que retira de
+\ensuremath{\Conid{Block}} as \ensuremath{\Conid{Transactions}}, e concatena-as às \ensuremath{\Conid{Transactions}} passadas como parâmetro.
 
 \end{enumerate}
 

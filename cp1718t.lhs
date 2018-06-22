@@ -972,7 +972,7 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Problema 1}
 
 De modo a resolver este primeiro problema, antes de procedermos ao desenvolvimento
-das 3 alíneas do problema, tivemos que definir algumas funções que nos ajudarão
+das suas 3 alíneas, tivemos que definir algumas funções que nos ajudarão
 a implementar as soluções requeridas.
 
 \begin{code}
@@ -1000,9 +1000,8 @@ de Programas e com a ajuda de alguns diagramas.
 Uma vez que o tipo de Blockchain é
 |Bc {bc :: Block}|
 ou
-|Bcs {bcs :: (Block, Blockchain)}|
-
-Sabemos que o |inBlockchain| e o |outBlockchain| deverão "fechar" e "abrir"
+|Bcs {bcs :: (Block, Blockchain)}|,
+sabemos que o |inBlockchain| e o |outBlockchain| deverão "fechar" e "abrir"
 a Blockchain, respetivamente, logo, conseguimos representar os diagramas:
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
@@ -1038,38 +1037,52 @@ Relativamente às funções |recBlockchain|, |cataBlockchain|,
 |anaBlockchain| e |hyloBlockchain|, os seus tipos já estavam presentes
 no enunciado e o significado e intuito de cada uma delas também já era sabido.
 
+A título de exemplo, através do diagrama em seguida conseguimos ter uma
+melhor perceção de qual deverá ser a definição de cada uma destas funções.
+
+Assumimos que as funções |g| e |h| mencionadas são funções que devolvem
+a identidade.
+
+
 \begin{eqnarray*}
 \xymatrix@@C=3cm{
-   |A*|
-          \ar[d]_-{|anaBlockchain h|}
-           \ar[r]^-{|lsplitBGene|}
+   |Blockchain|
+          \ar[d]_-{|anaBlockchain g|}
+           \ar[r]^-{|g|}
 &
-   |1 + A* >< (A >< A above) above|
-          \ar[d]^{|id +((ana lsplitBGene) >< map(id >< ana lsplitBGene))|}
+   |Block + (Block >< Blockchain)|
+          \ar[d]^{|recBlockchain(anaBlockchain g)|}
 \\
     |Blockchain|
-       \ar[d]_-{|cataBlockchain g|}
+       \ar[d]_-{|cataBlockchain h|}
        \ar[r]^-{|outBlockchain|}
 &
     |Block + (Block >< Blockchain)|
           \ar[l]^-{|inBlockchain|}
-           \ar[d]^{|id +((cata inordBGene) >< map(id >< cata inordBGene))|}
+           \ar[d]^{|recBlockchain(cataBlockchain h)|}
 \\
    |Blockchain|
 &
    |Block + (Block >< Blockchain)|
-       \ar[l]^-{|g|}
+       \ar[l]^-{|h|}
 }
 \end{eqnarray*}
 
-TODOOO PENSAR SOBRE ISTO
+Assim, intuitivamente conseguimos perceber a definição de cada uma delas.
+\begin{eqnarray*}
+\start
+|recBlockchain g = id + (id >< g)|
+\more
+|cataBlockchain h = h . (recBlockchain (cataBlockchain h)) . outBlockchain|
+\more
+|anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g|
+\more
+|hyloBlockchain h g = cataBlockchain h . anaBlockchain g|
+\end{eqnarray*}
 
-\vspace{0.2cm}
 
 Na resolução das alíneas recorremos a alguns diagramas onde também fica
 implícito o porquê da definição de cada uma destas funções.
-
-TODOO
 
 
 \begin{enumerate}
@@ -1096,8 +1109,8 @@ O diagrama desta função será:
 \end{eqnarray*}
 
 
-O objetivo é descobrir o gene |g|, para assim termos a definição final de
-|allTransactions = cataBlockchain g|.
+O objetivo é descobrir o gene |g|, para assim termos a definição final de como
+algo do género |allTransactions = cataBlockchain g|
 
 Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
@@ -1106,7 +1119,11 @@ Assim, tendo em atenção o tipo de Block:
 
 E o tipo de Blockchain já apresentado, deduzimos que o |g| terá que ser um ``either'',
 |g = either b0 joint|,
-onde de um lado irá tratar o |Block| e do outro o |Block >< Transactions|.
+onde de um lado irá tratar o |Block| e do outro o |Block >< Transactions|. Isso deve-se
+ao facto de |g| receber como parâmetro: |Block + (Block >< Transactions)|, ou seja, uma
+"soma", e devolver: |Transactions|, logo, obrigatoriamente a função terá que ser ``either''
+para abolir o |+|.
+
 
 \begin{enumerate}
 \item Descobrir b0
@@ -1133,7 +1150,7 @@ Deste modo, fica definido |b0| como:
 
 \item Descobrir joint
 
-Tendo em conta o domínio da função |joint|, isto é, |Block >< Transactions|,
+Tendo em conta o domínio da função |joint|, ou seja, |Block >< Transactions|,
 percebemos que o objetivo desta função será retirar de |Block| as suas
 |Transactions| e juntá-las às |Transactions| já acumuladas (passadas como
 parâmetro).
@@ -1143,7 +1160,8 @@ Assim, uma definição de |joint| |pointwise| é:
 |joint (block, transac) = (p2 (p2 block)) ++ transac|
 \end{eqnarray*}
 
-Esta função cumpre os requisitos a que a proposemos.
+Esta função cumpre os requisitos a que a proposemos, uma vez que retira de
+|Block| as |Transactions|, e concatena-as às |Transactions| passadas como parâmetro.
 
 \end{enumerate}
 
