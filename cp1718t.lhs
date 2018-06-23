@@ -1197,14 +1197,14 @@ dada block chain.
 
 
 \begin{code}
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where mapFst f (a, b) = (f a, b)
-          sums [] = []
-          sums ((a,b):t) = (a, sum b) : sums t
-
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
-    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+    where
+        insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+        groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+        mapFst f (a, b) = (f a, b)
+        sums [] = [];
+        sums ((a,b):t) = (a, sum b) : sums t
+
 \end{code}
 
 
@@ -1287,8 +1287,10 @@ TODOOOO
 
 \begin{code}
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
-    where   list x = [p1 x]
-            insert(x,y) = (p1 x) : y
+    where
+        list x = [p1 x]
+        insert(x,y) = (p1 x) : y
+
 \end{code}
 
 
@@ -2626,19 +2628,40 @@ loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \subsection*{Problema 4}
 
 \begin{code}
-inFTree = undefined
-outFTree = undefined
-baseFTree = undefined
-recFTree = undefined
-cataFTree = undefined
-anaFTree = undefined
-hyloFTree = undefined
+
+inFTree = either Unit (uncurryB Comp)
+    where uncurryB f (a,(t1,t2)) = f a t1 t2
+outFTree (Unit c)       = Left c
+outFTree (Comp a t1 t2) = Right(a,(t1,t2))
+baseFTree f g h  = g -|- (f  >< (h >< h))
+recFTree f = baseFTree id id f
+cataFTree a = a . (recFTree (cataFTree a)) . outFTree
+anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
+hyloFTree a c = cataFTree a . anaFTree c
 
 instance Bifunctor FTree where
-    bimap = undefined
+    bimap f g = cataFTree ( inFTree . baseFTree f g id )
 
-generatePTree = undefined
-drawPTree = undefined
+generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
+    where
+        m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
+
+drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
+    where
+        list n = (foldMap lineLoop (squares n))
+        squares n = concat $ take (depthFTree a - n) $ iterateM mkBranches start
+        start = [(-100,0),(0,0),(0,-100),(-100,-100)]
+        iterateM f x = iterate (>>= f) (pure x)
+        mkBranches [a, b, c, d] =   let d = 0.5 <*> (b <+> ((-1) <*> a))
+                                        l1 = d <+> orth d
+                                        l2 = orth l1
+                                    in
+                                        [ [a <+> l2, b <+> (2 <*> l2), a <+> l1, a]
+                                        , [a <+> (2 <*> l1), b <+> l1, b, b <+> l2] ]
+        (a, b) <+> (c, d) = (a+c, b+d)
+        n <*> (a, b) = (a*n, b*n)
+        orth (a, b) = (-b, a)
+
 \end{code}
 
 \subsection*{Problema 5}
