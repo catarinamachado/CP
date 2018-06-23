@@ -1901,7 +1901,7 @@ No seguinte diagrama conseguimos perceber o que é que as funções
 \ensuremath{\Varid{inQTree}\comp \Varid{baseQTree}\;\Varid{f}\;\Varid{id}} fazem, considerando que f é uma função
 do tipo: \ensuremath{\Varid{f}\mathbin{::}\Conid{A}\to \Conid{E}}:
 
-\hfill \break
+\begin{eqnarray*}
 \xymatrix@C=20cm{
     \ensuremath{(\Varid{a},\Varid{b})+(\Varid{c},(\Varid{c},(\Varid{c},\Varid{c})))}
        \ar[d]_-{\ensuremath{\Varid{baseQTree}\;\Varid{f}\;\Varid{id}}}
@@ -1911,6 +1911,8 @@ do tipo: \ensuremath{\Varid{f}\mathbin{::}\Conid{A}\to \Conid{E}}:
 \\
     \ensuremath{\Conid{QTree}\;\Varid{e}}
 }
+\end{eqnarray*}
+
 
 Ou seja, numa primeira fase a função \ensuremath{\Varid{baseQTree}\;\Varid{f}\;\Varid{id}} aplica a função \ensuremath{\Varid{f}} ao
 conteúdo da \ensuremath{\Conid{Cell}} e numa segunda fase a função \ensuremath{\Varid{inQTree}} junta o resultado
@@ -3024,43 +3026,218 @@ Deste modo, obtemos os dois resultados pretendidos:
 
 \subsection*{Problema 4}
 
+O quarto problema aborda \ensuremath{\Conid{Fractais}}. Fractais são formas geométricas que
+podem ser construídas recursivamente de acordo com um conjunto de equações matemáticas.
+Iremos concentrarmos no exemplo clássico de árvores de Pitágoras.
+
+A par do problema 1 e 2, começamos por definir algumas funções que serão
+utilizadas na resolução deste problema.
+
+Assim, analisando o tipo de uma \ensuremath{\Conid{FTree}} sabemos que uma:
+\begin{eqnarray*}
+\ensuremath{\Conid{FTree}\;\Varid{a}\;\Varid{b}}
+\end{eqnarray*}
+poderá ser
+\begin{eqnarray*}
+\ensuremath{\Conid{Unit}\;\Varid{b}}
+\end{eqnarray*}
+ou
+\begin{eqnarray*}
+\ensuremath{\Conid{Comp}\;\Varid{a}\;(\Conid{FTree}\;\Varid{a}\;\Varid{b})\;(\Conid{FTree}\;\Varid{a}\;\Varid{b})}
+\end{eqnarray*}
+
+Deste modo, as funções \ensuremath{\Varid{inFTree}} e \ensuremath{\Varid{outFTree}} são as seguintes:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{25}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{30}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{37}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{41}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{inFTree}\mathrel{=}\alt{\Conid{Unit}}{\Varid{uncurryB}\;\Conid{Comp}}{}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
 \>[5]{}\mathbf{where}\;\Varid{uncurryB}\;\Varid{f}\;(\Varid{a},(\Varid{t1},\Varid{t2}))\mathrel{=}\Varid{f}\;\Varid{a}\;\Varid{t1}\;\Varid{t2}{}\<[E]%
-\\
+\\[\blanklineskip]%
 \>[B]{}\Varid{outFTree}\;(\Conid{Unit}\;\Varid{c}){}\<[25]%
 \>[25]{}\mathrel{=}i_1\;\Varid{c}{}\<[E]%
 \\
 \>[B]{}\Varid{outFTree}\;(\Conid{Comp}\;\Varid{a}\;\Varid{t1}\;\Varid{t2})\mathrel{=}i_2\;(\Varid{a},(\Varid{t1},\Varid{t2})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Diagrama de \ensuremath{\Varid{inFTree}}:
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+     \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+&
+     \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+           \ar[l]^-{\ensuremath{\Varid{inFTree}}}
+}
+\end{eqnarray*}
+
+Diagrama de \ensuremath{\Varid{outFTree}}:
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+     \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+           \ar[r]_-{\ensuremath{\Varid{outFTree}}}
+&
+     \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+}
+\end{eqnarray*}
+
+Ambas as funções foram explicadas com mais pormenor no Problema 2, que apesar de dizer
+respeito a \ensuremath{\Conid{QTree}}, o pensamento para as definir foi muito semelhante.
+
+Temos também as seguintes funções:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{recFTree}\;\Varid{f}\mathrel{=}\Varid{baseFTree}\;\Varid{id}\;\Varid{id}\;\Varid{f}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{cataFTree}\;\Varid{a}\mathrel{=}\Varid{a}\comp (\Varid{recFTree}\;(\Varid{cataFTree}\;\Varid{a}))\comp \Varid{outFTree}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{anaFTree}\;\Varid{f}\mathrel{=}\Varid{inFTree}\comp (\Varid{recFTree}\;(\Varid{anaFTree}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{hyloFTree}\;\Varid{a}\;\Varid{c}\mathrel{=}\Varid{cataFTree}\;\Varid{a}\comp \Varid{anaFTree}\;\Varid{c}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Tal como nas funções \ensuremath{\Varid{inFTree}} e \ensuremath{\Varid{outFTree}}, estas quatro funções também
+são muito semelhantes às desenvolvidas no Problema 2 pelo que não iremos voltar
+a entrar em pormenor porque a justificação é praticamente a mesma.
+
+O diagrama que agrega todas estas funções é o seguinte, partindo do mesmo princípio
+que, a título de exemplo, os genes \ensuremath{\Varid{g}} e \ensuremath{\Varid{h}} não alteram a \ensuremath{\Conid{FTree}} (são \ensuremath{\Varid{id}}):
+\begin{eqnarray*}
+\xymatrix@C=3cm{
+   \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+          \ar[d]_-{\ensuremath{\Varid{anaFTree}\;\Varid{g}}}
+           \ar[r]^-{\ensuremath{\Varid{g}}}
+&
+    \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+          \ar[d]^{\ensuremath{\Varid{recFTree}\;(\Varid{anaFTree}\;\Varid{g})}}
 \\
+    \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+       \ar[d]_-{\ensuremath{\Varid{cataFTree}\;\Varid{h}}}
+       \ar[r]^-{\ensuremath{\Varid{outFTree}}}
+&
+    \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+          \ar[l]^-{\ensuremath{\Varid{inFTree}}}
+           \ar[d]^{\ensuremath{\Varid{recFTree}\;(\Varid{cataFTree}\;\Varid{h})}}
+\\
+   \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+&
+   \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+       \ar[l]^-{\ensuremath{\Varid{h}}}
+}
+\end{eqnarray*}
+
+A função \ensuremath{\Varid{hyloFTree}} é definida como sendo \ensuremath{\Varid{hyloFTree}\;\Varid{h}\;\Varid{g}\mathrel{=}\Varid{cataFTree}\;\Varid{h}\comp \Varid{anaFTree}\;\Varid{g}},
+ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
+argumento da função \ensuremath{\Varid{anaFTree}} até ao retorno da função \ensuremath{\Varid{cataFTree}}.
+
+
+A função \ensuremath{\Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{h}}, que possui o tipo:
+\begin{eqnarray*}
+\start
+\ensuremath{(\Varid{a1}\to \Varid{b1})\to }
+\more
+\ensuremath{(\Varid{a2}\to \Varid{b2})\to }
+\more
+\ensuremath{(\Varid{a3}\to \Varid{d})\to }
+\more
+\ensuremath{\Varid{a2}+(\Varid{a1},(\Varid{a3},\Varid{a3}))\to }
+\more
+\ensuremath{\Varid{b2}+(\Varid{b1},(\Varid{d},\Varid{d}))}
+\end{eqnarray*}
+
+
+Tem o objetivo de alterar os argumentos da FTree aplicando-lhe funções
+tal como podemos ver no diagrama em seguida,
+assumindo que \ensuremath{\Varid{f}\mathbin{:}\Varid{a1}\to \Varid{b1}}, \ensuremath{\Varid{g}\mathbin{:}\Varid{a2}\to \Varid{b2}} e \ensuremath{\Varid{h}\mathbin{:}\Varid{a3}\to \Varid{d}}.
+\begin{eqnarray*}
+\xymatrix@C=20cm{
+    \ensuremath{\Varid{a2}+(\Varid{a1},(\Varid{a3},\Varid{a3}))}
+           \ar[d]_-{\ensuremath{\Varid{g}\mathbin{+}(\Varid{f}\times(\Varid{h}\times\Varid{h})}}
+\\
+    \ensuremath{\Varid{b2}+(\Varid{b1},(\Varid{d},\Varid{d}))}
+}
+\end{eqnarray*}
+
+Esta função é então definida como:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{30}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{h}{}\<[18]%
 \>[18]{}\mathrel{=}\Varid{g}+(\Varid{f}{}\<[30]%
 \>[30]{}\times(\Varid{h}\times\Varid{h})){}\<[E]%
-\\
-\>[B]{}\Varid{recFTree}\;\Varid{f}\mathrel{=}\Varid{baseFTree}\;\Varid{id}\;\Varid{id}\;\Varid{f}{}\<[E]%
-\\
-\>[B]{}\Varid{cataFTree}\;\Varid{a}\mathrel{=}\Varid{a}\comp (\Varid{recFTree}\;(\Varid{cataFTree}\;\Varid{a}))\comp \Varid{outFTree}{}\<[E]%
-\\
-\>[B]{}\Varid{anaFTree}\;\Varid{f}\mathrel{=}\Varid{inFTree}\comp (\Varid{recFTree}\;(\Varid{anaFTree}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
-\\
-\>[B]{}\Varid{hyloFTree}\;\Varid{a}\;\Varid{c}\mathrel{=}\Varid{cataFTree}\;\Varid{a}\comp \Varid{anaFTree}\;\Varid{c}{}\<[E]%
-\\[\blanklineskip]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Temos ainda um \ensuremath{\Conid{Bifuntor}}:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\mathbf{instance}\;\Conid{Bifunctor}\;\Conid{FTree}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
 \>[5]{}\Varid{bimap}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataFTree}\;(\Varid{inFTree}\comp \Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{id}){}\<[E]%
-\\[\blanklineskip]%
+\ColumnHook
+\end{hscode}\resethooks
+
+O gene \ensuremath{\Varid{g}\mathrel{=}\Varid{inFTree}\comp \Varid{baseFTree}\;\Varid{f}\;\Varid{h}\;\Varid{id}} do cataFTree pode ser demonstrado
+através do seguinte diagrama, onde assumimos que \ensuremath{\Varid{f}\mathbin{:}\Varid{a1}\to \Varid{b1}} e \ensuremath{\Varid{h}\mathbin{:}\Varid{a2}\to \Varid{b2}}.
+\begin{eqnarray*}
+\xymatrix@C=20cm{
+    \ensuremath{\Varid{a2}+(\Varid{a1},(\Varid{a3},\Varid{a3}))}
+       \ar[d]_-{\ensuremath{\Varid{baseFTree}\;\Varid{f}\;\Varid{h}\;\Varid{id}}}
+\\
+    \ensuremath{\Varid{b2}+(\Varid{b1},(\Varid{a3},\Varid{a3}))}
+       \ar[d]_-{\ensuremath{\Varid{inFTree}}}
+\\
+    \ensuremath{\Conid{FTree}\;\Varid{b1}\;\Varid{b2}}
+}
+\end{eqnarray*}
+
+Construindo o \ensuremath{\Varid{cataFTree}} aplicado ao gene referido anteriormente temos:
+\begin{eqnarray*}
+\xymatrix@C=3cm{
+    \ensuremath{\Conid{FTree}\;\Varid{a1}\;\Varid{a2}}
+           \ar[d]_-{\ensuremath{\Varid{cataFTree}\;\Varid{g}}}
+&
+    \ensuremath{\Varid{a2}+(\Varid{a1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+           \ar[d]^{\ensuremath{\Varid{recFTree}\;(\Varid{cataFTree}\;\Varid{g})}}
+           \ar[l]_-{\ensuremath{\Varid{inFTree}}}
+\\
+     \ensuremath{\Conid{FTree}\;\Varid{b1}\;\Varid{a2}}
+&
+     \ensuremath{\Varid{a2}+(\Varid{b1},(\Conid{FTree}\;\Varid{a1}\;\Varid{a2},\Conid{FTree}\;\Varid{a1}\;\Varid{a2}))}
+           \ar[l]^-{\ensuremath{\Varid{g}}}
+}
+\end{eqnarray*}
+
+aquifds
+
+Mais uma vez, as justificações do Problema 2 relaticamente à função \ensuremath{\mathsf{fmap}} fazem
+um ``match'' com a função \ensuremath{\Varid{bimap}}, pelo que uma explicação mais detalhada acerca desta
+última função pode ser encontrada no Problema 2.
+
+
+\vspace{0.4cm}
+
+Concentrando agora nas funções pedidas no enunciado:
+
+\begin{enumerate}
+\item Função \ensuremath{\Varid{generatePTree}}
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{generatePTree}\;\Varid{a}\mathrel{=}\Varid{anaFTree}\;((\underline{\mathrm{0}}+\conj{\Varid{m}}{\conj{\Varid{id}}{\Varid{id}}})\comp \Varid{outNat})\;\Varid{a}{}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
@@ -3068,7 +3245,20 @@ Deste modo, obtemos os dois resultados pretendidos:
 \\
 \>[5]{}\hsindent{4}{}\<[9]%
 \>[9]{}\Varid{m}\;\Varid{x}\mathrel{=}\mathrm{50}\mathbin{*}(\Varid{sqrt}\;(\mathrm{2})\mathbin{/}\mathrm{2})\mathbin{\uparrow}\Varid{abs}\;(\Varid{x}\mathbin{-}\Varid{a}){}\<[E]%
-\\[\blanklineskip]%
+\ColumnHook
+\end{hscode}\resethooks
+
+
+
+\item Função \ensuremath{\Varid{drawPTree}}
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{37}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{41}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{drawPTree}\;\Varid{a}\mathrel{=}\Varid{anaList}\;((\Varid{nil}+\conj{\Varid{list}}{\Varid{id}})\comp \Varid{outNat})\;(\Varid{depthFTree}\;\Varid{a}){}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
@@ -3114,6 +3304,9 @@ Deste modo, obtemos os dois resultados pretendidos:
 \>[9]{}\Varid{orth}\;(\Varid{a},\Varid{b})\mathrel{=}(\mathbin{-}\Varid{b},\Varid{a}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+\end{enumerate}
+
+
 
 \subsection*{Problema 5}
 

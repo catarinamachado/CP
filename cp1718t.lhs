@@ -1521,7 +1521,7 @@ No seguinte diagrama conseguimos perceber o que é que as funções
 |inQTree . baseQTree f id| fazem, considerando que f é uma função
 do tipo: |f :: A -> E|:
 
-\hfill \break
+\begin{eqnarray*}
 \xymatrix@@C=20cm{
     |Either (a, b) (c, (c, (c, c)))|
        \ar[d]_-{|baseQTree f id|}
@@ -1531,6 +1531,8 @@ do tipo: |f :: A -> E|:
 \\
     |QTree e|
 }
+\end{eqnarray*}
+
 
 Ou seja, numa primeira fase a função |baseQTree f id| aplica a função |f| ao
 conteúdo da |Cell| e numa segunda fase a função |inQTree| junta o resultado
@@ -2658,25 +2660,199 @@ loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 
 \subsection*{Problema 4}
 
-\begin{code}
+O quarto problema aborda |Fractais|. Fractais são formas geométricas que
+podem ser construídas recursivamente de acordo com um conjunto de equações matemáticas.
+Iremos concentrarmos no exemplo clássico de árvores de Pitágoras.
 
+A par do problema 1 e 2, começamos por definir algumas funções que serão
+utilizadas na resolução deste problema.
+
+Assim, analisando o tipo de uma |FTree| sabemos que uma:
+\begin{eqnarray*}
+|FTree a b|
+\end{eqnarray*}
+poderá ser
+\begin{eqnarray*}
+|Unit b|
+\end{eqnarray*}
+ou
+\begin{eqnarray*}
+|Comp a (FTree a b) (FTree a b)|
+\end{eqnarray*}
+
+Deste modo, as funções |inFTree| e |outFTree| são as seguintes:
+\begin{code}
 inFTree = either Unit (uncurryB Comp)
     where uncurryB f (a,(t1,t2)) = f a t1 t2
+
 outFTree (Unit c)       = Left c
 outFTree (Comp a t1 t2) = Right(a,(t1,t2))
-baseFTree f g h  = g -|- (f  >< (h >< h))
-recFTree f = baseFTree id id f
-cataFTree a = a . (recFTree (cataFTree a)) . outFTree
-anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
-hyloFTree a c = cataFTree a . anaFTree c
+\end{code}
 
+Diagrama de |inFTree|:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |FTree a1 a2|
+&
+     |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+           \ar[l]^-{|inFTree|}
+}
+\end{eqnarray*}
+
+Diagrama de |outFTree|:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |FTree a1 a2|
+           \ar[r]_-{|outFTree|}
+&
+     |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+}
+\end{eqnarray*}
+
+Ambas as funções foram explicadas com mais pormenor no Problema 2, que apesar de dizer
+respeito a |QTree|, o pensamento para as definir foi muito semelhante.
+
+Temos também as seguintes funções:
+\begin{code}
+recFTree f = baseFTree id id f
+
+cataFTree a = a . (recFTree (cataFTree a)) . outFTree
+
+anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
+
+hyloFTree a c = cataFTree a . anaFTree c
+\end{code}
+
+Tal como nas funções |inFTree| e |outFTree|, estas quatro funções também
+são muito semelhantes às desenvolvidas no Problema 2 pelo que não iremos voltar
+a entrar em pormenor porque a justificação é praticamente a mesma.
+
+O diagrama que agrega todas estas funções é o seguinte, partindo do mesmo princípio
+que, a título de exemplo, os genes |g| e |h| não alteram a |FTree| (são |id|):
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |FTree a1 a2|
+          \ar[d]_-{|anaFTree g|}
+           \ar[r]^-{|g|}
+&
+    |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+          \ar[d]^{|recFTree(anaFTree g)|}
+\\
+    |FTree a1 a2|
+       \ar[d]_-{|cataFTree h|}
+       \ar[r]^-{|outFTree|}
+&
+    |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+          \ar[l]^-{|inFTree|}
+           \ar[d]^{|recFTree(cataFTree h)|}
+\\
+   |FTree a1 a2|
+&
+   |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+A função |hyloFTree| é definida como sendo |hyloFTree h g = cataFTree h . anaFTree g|,
+ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
+argumento da função |anaFTree| até ao retorno da função |cataFTree|.
+
+
+A função |baseFTree f g h|, que possui o tipo:
+\begin{eqnarray*}
+\start
+|(a1 -> b1) ->|
+\more
+|(a2 -> b2) ->|
+\more
+|(a3 -> d) ->|
+\more
+|Either a2 (a1, (a3, a3)) ->|
+\more
+|Either b2 (b1, (d, d))|
+\end{eqnarray*}
+
+
+Tem o objetivo de alterar os argumentos da FTree aplicando-lhe funções
+tal como podemos ver no diagrama em seguida,
+assumindo que |f : a1 -> b1|, |g : a2 -> b2| e |h : a3 -> d|.
+\begin{eqnarray*}
+\xymatrix@@C=20cm{
+    |Either a2 (a1, (a3, a3))|
+           \ar[d]_-{|g + (f  >< (h >< h)|}
+\\
+    |Either b2 (b1, (d, d))|
+}
+\end{eqnarray*}
+
+Esta função é então definida como:
+\begin{code}
+baseFTree f g h  = g -|- (f  >< (h >< h))
+\end{code}
+
+Temos ainda um |Bifuntor|:
+
+\begin{code}
 instance Bifunctor FTree where
     bimap f g = cataFTree ( inFTree . baseFTree f g id )
+\end{code}
 
+O gene |g = inFTree . baseFTree f h id| do cataFTree pode ser demonstrado
+através do seguinte diagrama, onde assumimos que |f : a1 -> b1| e |h : a2 -> b2|.
+\begin{eqnarray*}
+\xymatrix@@C=20cm{
+    |Either a2 (a1, (a3, a3))|
+       \ar[d]_-{|baseFTree f h id|}
+\\
+    |Either b2 (b1, (a3, a3))|
+       \ar[d]_-{|inFTree|}
+\\
+    |FTree b1 b2|
+}
+\end{eqnarray*}
+
+Construindo o |cataFTree| aplicado ao gene referido anteriormente temos:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+    |FTree a1 a2|
+           \ar[d]_-{|cataFTree g|}
+&
+    |Either a2 (a1, (FTree a1 a2, FTree a1 a2))|
+           \ar[d]^{|recFTree(cataFTree g)|}
+           \ar[l]_-{|inFTree|}
+\\
+     |FTree b1 a2|
+&
+     |Either a2 (b1, (FTree a1 a2, FTree a1 a2))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+aquifds
+
+Mais uma vez, as justificações do Problema 2 relaticamente à função |fmap| fazem
+um ``match'' com a função |bimap|, pelo que uma explicação mais detalhada acerca desta
+última função pode ser encontrada no Problema 2.
+
+
+\vspace{0.4cm}
+
+Concentrando agora nas funções pedidas no enunciado:
+
+\begin{enumerate}
+\item Função |generatePTree|
+
+\begin{code}
 generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
         m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
+\end{code}
 
+
+
+\item Função |drawPTree|
+
+\begin{code}
 drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
     where
         list n = (foldMap lineLoop (squares n))
@@ -2694,6 +2870,9 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
         orth (a, b) = (-b, a)
 
 \end{code}
+\end{enumerate}
+
+
 
 \subsection*{Problema 5}
 
