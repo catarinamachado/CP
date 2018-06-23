@@ -2648,6 +2648,10 @@ Para a resolução do quinto e último problema
 
 
 
+
+
+Tal como o nome da função indica, o objetivo dela é blabla.
+
 \begin{code}
 
 singletonbag a = B[(a, 1)]
