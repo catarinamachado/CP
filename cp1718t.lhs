@@ -2832,6 +2832,15 @@ Mais uma vez, as justificações do Problema 2 relaticamente à função |fmap| 
 um ``match'' com a função |bimap|, pelo que uma explicação mais detalhada acerca desta
 última função pode ser encontrada no Problema 2.
 
+Temos ainda o tipo de dados |PTree| composto por:
+\begin{eqnarray*}
+|PTree :: FTree Square Square|
+\end{eqnarray*}
+
+Onde |Square|:
+\begin{eqnarray*}
+|Square :: Float|
+\end{eqnarray*}
 
 \vspace{0.4cm}
 
@@ -2843,26 +2852,7 @@ Concentrando agora nas funções pedidas no enunciado:
 Esta função tem o objetivo de gerar uma árvore de Pitágoras para uma
 dada ordem.
 
-Tal como indica o enunciado, definimos esta função como uma |anaFTree|.
-Assim, através do seguinte diagrama conseguimos ver os
-tipos do gene:
-\begin{eqnarray*}
-\start
-|g = (((const 0) + (split m (split id id))) . outNat|
-\more
-|m x = 50 * (sqrt(2) / 2) ^ abs(x-a)|
-\end{eqnarray*}
-
-
-... diagrama com setas para baixo
-
-Aplicando um |anaFTree| obtemos o seguinte diagrama:
-
-... diagrama padrão
-
-
-...
-
+Tal como indica o enunciado, definimos esta função como uma |anaFTree|:
 \begin{code}
 generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
@@ -2870,10 +2860,57 @@ generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
 \end{code}
 
 
+Assim, através do seguinte diagrama conseguimos ver os
+tipos do gene do |anaFTree|:
+\begin{eqnarray*}
+\start
+|g = (((const 0) + (split m (split id id))) . outNat|
+\more
+|m x = 50 * (sqrt(2) / 2) ^ abs(x-a)|
+\end{eqnarray*}
+
+Que podem ser representados pelo seguinte diagrama:
+\begin{eqnarray*}
+\xymatrix@@C=20cm{
+    |Int|
+           \ar[d]_-{|outNat|}
+\\
+    |1 + Int|
+            \ar[d]_-{|((const 0) + (split m (split id id)))|}
+\\
+    |(const 0) + (Square, (Int, Int))|
+}
+\end{eqnarray*}
+
+
+Com o anamorfismo obtemos o seguinte diagrama:
+\begin{eqnarray}
+\xymatrix@@C=4cm{
+    |Int|
+        \ar[d]_-{|anaFTree g|}
+        \ar[r]^-{|g = (const 0) + (split m (split id id))|}
+&
+    |Either (const 0) (Square, (Int, Int))|
+           \ar[d]^{|recFTree (anaFTree g)|}
+\\
+     |PTree (FTree Square Square)|
+&
+     |Either (const 0) (Square, (PT, PT))|
+           \ar[l]^-{|inFTree|}
+}
+\end{eqnarray}
+
+Onde |PT :: PTree (FTree Square Square)|.
+
+O que acontece é que o o |m x| irá criar um |Square|, onde o |split m (split id id))|
+irá obter o resultado |Square >< (Nat0 >< Nat0)|. Para cada um dos |Nat0|,
+irá ser aplicado o anamorfismo de modo a obtermos a |PTree(FTree Square Square)|.
+
+
 
 \item Função |drawPTree|
 
-O objetivo de |drawPTree| animar incrementalmente os passos de construção de
+O objetivo de |drawPTree| é animar incrementalmente os passos de construção de
 uma função de Pitágoras recorrendo à biblioteca gloss.
 
 
