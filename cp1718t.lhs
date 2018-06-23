@@ -1000,7 +1000,6 @@ ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where   list x = [p1 x]
             insert(x,y) = (p1 x) : y
-
 \end{code}
 
 
@@ -1056,7 +1055,6 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
             | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
             | otherwise = matrix j i (const False)
           g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
-
 
 \end{code}
 
@@ -1632,9 +1630,18 @@ drawPTree = undefined
 \subsection*{Problema 5}
 
 \begin{code}
-singletonbag = undefined
-muB = undefined
-dist = undefined
+
+singletonbag a = B[(a, 1)]
+
+muB b = B (concat (fmap unB (junta (unB b))))
+    where junta ((ba, int) : bas) = (fmapSpecial (*int) ba) : (junta bas)
+          junta [] = []
+          fmapSpecial f = B . map (id >< f) . unB
+
+dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
+    where number [] = 0
+          number ((_, int): cs) = int + number cs
+
 \end{code}
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
