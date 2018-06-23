@@ -1449,7 +1449,7 @@ algo do género \ensuremath{\Varid{allTransactions}\mathrel{=}\Varid{cataBlockch
 
 Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
-\ensuremath{\mathbf{type}\;\Conid{Block}\mathrel{=}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
+\ensuremath{\Conid{Block}\mathbin{::}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
 \end{eqnarray*}
 
 E o tipo de Blockchain já apresentado, deduzimos que o \ensuremath{\Varid{g}} terá que ser um ``either'',
@@ -1468,14 +1468,14 @@ ser \ensuremath{\Conid{Transactions}}, o objetivo desta função será "retirar"
 
 Assim, teremos que definir \ensuremath{\Varid{b0}} com projeções \ensuremath{\p2} como podemos verificar no diagrama
 em seguida:
-\hfill \break
+\begin{eqnarray*}
 \xymatrix@C=20cm{
     \ensuremath{\Conid{MagicNo}\times(\Conid{Time}\times\Conid{Transactions})}
            \ar[d]_-{\ensuremath{\p2\comp \p2}}
 \\
     \ensuremath{\Conid{Transactions}}
 }
-\hfill \break
+\end{eqnarray*}
 
 Deste modo, fica definido \ensuremath{\Varid{b0}} como:
 \begin{eqnarray*}
@@ -1547,12 +1547,14 @@ O tipo de uma Transação é o seguinte:
 \ensuremath{(\Conid{Entity},(\Conid{Value},\Conid{Entity}))}
 \end{eqnarray*}
 Sendo o primeiro \ensuremath{\Conid{Entity}} a entidade que envia o valor a ser transacionado
-e o segundo o que diz respeito à entidade que recebe.
+e o segundo o que recebe.
 
-Assim, após termos a \ensuremath{[\mskip1.5mu \Conid{Transaction}\mskip1.5mu]} aplicamos-lhe um \ensuremath{\Varid{cataList}}.
+Assim, após termos a \ensuremath{[\mskip1.5mu \Conid{Transaction}\mskip1.5mu]} (resultado da função \ensuremath{\Varid{allTransactions}})
+aplicamos-lhe um \ensuremath{\Varid{cataList}}.
 Este catamorfismo tem um gene \ensuremath{\Varid{g}\mathrel{=}\alt{\Varid{nil}}{\Varid{insert}}} que é responsável
 por olhar para cada \ensuremath{\Conid{Transaction}} e construir \ensuremath{[\mskip1.5mu (\Conid{Entity},\Conid{Value})\mskip1.5mu]}.
-Para cada \ensuremath{\Conid{Transaction}} são adicionados dois novos pares à lista: o primeiro
+
+Para cada \ensuremath{\Conid{Transaction}} verificada são adicionados dois novos pares à lista: o primeiro
 com (Entidade que enviou, - Valor que enviou) e o segundo com (Entidade que
 recebeu, Valor que recebeu).
 
@@ -1624,12 +1626,12 @@ Um número mágico é representado por: \ensuremath{\Conid{MagicNo}\mathbin{::}\
 
 E relembramos também o tipo de \ensuremath{\Conid{Block}}:
 \begin{eqnarray*}
-\ensuremath{\mathbf{type}\;\Conid{Block}\mathrel{=}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
+\ensuremath{\Conid{Block}\mathbin{::}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
 \end{eqnarray*}
 
 
 Assim, numa primeira fase o nosso intuito foi que a função \ensuremath{\Varid{isValidMagicNr}},
-através de um cataBlockchain com um gene:
+através de um \ensuremath{\Varid{cataBlockchain}} com um gene:
 \begin{eqnarray*}
 \start
 \ensuremath{\Varid{g}\mathrel{=}\alt{\Varid{list}}{\Varid{insert}}}
@@ -1639,7 +1641,7 @@ através de um cataBlockchain com um gene:
 \ensuremath{\Varid{insert}\;(\Varid{x},\Varid{y})\mathrel{=}(\p1\;\Varid{x})\mathbin{:}\Varid{y}}
 \end{eqnarray*}
 
-obtivesse uma com lista de todos os números mágicos utilizados na \ensuremath{\Conid{Blockchain}}.
+obtivesse uma lista com todos os números mágicos utilizados na \ensuremath{\Conid{Blockchain}}.
 
 Este \ensuremath{\Varid{cataBlockchain}} pode ser definido pelo seguinte diagrama:
 \begin{eqnarray*}
@@ -1686,6 +1688,10 @@ A função \ensuremath{\Varid{isValidMagicNr}} pode ser então definida como:
 \ColumnHook
 \end{hscode}\resethooks
 \end{enumerate}
+
+\vspace{0.2cm}
+
+Todas as funções pedidas passam nos 100 tests do QuickCheck.
 
 \subsection*{Problema 2}
 
@@ -1755,7 +1761,7 @@ caso da \ensuremath{\Conid{Cell}} (lado esquerdo do \ensuremath{\mathbin{+}}) te
 devolvendo \ensuremath{\Conid{Cell}\;\Varid{a}\;\Conid{Int}\;\Conid{Int}}, para assim a função devolver a informação
 no tipo de dados correto. No caso do \ensuremath{\Conid{Block}}, recebendo
 \ensuremath{(\Varid{q1},(\Varid{q2},(\Varid{q3},\Varid{q4})))} teremos que retornar \ensuremath{\Conid{Block}\;\Varid{q1}\;\Varid{q2}\;\Varid{q3}\;\Varid{q4}}.
-Esta função é definida como um ``either'' porque temos estas duas "hipóteses"
+Esta função é definida como um ``either'' porque temos estas duas hipóteses
 de tipo de dados dentro do tipo de dados \ensuremath{\Conid{QTree}}.
 
 \vspace{0.2cm}
@@ -1828,7 +1834,7 @@ e que g tem um tipo: \ensuremath{\Varid{g}\mathbin{::}\mathit C\to \Conid{D}}:
 }
 \hfill \break
 
-Assim, percebemos de imediata que a função \ensuremath{\Varid{baseQTree}} terá que ser definida como
+Assim, percebemos de imediato que a função \ensuremath{\Varid{baseQTree}} terá que ser definida como
 \ensuremath{(\Varid{f}\times\Varid{id})\mathbin{+}(\Varid{g}\times(\Varid{g}\times(\Varid{g}\times\Varid{g})))}:
 
 \hfill \break
@@ -1842,7 +1848,7 @@ Assim, percebemos de imediata que a função \ensuremath{\Varid{baseQTree}} ter�
 
 \vspace{0.4cm}
 
-O segundo, que é um pouco mais complexo, é apenas um exemplo do que se pode
+O segundo diagrama, que é um pouco mais complexo, é apenas um exemplo do que se pode
 fazer com a combinação destas funções, nomedamente \ensuremath{\Varid{inQTree}}, \ensuremath{\Varid{outQTree}},
 \ensuremath{\Varid{recQTree}}, \ensuremath{\Varid{cataQTree}}, \ensuremath{\Varid{anaQTree}} e \ensuremath{\Varid{hyloQTree}}. Vamos assumir que neste nosso diagrama
 as funções \ensuremath{\Varid{g}} e \ensuremath{\Varid{h}} mencionadas são funções que devolvem a identidade, ou seja,
@@ -1881,7 +1887,7 @@ Assim, com a ajuda destes diagramas, encontramos as definições procuradas.
 
 Por fim, temos \ensuremath{\mathsf{fmap}}, que tem como objetivo aplicar a função \ensuremath{\Varid{f}} a todas
 as \ensuremath{\Conid{Cell}} da \ensuremath{\Conid{QTree}}, mais especificamente ao conteúdo da \ensuremath{\Conid{Cell}} que diz respeito ao
-valor/ objeto da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
+valor da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
 a função \ensuremath{\Varid{f}}.
 
 Assim, decidimos definir a nossa função \ensuremath{\mathsf{fmap}} da seguinte forma:
@@ -1940,11 +1946,11 @@ Sendo \ensuremath{\Varid{g}\;\Varid{f}\mathrel{=}\Varid{inQTree}\comp \Varid{bas
 Em suma, tal como nos diz a própria definição de
 catamorfismo, na seta vertical mais à direita o mesmo é aplicado recursivamente
 à parte direita do \ensuremath{\mathbin{+}} (o \ensuremath{\Conid{Functor}}, ou seja, \ensuremath{\Varid{recQTree}} encarrega-se disso) e,
-depois disso, temos então a "cauda" processada, tal como podemos ver no diagrama.
+depois disso, temos então a "cauda" processada - tal como podemos ver no diagrama.
 O nosso gene \ensuremath{\Varid{g}}
-responsabiliza-se pelo último passo de transformar na \ensuremath{\Conid{Cell}} (lado
-esquerdo do \ensuremath{\mathbin{+}} inferior) o seu conteúdo (através da função \ensuremath{\Varid{f}}) e de juntar tudo numa só
-\ensuremath{\Conid{QTree}}.
+responsabiliza-se agora também pelo último passo que é transformar o contéudo
+da \ensuremath{\Conid{Cell}} (lado esquerdo do \ensuremath{\mathbin{+}} inferior) (através da função \ensuremath{\Varid{f}}) e de juntar
+tudo numa só \ensuremath{\Conid{QTree}}.
 
 \vspace{0.3cm}
 
@@ -2178,19 +2184,19 @@ Basicamente, o que irá acontecer à imagem é perder informação e por isso ``
 
 Para o desenvolvimento desta função recorremos a uma \ensuremath{\Varid{anaQTree}} uma vez que
 consideramos que seria mais simples de tratar o problema usando esse
-conceito/ definição.
+conceito/definição.
 
 De uma forma mais concreta, pensamos em utilizar uma \ensuremath{\Varid{anaQTree}} uma vez que sabiamos que
 ela se iria concentrar em cada nível da árvore gradualmente, começando
 da raiz até às folhas. Assim, de uma forma geral, pensamos
 que a nossa \ensuremath{\Varid{anaQTree}} deveria ter um gene que averigua-se se estamos no
-nível desejado e em caso afirmativa eliminasse toda a \ensuremath{\Conid{QTree}} a partir desse nível.
+nível desejado e em caso afirmativo eliminasse toda a \ensuremath{\Conid{QTree}} a partir desse nível.
 
 
-Assim, passamos para o chamado desenvolvimento do problema:
+Assim, passamos para o desenvolvimento do problema:
 
-Temos por exemplo \ensuremath{\Conid{QTree}} da Figura~\ref{fig:qt},
-que é representada pela \ensuremath{\Conid{QTree}\;\Varid{qt}}, que já vinha também no enunciado:
+Temos por exemplo \ensuremath{\Conid{QTree}} da Figura~\ref{fig:qtt},
+que é representada pela \ensuremath{\Conid{QTree}\;\Varid{qt}}, que já estava presente no enunciado:
 \begin{eqnarray*}
 \start
 \ensuremath{\Varid{qt}\mathrel{=}\Conid{Block}}
@@ -2209,12 +2215,12 @@ que é representada pela \ensuremath{\Conid{QTree}\;\Varid{qt}}, que já vinha t
 \includegraphics[width=0.4\textwidth]{imgs/qt.png}
 \end{center}
 \caption{Esquema da \ensuremath{\Conid{QTree}\;\Varid{qt}}.}
-\label{fig:qt}
+\label{fig:qtt}
 \end{figure}
 
 
 Se quisermos aplicar a função \ensuremath{\Varid{compressQTree}\;\mathrm{2}}, ou seja, comprimir
-dois níveis, o esquema da \ensuremath{\Conid{QTree}} de retorno deverá ser o seguinte
+dois níveis, o esquema da \ensuremath{\Conid{QTree}} de retorno deverá ser
 o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
 \begin{eqnarray*}
 \start
@@ -2238,10 +2244,10 @@ o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
 \end{figure}
 
 Deste modo, apercebemo-nos que teriamos que ter uma função que nos ``cortasse'' todos
-os ramos da \ensuremath{\Conid{QTree}} a abolir. Percebemos através da Figura~\ref{fig:qt}
+os ramos da \ensuremath{\Conid{QTree}} a abolir. Percebemos através da Figura~\ref{fig:qtt}
 e da Figura~\ref{fig:qtcompress2} que
 se essa função, que poderá chamar-se \ensuremath{\Varid{corta}}, receber como parâmetro a parte da
-\ensuremath{\Conid{Qtree}} a eliminar deveremos transforma-la numa única \ensuremath{\Conid{Cell}}.
+\ensuremath{\Conid{Qtree}} a eliminar deveremos transformá-la numa única \ensuremath{\Conid{Cell}}.
 
 Nesta fase, tivemos que perceber quais as dimensões da \ensuremath{\Conid{Cell}}
 resultado pelo que, por exemplo, se tivermos:
@@ -2264,8 +2270,7 @@ A \ensuremath{\Conid{Cell}} resultado deverá ser:
 \ensuremath{\Conid{Cell}\;\mathrm{0}\;\mathrm{5}\;\mathrm{4}}
 \end{eqnarray*}
 
-E em modo matriz:
-Representado por:
+E em modo matriz representado por:
 \begin{tabbing}\ttfamily
 ~\char40{}~0~0~0~0~0~\char41{}\\
 \ttfamily ~\char40{}~0~0~0~0~0~\char41{}\\
@@ -2328,16 +2333,16 @@ para baixo e não volta para cima, por isso, quando o sub-ramo tiver uma profund
 igual ao número de níveis a cortar sabemos que é esse o nível que procuramos,
 para podermos aplicar a nossa função \ensuremath{\Varid{corta}}. Se ainda não tivermos chegado
 ao nível que procuramos, a função \ensuremath{\Varid{compress}} deverá devolver a \ensuremath{\Conid{QTree}}, ou seja,
-o ramo, intacto.
+o ramo intacto.
 
 Tivemos que ter em consideração o caso em que o número de níveis a cortar
 é maior que toda a profundidade da árvore, sendo que neste caso toda a \ensuremath{\Conid{QTree}}
-deverá ser cortada (é aplicada à função \ensuremath{\Varid{cortar}}) ficando somente a \ensuremath{\Conid{Cell}}
+deverá ser cortada (a sua raiz é aplicada à função \ensuremath{\Varid{cortar}}) ficando somente a \ensuremath{\Conid{Cell}}
 comprimida.
 
-É ainda mencionar que, tendo em conta o tipo de \ensuremath{\Varid{anaQTree}}, a nossa \ensuremath{\Varid{compress}}
+É ainda de mencionar que, tendo em conta o tipo de \ensuremath{\Varid{anaQTree}}, a nossa \ensuremath{\Varid{compress}}
 deverá retornar sempre uma \ensuremath{\Conid{QTree}} ``aberta'' e, assim, aplicamos
-a função \ensuremath{\Varid{outQTree}}.
+a função \ensuremath{\Varid{outQTree}} tal como se pode ver na definição de \ensuremath{\Varid{compressQTree}}.
 
 
 Finalmente, juntando todos estes passos, temos a função \ensuremath{\Varid{compressQTree}} definida:
@@ -2397,37 +2402,35 @@ a Figura~\ref{fig:compress2}, a Figura~\ref{fig:compress3}
 e a Figura~\ref{fig:compress4}.
 
 \begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/compress1.png}
-    \end{center}
-    \caption{Figura Person comprimida em 1 nível.}
-    \label{fig:compress1}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/compress1.png}
+\caption{Figura Person comprimida em 1 nível.}
+\label{fig:compress1}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.23\textwidth]{imgs/compress2.png}
-    \end{center}
-    \caption{Figura Person comprimida em 2 níveis.}
-    \label{fig:compress2}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.23\textwidth]{imgs/compress2.png}
+\caption{Figura Person comprimida em 2 níveis.}
+\label{fig:compress2}
 \end{subfigure}
-\end{figure}
-
-\begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/compress3.png}
-    \end{center}
-    \caption{Figura Person comprimida em 3 níveis.}
-    \label{fig:compress3}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/compress3.png}
+\caption{Figura Person comprimida em 3 níveis.}
+\label{fig:compress3}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.22\textwidth]{imgs/compress4.png}
-    \end{center}
-    \caption{Figura Person comprimida em 4 níveis.}
-    \label{fig:compress4}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.22\textwidth]{imgs/compress4.png}
+\caption{Figura Person comprimida em 4 níveis.}
+\label{fig:compress4}
 \end{subfigure}
+%
 \end{figure}
 
 
@@ -2439,7 +2442,7 @@ contorno de uma malha poligonal contida na imagem.
 
 Após analisar o problema e as funções que o enunciado já fornece percebemos
 que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
-Esta função é a função \ensuremath{\Varid{qt2bm}}, que converte uma \ensuremath{\Conid{QTree}\;\Varid{a}} em \ensuremath{\Conid{Matrix}\;\Varid{a}}.
+Esta função chama-se \ensuremath{\Varid{qt2bm}} e converte uma \ensuremath{\Conid{QTree}\;\Varid{a}} em \ensuremath{\Conid{Matrix}\;\Varid{a}}.
 
 \begin{eqnarray*}
 \start
@@ -2452,7 +2455,7 @@ Esta função é a função \ensuremath{\Varid{qt2bm}}, que converte uma \ensure
 \ensuremath{\Varid{g}\;(\Varid{a},(\Varid{b},(\Varid{c},\Varid{d})))\mathrel{=}(\Varid{a}\mathbin{<}}> b) <-> (c <\ensuremath{\mathbin{>}\Varid{d})}
 \end{eqnarray*}
 
-Assim, olhamos para o gene do \ensuremath{\Varid{cataQTree}\;\alt{\Varid{f}}{\Varid{g}}} e pensamos no que teremos
+Assim, olhamos para o gene do \ensuremath{\Varid{cataQTree}} \ensuremath{\alt{\Varid{f}}{\Varid{g}}} e pensamos no que teremos
 que alterar para a nossa função \ensuremath{\Varid{outlineQTree}} retornar uma \ensuremath{\Conid{Matrix}\;\Conid{Bool}}.
 Sabemos que teremos que aplicar a função passada como parâmetro às \ensuremath{\Conid{Cell}}
 de modo a saber se a mesma se trata de um píxel (conjunto de píxeis) de fundo.
@@ -2483,7 +2486,7 @@ ou seja, isso acontece quando \ensuremath{\Varid{x}\equiv \mathrm{1}} ou \ensure
 
 \item \ensuremath{\Conid{False}}- O contéudo da \ensuremath{\Conid{Cell}} não ser um píxel de fundo:
 
-Neste caso, basta aplicar a função \ensuremath{matrix} onde o conteúdo dos
+Neste caso, basta aplicar a função \ensuremath{matrix} onde o conteúdo de todos os
 elementos é \ensuremath{\Conid{False}}.
 
 \end{enumerate}
@@ -2513,20 +2516,21 @@ Consequentemente, temos todos os dados para definir a nossa função \ensuremath
 \end{hscode}\resethooks
 
 \begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/outline1.png}
-    \end{center}
-    \caption{Figura Person produzida com a função \ensuremath{\Varid{outlineBMP}}.}
-    \label{fig:outline1}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/outline1.png}
+\caption{Figura Person produzida com a função \ensuremath{\Varid{outlineBMP}}.}
+\label{fig:outline1}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/outline2.png}
-    \end{center}
-    \caption{Figura Person produzida com a função \ensuremath{\Varid{addOutlineBMP}}.}
-    \label{fig:outline2}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.27\textwidth]{imgs/outline2.png}
+\caption{Figura Person produzida com a função \ensuremath{\Varid{addOutlineBMP}}.}
+\label{fig:outline2}
 \end{subfigure}
+%
 \end{figure}
 
 
@@ -2537,6 +2541,7 @@ e a Figura~\ref{fig:outline2}.
 
 \end{enumerate}
 
+\vspace{0.2cm}
 
 É ainda de salientar que todas as funções do problema passaram em todos os testes
 do QuickCheck e nos Testes Unitários.
@@ -3023,6 +3028,10 @@ Deste modo, obtemos os dois resultados pretendidos:
 \ColumnHook
 \end{hscode}\resethooks
 
+\vspace{0.2cm}
+
+O problema passa nos 100 testes do QuickCheck.
+
 \subsection*{Problema 4}
 
 O quarto problema aborda \ensuremath{\Conid{Fractais}}. Fractais são formas geométricas que
@@ -3102,7 +3111,7 @@ Temos também as seguintes funções:
 
 Tal como nas funções \ensuremath{\Varid{inFTree}} e \ensuremath{\Varid{outFTree}}, estas quatro funções também
 são muito semelhantes às desenvolvidas no Problema 2 pelo que não iremos voltar
-a entrar em pormenor porque a justificação é praticamente a mesma.
+a entrar em pormenor.
 
 O diagrama que agrega todas estas funções é o seguinte, partindo do mesmo princípio
 que, a título de exemplo, os genes \ensuremath{\Varid{g}} e \ensuremath{\Varid{h}} não alteram a \ensuremath{\Conid{FTree}} (são \ensuremath{\Varid{id}}):
@@ -3134,6 +3143,7 @@ A função \ensuremath{\Varid{hyloFTree}} é definida como sendo \ensuremath{\Va
 ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
 argumento da função \ensuremath{\Varid{anaFTree}} até ao retorno da função \ensuremath{\Varid{cataFTree}}.
 
+\vspace{0.3cm}
 
 A função \ensuremath{\Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{h}}, que possui o tipo:
 \begin{eqnarray*}
@@ -3150,7 +3160,7 @@ A função \ensuremath{\Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{h}}, que 
 \end{eqnarray*}
 
 
-Tem o objetivo de alterar os argumentos da FTree aplicando-lhe funções
+Tem o objetivo de alterar os argumentos da \ensuremath{\Conid{FTree}} aplicando-lhe funções
 tal como podemos ver no diagrama em seguida,
 assumindo que \ensuremath{\Varid{f}\mathbin{:}\Varid{a1}\to \Varid{b1}}, \ensuremath{\Varid{g}\mathbin{:}\Varid{a2}\to \Varid{b2}} e \ensuremath{\Varid{h}\mathbin{:}\Varid{a3}\to \Varid{d}}.
 \begin{eqnarray*}
@@ -3187,7 +3197,7 @@ Temos ainda um \ensuremath{\Conid{Bifuntor}}:
 \ColumnHook
 \end{hscode}\resethooks
 
-O gene \ensuremath{\Varid{g}\mathrel{=}\Varid{inFTree}\comp \Varid{baseFTree}\;\Varid{f}\;\Varid{h}\;\Varid{id}} do cataFTree pode ser demonstrado
+O gene \ensuremath{\Varid{g}\mathrel{=}\Varid{inFTree}\comp \Varid{baseFTree}\;\Varid{f}\;\Varid{h}\;\Varid{id}} do \ensuremath{\Varid{cataFTree}} pode ser demonstrado
 através do seguinte diagrama, onde assumimos que \ensuremath{\Varid{f}\mathbin{:}\Varid{a1}\to \Varid{b1}} e \ensuremath{\Varid{h}\mathbin{:}\Varid{a2}\to \Varid{b2}}.
 \begin{eqnarray*}
 \xymatrix@C=20cm{
@@ -3219,15 +3229,17 @@ Construindo o \ensuremath{\Varid{cataFTree}} aplicado ao gene referido anteriorm
 \end{eqnarray*}
 
 Mais uma vez, as justificações do Problema 2 relaticamente à função \ensuremath{\mathsf{fmap}} fazem
-um ``match'' com a função \ensuremath{\Varid{bimap}}, pelo que uma explicação mais detalhada acerca desta
-última função pode ser encontrada no Problema 2.
+um ``match'' com a função \ensuremath{\Varid{bimap}}, pelo que uma explicação mais detalhada
+pode ser encontrada no Problema 2.
+
+\vspace{0.2cm}
 
 Temos ainda o tipo de dados \ensuremath{\Conid{PTree}} composto por:
 \begin{eqnarray*}
 \ensuremath{\Conid{PTree}\mathbin{::}\Conid{FTree}\;\Conid{Square}\;\Conid{Square}}
 \end{eqnarray*}
 
-Onde \ensuremath{\Conid{Square}}:
+Onde:
 \begin{eqnarray*}
 \ensuremath{\Conid{Square}\mathbin{::}\Conid{Float}}
 \end{eqnarray*}
@@ -3259,8 +3271,7 @@ Tal como indica o enunciado, definimos esta função como uma \ensuremath{\Varid
 \end{hscode}\resethooks
 
 
-Assim, através do seguinte diagrama conseguimos ver os
-tipos do gene do \ensuremath{\Varid{anaFTree}}:
+O gene do \ensuremath{\Varid{anaFTree}}:
 \begin{eqnarray*}
 \start
 \ensuremath{\Varid{g}\mathrel{=}((\underline{\mathrm{0}}\mathbin{+}\conj{\Varid{m}}{\conj{\Varid{id}}{\Varid{id}}})\comp \Varid{outNat}}
@@ -3268,7 +3279,7 @@ tipos do gene do \ensuremath{\Varid{anaFTree}}:
 \ensuremath{\Varid{m}\;\Varid{x}\mathrel{=}\mathrm{50}\mathbin{*}(\Varid{sqrt}\;(\mathrm{2})\mathbin{/}\mathrm{2})\mathbin{\uparrow}\Varid{abs}\;(\Varid{x}\mathbin{-}\Varid{a})}
 \end{eqnarray*}
 
-Que podem ser representados pelo seguinte diagrama:
+Pode ser representado pelo seguinte diagrama:
 \begin{eqnarray*}
 \xymatrix@C=20cm{
     \ensuremath{\Conid{Int}}
@@ -3282,7 +3293,7 @@ Que podem ser representados pelo seguinte diagrama:
 \end{eqnarray*}
 
 
-Com o anamorfismo obtemos o seguinte diagrama:
+E com o anamorfismo obtemos o seguinte diagrama:
 \begin{eqnarray}
 \xymatrix@C=4cm{
     \ensuremath{\Conid{Int}}
@@ -3303,7 +3314,8 @@ Onde \ensuremath{\Conid{PT}\mathbin{::}\Conid{PTree}\;(\Conid{FTree}\;\Conid{Squ
 
 O que acontece é que o o \ensuremath{\Varid{m}\;\Varid{x}} irá criar um \ensuremath{\Conid{Square}}, onde o \ensuremath{\conj{\Varid{m}}{\conj{\Varid{id}}{\Varid{id}}})}
 irá obter o resultado \ensuremath{\Conid{Square}\times(\N_0\times\N_0)}. Para cada um dos \ensuremath{\N_0},
-irá ser aplicado o anamorfismo de modo a obtermos a \ensuremath{\Conid{PTree}\;(\Conid{FTree}\;\Conid{Square}\;\Conid{Square})}.
+irá ser aplicado o anamorfismo de modo a obtermos a \ensuremath{\Conid{PTree}\;(\Conid{FTree}\;\Conid{Square}\;\Conid{Square})}
+desejada.
 
 
 
@@ -3313,13 +3325,9 @@ O objetivo de \ensuremath{\Varid{drawPTree}} é animar incrementalmente os passo
 uma função de Pitágoras recorrendo à biblioteca gloss.
 
 
-
-
-...
-
-
-
-
+A função draw é um anamorfismo que recebe como argumento uma PTree e devolve
+ uma lista de Picture que contém os níveis sucessivos de
+construção duma árvore de quadrados de Pitágoras.
 
 
 \begin{hscode}\SaveRestoreHook
@@ -3375,6 +3383,28 @@ uma função de Pitágoras recorrendo à biblioteca gloss.
 \ColumnHook
 \end{hscode}\resethooks
 
+O gene do anamorfismo desconstrói o número natural resultante do cálculo da
+profundidade da PTree argumento. Em seguida é aplicado um Either que, caso o
+resultado da desconstrução seja "1" devolve uma lista vazia ou um Split da
+função que constrói uma picture correspondente a um passo da construção ou Id.
+
+Com o anamorfismo obtemos o seguinte diagrama:
+\begin{eqnarray}
+\xymatrix@C=4cm{
+    \ensuremath{\Conid{Int}}
+        \ar[d]_-{\ensuremath{\Varid{anaList}\;\Varid{g}}}
+        \ar[r]^-{\ensuremath{\Varid{g}\mathrel{=}\Varid{nil}\mathbin{+}\conj{\Varid{list}}{\Varid{id}}}}
+&
+    \ensuremath{\mathrm{1}+(\Conid{Picure}\;\Varid{x}\;\Conid{Int})}
+           \ar[d]^{\ensuremath{\Varid{recList}\;(\Varid{anaList}\;\Varid{g})}}
+\\
+     \ensuremath{[\mskip1.5mu \Conid{Picture}\mskip1.5mu]}
+&
+     \ensuremath{\Varid{nil}+(\Conid{Picure},[\mskip1.5mu \Conid{Picture}\mskip1.5mu])}
+           \ar[l]^-{\ensuremath{\Varid{inList}}}
+}
+\end{eqnarray}
+
 Tal como sugere no enunciado, se corremos \ensuremath{\Varid{animatePTree}\;\mathrm{3}} os passos que vão aparecendo
 no ecrão encontram-se na Figura~\ref{fig:animate1}, Figura~\ref{fig:animate2} e
 Figura~\ref{fig:animate3}, respetivamente.
@@ -3392,7 +3422,7 @@ Figura~\ref{fig:animate3}, respetivamente.
 \centering
 \includegraphics[width=0.25\textwidth]{imgs/animate2.png}
 \caption{Árvore de Pitágoras em construção momento $2$.}
-\label{fig:animate1}
+\label{fig:animate2}
 \end{subfigure}
 %
 \begin{subfigure}{0.5\textwidth}
@@ -3418,7 +3448,9 @@ Aplicando para um parâmetro maior, neste caso igual a 15, obtemos a
 
 \end{enumerate}
 
+\vspace{0.2cm}
 
+Para este problema, os testes do QuickCheck também dão todos corretos.
 
 \subsection*{Problema 5}
 
@@ -3613,6 +3645,9 @@ dividirmos. A segunda é aplicar o construtor \ensuremath{\Conid{D}}, do módulo
 ao resultado do \ensuremath{\map }
 para assim conseguirmos obter o tipo de dados desejado.
 
+\vspace{0.2cm}
+
+Estas funções passam nos testes unitários fornecidos pelo enunciado.
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
 Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}

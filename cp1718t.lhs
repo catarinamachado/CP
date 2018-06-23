@@ -1116,7 +1116,7 @@ algo do género |allTransactions = cataBlockchain g|.
 
 Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
-|type Block = (MagicNo, (Time, Transactions))|
+|Block :: (MagicNo, (Time, Transactions))|
 \end{eqnarray*}
 
 E o tipo de Blockchain já apresentado, deduzimos que o |g| terá que ser um ``either'',
@@ -1135,14 +1135,14 @@ ser |Transactions|, o objetivo desta função será "retirar" do |Block| as |Tra
 
 Assim, teremos que definir |b0| com projeções |p2| como podemos verificar no diagrama
 em seguida:
-\hfill \break
+\begin{eqnarray*}
 \xymatrix@@C=20cm{
     |MagicNo >< (Time >< Transactions)|
            \ar[d]_-{|p2 . p2|}
 \\
     |Transactions|
 }
-\hfill \break
+\end{eqnarray*}
 
 Deste modo, fica definido |b0| como:
 \begin{eqnarray*}
@@ -1208,12 +1208,14 @@ O tipo de uma Transação é o seguinte:
 |(Entity, (Value, Entity))|
 \end{eqnarray*}
 Sendo o primeiro |Entity| a entidade que envia o valor a ser transacionado
-e o segundo o que diz respeito à entidade que recebe.
+e o segundo o que recebe.
 
-Assim, após termos a |[Transaction]| aplicamos-lhe um |cataList|.
+Assim, após termos a |[Transaction]| (resultado da função |allTransactions|)
+aplicamos-lhe um |cataList|.
 Este catamorfismo tem um gene |g = either nil insert| que é responsável
 por olhar para cada |Transaction| e construir |[(Entity, Value)]|.
-Para cada |Transaction| são adicionados dois novos pares à lista: o primeiro
+
+Para cada |Transaction| verificada são adicionados dois novos pares à lista: o primeiro
 com (Entidade que enviou, - Valor que enviou) e o segundo com (Entidade que
 recebeu, Valor que recebeu).
 
@@ -1270,12 +1272,12 @@ Um número mágico é representado por: |MagicNo :: String|.
 
 E relembramos também o tipo de |Block|:
 \begin{eqnarray*}
-|type Block = (MagicNo, (Time, Transactions))|
+|Block :: (MagicNo, (Time, Transactions))|
 \end{eqnarray*}
 
 
 Assim, numa primeira fase o nosso intuito foi que a função |isValidMagicNr|,
-através de um cataBlockchain com um gene:
+através de um |cataBlockchain| com um gene:
 \begin{eqnarray*}
 \start
 |g = either list insert|
@@ -1285,7 +1287,7 @@ através de um cataBlockchain com um gene:
 |insert(x,y) = (p1 x) : y|
 \end{eqnarray*}
 
-obtivesse uma com lista de todos os números mágicos utilizados na |Blockchain|.
+obtivesse uma lista com todos os números mágicos utilizados na |Blockchain|.
 
 Este |cataBlockchain| pode ser definido pelo seguinte diagrama:
 \begin{eqnarray*}
@@ -1323,6 +1325,10 @@ isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( eith
             insert(x,y) = (p1 x) : y
 \end{code}
 \end{enumerate}
+
+\vspace{0.2cm}
+
+Todas as funções pedidas passam nos 100 tests do QuickCheck.
 
 \subsection*{Problema 2}
 
@@ -1384,7 +1390,7 @@ caso da |Cell| (lado esquerdo do |+|) temos que ajustar o parâmetro recebido |(
 devolvendo |Cell a Int Int|, para assim a função devolver a informação
 no tipo de dados correto. No caso do |Block|, recebendo
 |(q1, (q2, (q3, q4)))| teremos que retornar |Block q1 q2 q3 q4|.
-Esta função é definida como um ``either'' porque temos estas duas "hipóteses"
+Esta função é definida como um ``either'' porque temos estas duas hipóteses
 de tipo de dados dentro do tipo de dados |QTree|.
 
 \vspace{0.2cm}
@@ -1454,7 +1460,7 @@ e que g tem um tipo: |g :: C -> D|:
 }
 \hfill \break
 
-Assim, percebemos de imediata que a função |baseQTree| terá que ser definida como
+Assim, percebemos de imediato que a função |baseQTree| terá que ser definida como
 |(f >< id) + (g >< (g >< (g >< g)))|:
 
 \hfill \break
@@ -1468,7 +1474,7 @@ Assim, percebemos de imediata que a função |baseQTree| terá que ser definida 
 
 \vspace{0.4cm}
 
-O segundo, que é um pouco mais complexo, é apenas um exemplo do que se pode
+O segundo diagrama, que é um pouco mais complexo, é apenas um exemplo do que se pode
 fazer com a combinação destas funções, nomedamente |inQTree|, |outQTree|,
 |recQTree|, |cataQTree|, |anaQTree| e |hyloQTree|. Vamos assumir que neste nosso diagrama
 as funções |g| e |h| mencionadas são funções que devolvem a identidade, ou seja,
@@ -1507,7 +1513,7 @@ Assim, com a ajuda destes diagramas, encontramos as definições procuradas.
 
 Por fim, temos |fmap|, que tem como objetivo aplicar a função |f| a todas
 as |Cell| da |QTree|, mais especificamente ao conteúdo da |Cell| que diz respeito ao
-valor/ objeto da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
+valor da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
 a função |f|.
 
 Assim, decidimos definir a nossa função |fmap| da seguinte forma:
@@ -1560,11 +1566,11 @@ Sendo |g f = inQTree . baseQTree f id|.
 Em suma, tal como nos diz a própria definição de
 catamorfismo, na seta vertical mais à direita o mesmo é aplicado recursivamente
 à parte direita do |+| (o |Functor|, ou seja, |recQTree| encarrega-se disso) e,
-depois disso, temos então a "cauda" processada, tal como podemos ver no diagrama.
+depois disso, temos então a "cauda" processada - tal como podemos ver no diagrama.
 O nosso gene |g|
-responsabiliza-se pelo último passo de transformar na |Cell| (lado
-esquerdo do |+| inferior) o seu conteúdo (através da função |f|) e de juntar tudo numa só
-|QTree|.
+responsabiliza-se agora também pelo último passo que é transformar o contéudo
+da |Cell| (lado esquerdo do |+| inferior) (através da função |f|) e de juntar
+tudo numa só |QTree|.
 
 \vspace{0.3cm}
 
@@ -1774,19 +1780,19 @@ Basicamente, o que irá acontecer à imagem é perder informação e por isso ``
 
 Para o desenvolvimento desta função recorremos a uma |anaQTree| uma vez que
 consideramos que seria mais simples de tratar o problema usando esse
-conceito/ definição.
+conceito/definição.
 
 De uma forma mais concreta, pensamos em utilizar uma |anaQTree| uma vez que sabiamos que
 ela se iria concentrar em cada nível da árvore gradualmente, começando
 da raiz até às folhas. Assim, de uma forma geral, pensamos
 que a nossa |anaQTree| deveria ter um gene que averigua-se se estamos no
-nível desejado e em caso afirmativa eliminasse toda a |QTree| a partir desse nível.
+nível desejado e em caso afirmativo eliminasse toda a |QTree| a partir desse nível.
 
 
-Assim, passamos para o chamado desenvolvimento do problema:
+Assim, passamos para o desenvolvimento do problema:
 
-Temos por exemplo |QTree| da Figura~\ref{fig:qt},
-que é representada pela |QTree qt|, que já vinha também no enunciado:
+Temos por exemplo |QTree| da Figura~\ref{fig:qtt},
+que é representada pela |QTree qt|, que já estava presente no enunciado:
 \begin{eqnarray*}
 \start
 |qt = Block|
@@ -1805,12 +1811,12 @@ que é representada pela |QTree qt|, que já vinha também no enunciado:
 \includegraphics[width=0.4\textwidth]{imgs/qt.png}
 \end{center}
 \caption{Esquema da |QTree qt|.}
-\label{fig:qt}
+\label{fig:qtt}
 \end{figure}
 
 
 Se quisermos aplicar a função |compressQTree 2|, ou seja, comprimir
-dois níveis, o esquema da |QTree| de retorno deverá ser o seguinte
+dois níveis, o esquema da |QTree| de retorno deverá ser
 o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
 \begin{eqnarray*}
 \start
@@ -1834,10 +1840,10 @@ o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
 \end{figure}
 
 Deste modo, apercebemo-nos que teriamos que ter uma função que nos ``cortasse'' todos
-os ramos da |QTree| a abolir. Percebemos através da Figura~\ref{fig:qt}
+os ramos da |QTree| a abolir. Percebemos através da Figura~\ref{fig:qtt}
 e da Figura~\ref{fig:qtcompress2} que
 se essa função, que poderá chamar-se |corta|, receber como parâmetro a parte da
-|Qtree| a eliminar deveremos transforma-la numa única |Cell|.
+|Qtree| a eliminar deveremos transformá-la numa única |Cell|.
 
 Nesta fase, tivemos que perceber quais as dimensões da |Cell|
 resultado pelo que, por exemplo, se tivermos:
@@ -1860,8 +1866,7 @@ A |Cell| resultado deverá ser:
 |Cell 0 5 4|
 \end{eqnarray*}
 
-E em modo matriz:
-Representado por:
+E em modo matriz representado por:
 \begin{verbatim}
 ( 0 0 0 0 0 )
 ( 0 0 0 0 0 )
@@ -1924,16 +1929,16 @@ para baixo e não volta para cima, por isso, quando o sub-ramo tiver uma profund
 igual ao número de níveis a cortar sabemos que é esse o nível que procuramos,
 para podermos aplicar a nossa função |corta|. Se ainda não tivermos chegado
 ao nível que procuramos, a função |compress| deverá devolver a |QTree|, ou seja,
-o ramo, intacto.
+o ramo intacto.
 
 Tivemos que ter em consideração o caso em que o número de níveis a cortar
 é maior que toda a profundidade da árvore, sendo que neste caso toda a |QTree|
-deverá ser cortada (é aplicada à função |cortar|) ficando somente a |Cell|
+deverá ser cortada (a sua raiz é aplicada à função |cortar|) ficando somente a |Cell|
 comprimida.
 
-É ainda mencionar que, tendo em conta o tipo de |anaQTree|, a nossa |compress|
+É ainda de mencionar que, tendo em conta o tipo de |anaQTree|, a nossa |compress|
 deverá retornar sempre uma |QTree| ``aberta'' e, assim, aplicamos
-a função |outQTree|.
+a função |outQTree| tal como se pode ver na definição de |compressQTree|.
 
 
 Finalmente, juntando todos estes passos, temos a função |compressQTree| definida:
@@ -1975,37 +1980,35 @@ a Figura~\ref{fig:compress2}, a Figura~\ref{fig:compress3}
 e a Figura~\ref{fig:compress4}.
 
 \begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/compress1.png}
-    \end{center}
-    \caption{Figura Person comprimida em 1 nível.}
-    \label{fig:compress1}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/compress1.png}
+\caption{Figura Person comprimida em 1 nível.}
+\label{fig:compress1}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.23\textwidth]{imgs/compress2.png}
-    \end{center}
-    \caption{Figura Person comprimida em 2 níveis.}
-    \label{fig:compress2}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.23\textwidth]{imgs/compress2.png}
+\caption{Figura Person comprimida em 2 níveis.}
+\label{fig:compress2}
 \end{subfigure}
-\end{figure}
-
-\begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/compress3.png}
-    \end{center}
-    \caption{Figura Person comprimida em 3 níveis.}
-    \label{fig:compress3}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/compress3.png}
+\caption{Figura Person comprimida em 3 níveis.}
+\label{fig:compress3}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.22\textwidth]{imgs/compress4.png}
-    \end{center}
-    \caption{Figura Person comprimida em 4 níveis.}
-    \label{fig:compress4}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.22\textwidth]{imgs/compress4.png}
+\caption{Figura Person comprimida em 4 níveis.}
+\label{fig:compress4}
 \end{subfigure}
+%
 \end{figure}
 
 
@@ -2017,7 +2020,7 @@ contorno de uma malha poligonal contida na imagem.
 
 Após analisar o problema e as funções que o enunciado já fornece percebemos
 que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
-Esta função é a função |qt2bm|, que converte uma |QTree a| em |Matrix a|.
+Esta função chama-se |qt2bm| e converte uma |QTree a| em |Matrix a|.
 
 \begin{eqnarray*}
 \start
@@ -2030,7 +2033,7 @@ Esta função é a função |qt2bm|, que converte uma |QTree a| em |Matrix a|.
 |g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)|
 \end{eqnarray*}
 
-Assim, olhamos para o gene do |cataQTree (either f g)| e pensamos no que teremos
+Assim, olhamos para o gene do |cataQTree| |(either f g)| e pensamos no que teremos
 que alterar para a nossa função |outlineQTree| retornar uma |Matrix Bool|.
 Sabemos que teremos que aplicar a função passada como parâmetro às |Cell|
 de modo a saber se a mesma se trata de um píxel (conjunto de píxeis) de fundo.
@@ -2061,7 +2064,7 @@ ou seja, isso acontece quando |x == 1| ou |y == 1| ou |x == largura maxima| ou
 
 \item |False|- O contéudo da |Cell| não ser um píxel de fundo:
 
-Neste caso, basta aplicar a função |matrix| onde o conteúdo dos
+Neste caso, basta aplicar a função |matrix| onde o conteúdo de todos os
 elementos é |False|.
 
 \end{enumerate}
@@ -2078,20 +2081,21 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
 \end{code}
 
 \begin{figure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/outline1.png}
-    \end{center}
-    \caption{Figura Person produzida com a função |outlineBMP|.}
-    \label{fig:outline1}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/outline1.png}
+\caption{Figura Person produzida com a função |outlineBMP|.}
+\label{fig:outline1}
 \end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{imgs/outline2.png}
-    \end{center}
-    \caption{Figura Person produzida com a função |addOutlineBMP|.}
-    \label{fig:outline2}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.27\textwidth]{imgs/outline2.png}
+\caption{Figura Person produzida com a função |addOutlineBMP|.}
+\label{fig:outline2}
 \end{subfigure}
+%
 \end{figure}
 
 
@@ -2102,6 +2106,7 @@ e a Figura~\ref{fig:outline2}.
 
 \end{enumerate}
 
+\vspace{0.2cm}
 
 É ainda de salientar que todas as funções do problema passaram em todos os testes
 do QuickCheck e nos Testes Unitários.
@@ -2657,6 +2662,10 @@ base k = (1, k + 1, 1, 1)
 loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \end{code}
 
+\vspace{0.2cm}
+
+O problema passa nos 100 testes do QuickCheck.
+
 \subsection*{Problema 4}
 
 O quarto problema aborda |Fractais|. Fractais são formas geométricas que
@@ -2724,7 +2733,7 @@ hyloFTree a c = cataFTree a . anaFTree c
 
 Tal como nas funções |inFTree| e |outFTree|, estas quatro funções também
 são muito semelhantes às desenvolvidas no Problema 2 pelo que não iremos voltar
-a entrar em pormenor porque a justificação é praticamente a mesma.
+a entrar em pormenor.
 
 O diagrama que agrega todas estas funções é o seguinte, partindo do mesmo princípio
 que, a título de exemplo, os genes |g| e |h| não alteram a |FTree| (são |id|):
@@ -2756,6 +2765,7 @@ A função |hyloFTree| é definida como sendo |hyloFTree h g = cataFTree h . ana
 ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
 argumento da função |anaFTree| até ao retorno da função |cataFTree|.
 
+\vspace{0.3cm}
 
 A função |baseFTree f g h|, que possui o tipo:
 \begin{eqnarray*}
@@ -2772,7 +2782,7 @@ A função |baseFTree f g h|, que possui o tipo:
 \end{eqnarray*}
 
 
-Tem o objetivo de alterar os argumentos da FTree aplicando-lhe funções
+Tem o objetivo de alterar os argumentos da |FTree| aplicando-lhe funções
 tal como podemos ver no diagrama em seguida,
 assumindo que |f : a1 -> b1|, |g : a2 -> b2| e |h : a3 -> d|.
 \begin{eqnarray*}
@@ -2796,7 +2806,7 @@ instance Bifunctor FTree where
     bimap f g = cataFTree ( inFTree . baseFTree f g id )
 \end{code}
 
-O gene |g = inFTree . baseFTree f h id| do cataFTree pode ser demonstrado
+O gene |g = inFTree . baseFTree f h id| do |cataFTree| pode ser demonstrado
 através do seguinte diagrama, onde assumimos que |f : a1 -> b1| e |h : a2 -> b2|.
 \begin{eqnarray*}
 \xymatrix@@C=20cm{
@@ -2828,15 +2838,17 @@ Construindo o |cataFTree| aplicado ao gene referido anteriormente temos:
 \end{eqnarray*}
 
 Mais uma vez, as justificações do Problema 2 relaticamente à função |fmap| fazem
-um ``match'' com a função |bimap|, pelo que uma explicação mais detalhada acerca desta
-última função pode ser encontrada no Problema 2.
+um ``match'' com a função |bimap|, pelo que uma explicação mais detalhada
+pode ser encontrada no Problema 2.
+
+\vspace{0.2cm}
 
 Temos ainda o tipo de dados |PTree| composto por:
 \begin{eqnarray*}
 |PTree :: FTree Square Square|
 \end{eqnarray*}
 
-Onde |Square|:
+Onde:
 \begin{eqnarray*}
 |Square :: Float|
 \end{eqnarray*}
@@ -2859,8 +2871,7 @@ generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
 \end{code}
 
 
-Assim, através do seguinte diagrama conseguimos ver os
-tipos do gene do |anaFTree|:
+O gene do |anaFTree|:
 \begin{eqnarray*}
 \start
 |g = (((const 0) + (split m (split id id))) . outNat|
@@ -2868,7 +2879,7 @@ tipos do gene do |anaFTree|:
 |m x = 50 * (sqrt(2) / 2) ^ abs(x-a)|
 \end{eqnarray*}
 
-Que podem ser representados pelo seguinte diagrama:
+Pode ser representado pelo seguinte diagrama:
 \begin{eqnarray*}
 \xymatrix@@C=20cm{
     |Int|
@@ -2882,7 +2893,7 @@ Que podem ser representados pelo seguinte diagrama:
 \end{eqnarray*}
 
 
-Com o anamorfismo obtemos o seguinte diagrama:
+E com o anamorfismo obtemos o seguinte diagrama:
 \begin{eqnarray}
 \xymatrix@@C=4cm{
     |Int|
@@ -2903,7 +2914,8 @@ Onde |PT :: PTree (FTree Square Square)|.
 
 O que acontece é que o o |m x| irá criar um |Square|, onde o |split m (split id id))|
 irá obter o resultado |Square >< (Nat0 >< Nat0)|. Para cada um dos |Nat0|,
-irá ser aplicado o anamorfismo de modo a obtermos a |PTree(FTree Square Square)|.
+irá ser aplicado o anamorfismo de modo a obtermos a |PTree(FTree Square Square)|
+desejada.
 
 
 
@@ -2913,10 +2925,8 @@ O objetivo de |drawPTree| é animar incrementalmente os passos de construção d
 uma função de Pitágoras recorrendo à biblioteca gloss.
 
 
-
-
 A função draw é um anamorfismo que recebe como argumento uma PTree e devolve
-como resultado uma lista de Picture que contém os níveis sucessivos de
+ uma lista de Picture que contém os níveis sucessivos de
 construção duma árvore de quadrados de Pitágoras.
 
 
@@ -2978,7 +2988,7 @@ Figura~\ref{fig:animate3}, respetivamente.
 \centering
 \includegraphics[width=0.25\textwidth]{imgs/animate2.png}
 \caption{Árvore de Pitágoras em construção momento $2$.}
-\label{fig:animate1}
+\label{fig:animate2}
 \end{subfigure}
 %
 \begin{subfigure}{0.5\textwidth}
@@ -3004,7 +3014,9 @@ Aplicando para um parâmetro maior, neste caso igual a 15, obtemos a
 
 \end{enumerate}
 
+\vspace{0.2cm}
 
+Para este problema, os testes do QuickCheck também dão todos corretos.
 
 \subsection*{Problema 5}
 
@@ -3177,6 +3189,9 @@ dividirmos. A segunda é aplicar o construtor |D|, do módulo |Probability|,
 ao resultado do |map|
 para assim conseguirmos obter o tipo de dados desejado.
 
+\vspace{0.2cm}
+
+Estas funções passam nos testes unitários fornecidos pelo enunciado.
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
 Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}
