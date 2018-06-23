@@ -2665,12 +2665,12 @@ Assim, a sua definição é intuitiva e é a seguinte:
 singletonbag a = B[(a, 1)]
 \end{code}
 
-É o construtor |B| que se encarrega de alterar de fazer com que o
+É o construtor |B| que se encarrega de fazer com que o
 tipo de retorno de |singletonbag| seja o desejado.
 
 \vspace{0.3cm}
 
-Quanto ao |muB|, temos que o seu tipo de dados deverá ser o seguinte:
+Quanto ao |muB|, sabemos que o seu tipo de dados deverá ser o seguinte:
 \begin{eqnarray*}
 |muB :: Bag (Bag a) -> Bag a|
 \end{eqnarray*}
@@ -2678,20 +2678,25 @@ Quanto ao |muB|, temos que o seu tipo de dados deverá ser o seguinte:
 Deste modo, tendo ainda em consideração a definição de |Monad|
 sabemos que esta função recebe um Bag de Bags, como por
 exemplo:
-\begin{code}
-b2 :: Bag (Bag Marble)
-b2 = B [(B[(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)],5)
-      ,(B [(Pink,1),(Green,2),(Red,1),(Blue,1)],2)]
-\end{code}
+\begin{eqnarray*}
+\start
+|b2 :: Bag (Bag Marble)|
+\more
+|b2 = B [(B[(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)],5)|
+\more
+|,(B [(Pink,1),(Green,2),(Red,1),(Blue,1)],2)]|
+\end{eqnarray*}
 
 E que o objetivo é que a função retorne um Bag somente, que, no
 caso de correr |muB b2| deverá ser:
-\begin{code}
-b1 :: Bag Marble
-b1 = B[(Pink,12),(Green,19),(Red,12),(Blue,12),(White,5)]
-\end{code}
+\begin{eqnarray*}
+\start
+|b1 :: Bag Marble|
+\more
+|b1 = B[(Pink,12),(Green,19),(Red,12),(Blue,12),(White,5)]|
+\end{eqnarray*}
 
-O objetivo do |muB| é então que dado um Bag com Bags lá dentro
+Sucintamente, o objetivo do |muB| é que dado um Bag com Bags lá dentro
 todos os seus elementos se juntem num só Bag. Para tal, é necessário
 ter em atenção quantos Bags estão dentro do Bag maior e
 agrupar convenientemente os seus conteúdos,
@@ -2708,7 +2713,7 @@ muB b = B (concat (fmap unB (junta (unB b))))
 
 O diagrama seguinte mostra as alterações nos tipos de dados que vão
 acontecendo no decorrer da definição de |muB| por nós proposta:
-\hfill \break
+\begin{eqnarray*}
 \xymatrix@@C=5cm{
     |Bag(Bag a)|
         \ar[d]_-{|unB|}
@@ -2727,8 +2732,7 @@ acontecendo no decorrer da definição de |muB| por nós proposta:
 \\
     |Bag a|
 }
-\hfill \break
-
+\end{eqnarray*}
 
 Passando a explicar por palavras passo a passo
 o que acontece na função |muB|, temos que:
@@ -2745,9 +2749,9 @@ Esta função, com a ajuda de uma função auxiliar chamada |fmapSpecial|,
 transforma a lista de |(Bag a) >< Int|, sendo que este Int
 representa o número de ``sacos'' que existem de |Bag a|, numa só lista de |Bag a|.
 A função multiplica o número de sacos que existem daquele tipo pelo conteúdo
-dentro do |(Bag a)|. Ou seja, se temos 3 sacos com 2 berlindes azuis
+dentro do |Bag a|. Ou seja, se temos 3 sacos com 2 berlindes azuis
 dentro de cada um sabemos que no total temos 6 berlindes azuis, e é exatamente
-isso que a função faz dentro de cada |(Bag a)| da lista.
+isso que a função faz dentro de cada |Bag a| da lista.
 
 \item |fmap unB|
 
@@ -2765,21 +2769,49 @@ numa só lista.
 
 Neste último passo é aplicado o construtor de |Bag| à lista de |(a, Int)| e com
 isso fica garantido que os |(a, Int)| repetidos se juntam, somando
-respetivos |Int| e que o tipo
+os respetivos |Int|, e que o tipo
 de dados de retorno é o tipo desejado, nomeadamente |Bag a|.
 
 \end{enumerate}
 
 \vspace{0.3cm}
 
-Para a função |dist|:
+Para a função |dist|, tendo em consideração o exemplo dado no enunciado, onde para o
+``saco'':
+\begin{eqnarray*}
+|B [(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)]|
+\end{eqnarray*}
+O resultado da aplicação desta função deverá ser:
+\begin{verbatim}
+Green  30.0%
+  Red  20.0%
+ Pink  20.0%
+ Blue  20.0%
+White  10.0%
+\end{verbatim}
+Percebemos que |dist| divide o número de elementos de cada elemento
+pelo número total de elementos.
 
+Assim, definimos a função como:
 \begin{code}
 dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
     where number [] = 0
           number ((_, int): cs) = int + number cs
 
 \end{code}
+
+A função percorre todos os elementos de |B a| (|[a, Int]|, mais especificamente,
+uma vez que é este o parâmetro que passamos ao |map|)
+e divide cada Int pelo número total de elementos do conjunto, que é calculado
+com a ajuda da função auxiliar |number|.
+
+De modo a retornarmos o resultado da forma correta, nomeadamente |Dist a|,
+tivemos que fazer duas pequenas alterações no código: a primeira foi converter
+o |y| e o |number a| (numero total de berlindes) de cada par para |Float| antes de os
+dividirmos. A segunda é aplicar o construtor |D|, do módulo |Probability|,
+ao resultado do |map|
+para assim conseguirmos obter o tipo de dados desejado.
+
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
 Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}
