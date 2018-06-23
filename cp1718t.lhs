@@ -971,6 +971,13 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
+O primeiro problema tem como tema uma block chain, ou seja, uma coleção de blocos
+que registam movimentos da moeda.
+
+De modo a resolvê-lo, antes de procedermos ao desenvolvimento
+das suas 3 alíneas, tivemos que definir algumas funções que nos ajudarão
+a implementar as soluções requeridas.
+
 \begin{code}
 inBlockchain = either Bc Bcs
 
@@ -984,16 +991,212 @@ cataBlockchain g = g . (recBlockchain (cataBlockchain g)) . outBlockchain
 anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g
 
 hyloBlockchain h g = cataBlockchain h . anaBlockchain g
+\end{code}
 
+Estas funções, nomeadamente |inBlockchain|, |outBlockchain|,
+|recBlockchain|, |cataBlockchain|, |anaBlockchain| e |hyloBlockchain|, podem ser
+deduzidas tendo em consideração o Tipo de Dados do problema, a matéria de Cálculo
+de Programas e com a ajuda de alguns diagramas.
+
+\vspace{0.2cm}
+
+Uma vez que o tipo de Blockchain é
+|Bc {bc :: Block}|
+ou
+|Bcs {bcs :: (Block, Blockchain)}|,
+sabemos que o |inBlockchain| e o |outBlockchain| deverão "fechar" e "abrir"
+a Blockchain, respetivamente, logo, conseguimos representar os diagramas:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Blockchain|
+&
+     |Block + (Block >< Blockchain)|
+           \ar[l]^-{|inBlockchain|}
+}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Blockchain|
+           \ar[r]_-{|outBlockchain|}
+&
+     |Block + (Block >< Blockchain)|
+}
+\end{eqnarray*}
+
+Assim, conseguimos perceber de imediato a definição de ambas as funções:
+\begin{eqnarray*}
+\start
+|inBlockchain = either Bc Bcs|
+\end{eqnarray*}
+\begin{eqnarray*}
+\start
+|outBlockchain (Bc a) = Left (a)|
+\more
+|outBlockchain (Bcs (a,b)) = Right(a,b)|
+\end{eqnarray*}
+
+Relativamente às funções |recBlockchain|, |cataBlockchain|,
+|anaBlockchain| e |hyloBlockchain|, os seus tipos já estavam presentes
+no enunciado e o significado e intuito de cada uma delas também já era sabido.
+
+A título de exemplo, através do diagrama em seguida conseguimos ter uma
+melhor perceção de qual deverá ser a definição de cada uma destas funções.
+
+Assumimos que as funções |g| e |h| mencionadas são funções que devolvem
+a identidade.
+
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |Blockchain|
+          \ar[d]_-{|anaBlockchain g|}
+           \ar[r]^-{|g|}
+&
+   |Block + (Block >< Blockchain)|
+          \ar[d]^{|recBlockchain(anaBlockchain g)|}
+\\
+    |Blockchain|
+       \ar[d]_-{|cataBlockchain h|}
+       \ar[r]^-{|outBlockchain|}
+&
+    |Block + (Block >< Blockchain)|
+          \ar[l]^-{|inBlockchain|}
+           \ar[d]^{|recBlockchain(cataBlockchain h)|}
+\\
+   |Blockchain|
+&
+   |Block + (Block >< Blockchain)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+Assim, intuitivamente conseguimos perceber a definição de cada uma delas.
+\begin{eqnarray*}
+\start
+|recBlockchain g = id + (id >< g)|
+\more
+|cataBlockchain h = h . (recBlockchain (cataBlockchain h)) . outBlockchain|
+\more
+|anaBlockchain g = inBlockchain . (recBlockchain (anaBlockchain g) ) . g|
+\more
+|hyloBlockchain h g = cataBlockchain h . anaBlockchain g|
+\end{eqnarray*}
+
+
+Na resolução das alíneas recorremos a alguns diagramas onde também fica
+implícito o porquê da definição de cada uma destas funções.
+
+
+\begin{enumerate}
+\item Função |allTransactions|
+
+O objetivo da função |allTransactions| é calcular a lista com todas as transações
+numa dada block chain, utilizando um catamorfismo.
+
+O diagrama desta função será:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Blockchain|
+           \ar[d]_-{|cataBlockchain g|}
+&
+    |Block + (Block >< Blockchain)|
+           \ar[d]^{|recBlockchain (cataBlockchain g)|}
+           \ar[l]_-{|inBlockchain|}
+\\
+     |Transactions|
+&
+     |Block + (Block >< Transactions)|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+O objetivo é descobrir o gene |g|, para assim termos a definição final de como
+algo do género |allTransactions = cataBlockchain g|
+
+Assim, tendo em atenção o tipo de Block:
+\begin{eqnarray*}
+|type Block = (MagicNo, (Time, Transactions))|
+\end{eqnarray*}
+
+E o tipo de Blockchain já apresentado, deduzimos que o |g| terá que ser um ``either'',
+|g = either b0 joint|,
+onde de um lado irá tratar o |Block| e do outro o |Block >< Transactions|. Isso deve-se
+ao facto de |g| receber como parâmetro: |Block + (Block >< Transactions)|, ou seja, uma
+"soma", e devolver: |Transactions|, logo, obrigatoriamente a função terá que ser ``either''
+para abolir o |+|.
+
+
+\begin{enumerate}
+\item Descobrir |b0|
+
+Para tratar o lado em que o domínio é |Block|, e sabendo que o resultado terá que
+ser |Transactions|, o objetivo desta função será "retirar" do |Block| as |Transactions|.
+
+Assim, teremos que definir |b0| com projeções |p2| como podemos verificar no diagrama
+em seguida:
+\hfill \break
+\xymatrix@@C=20cm{
+    |MagicNo >< (Time >< Transactions)|
+           \ar[d]_-{|p2 . p2|}
+\\
+    |Transactions|
+}
+\hfill \break
+
+Deste modo, fica definido |b0| como:
+\begin{eqnarray*}
+|b0 = p2 . p2|
+\end{eqnarray*}
+
+
+\item Descobrir |joint|
+
+Tendo em conta o domínio da função |joint|, ou seja, |Block >< Transactions|,
+percebemos que o objetivo desta função será retirar de |Block| as suas
+|Transactions| e juntá-las às |Transactions| já acumuladas (passadas como
+parâmetro).
+
+Assim, uma definição de |joint| |pointwise| é:
+\begin{eqnarray*}
+|joint (block, transac) = (p2 (p2 block)) ++ transac|
+\end{eqnarray*}
+
+Esta função cumpre os requisitos a que a proposemos, uma vez que retira de
+|Block| as |Transactions|, e concatena-as às |Transactions| passadas como parâmetro.
+
+\end{enumerate}
+
+Temos então a definição de |b0| e |joint|, pelo que ficamos a saber qual é o gene g:
+\begin{eqnarray*}
+\start
+|g = either b0 joint|
+%
+\just\equiv{ Definição de b0 ; Definição de joint }
+%
+|g = either (p2 . p2) joint|
+\more
+|   where joint(x,y) = (p2 (p2 x)) ++ y|
+%
+\end{eqnarray*}
+
+
+Deste modo, está definida a função |allTransactions| pedida:
+\begin{code}
 allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
     where joint(x,y) = (p2 (p2 x)) ++ y
+\end{code}
 
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where mapFst f (a, b) = (f a, b)
-          sums [] = []
-          sums ((a,b):t) = (a, sum b) : sums t
 
+
+\item Função |ledger|
+
+O objetivo desta função é calcular o valor disponível de cada entidade numa
+dada block chain.
+
+
+\begin{code}
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
     where
         insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
@@ -1002,6 +1205,87 @@ ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
         sums [] = [];
         sums ((a,b):t) = (a, sum b) : sums t
 
+\end{code}
+
+
+
+
+TODOOOO
+
+|type Transaction = (Entity, (Value, Entity))|
+|type Transactions = [Transaction]|
+
+|type Ledger = [(Entity, Value)]|
+
+|type Block = (MagicNo, (Time, Transactions))|
+
+
+
+
+
+
+
+
+
+\item Função |isValidMagicNr|
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+----
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Nat0|
+           \ar[d]_-{|cataNat g|}
+&
+    |1 + Nat0|
+           \ar[d]^{|id + (cataNat g)|}
+           \ar[l]_-{|inNat|}
+\\
+     |B|
+&
+     |1 + B|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |A*|
+          \ar[d]_-{|ana lsplitBGene|}
+           \ar[r]^-{|lsplitBGene|}
+&
+   |1 + A* >< (A >< A above) above|
+          \ar[d]^{|id +((ana lsplitBGene) >< map(id >< ana lsplitBGene))|}
+\\
+    |B|
+       \ar[d]_-{|cata inordBGene|}
+       \ar[r]^-{|outB|}
+&
+    |1 + B >< (A >< B) above|
+          \ar[l]^-{|inB|}
+           \ar[d]^{|id +((cata inordBGene) >< map(id >< cata inordBGene))|}
+\\
+   |A above|
+&
+   |1 + A above >< (A >< A above) above|
+       \ar[l]^-{|inordBGene|}
+}
+\end{eqnarray*}
+
+\begin{code}
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where
         list x = [p1 x]
@@ -1012,6 +1296,27 @@ isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( eith
 
 \subsection*{Problema 2}
 
+O segundo problema tem como tema uma estrutura de dados que é muito utilizada para
+representação e processamento de imagens- quadtrees. Tal como é referido no
+enunciado do problema, uma quadtree é uma árvore quaternária em
+que cada nodo tem quatro sub-árvores e cada folha representa um valor bi-dimensional.
+
+Antes de procedermos ao desenvolvimento das funções propostas neste problema
+definimos algumas funções que nos serão muito úteis.
+
+\vspace{0.5cm}
+
+Uma |QTree| poderá ser:
+\begin{eqnarray*}
+|Cell a Int Int|
+\end{eqnarray*}
+Ou
+\begin{eqnarray*}
+|Block (QTree a) (QTree a) (QTree a) (QTree a)|
+\end{eqnarray*}
+
+Em consequência, as definições de |inQTree| e |outQTree| terão que ser as seguintes:
+
 \begin{code}
 inQTree = either (uncurryCell) (uncurryBlock)
     where uncurryCell (e, (n1, n2)) = Cell e n1 n2
@@ -1021,7 +1326,76 @@ uncurryBlock (q1, (q2, (q3, q4))) = Block q1 q2 q3 q4
 
 outQTree (Cell e n1 n2) = Left (e, (n1, n2))
 outQTree (Block q1 q2 q3 q4) = Right (q1, (q2, (q3, q4)))
+\end{code}
 
+O diagrama da função |inQTree| é o seguinte:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |QTree a|
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[l]^-{|inQTree|}
+}
+\end{eqnarray*}
+
+E o diagrama da função |outQTree| é o seguinte:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |QTree a|
+           \ar[r]_-{|outQTree|}
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\end{eqnarray*}
+
+
+No caso da função |inQTree|, que "fecha" a |QTree|, o retorno deverá ser uma |QTree|, logo, no
+caso da |Cell| (lado esquerdo do |+|) temos que ajustar o parâmetro recebido |(a, (Int, Int))|
+devolvendo |Cell a Int Int|, para assim a função devolver a informação
+no tipo de dados correto. No caso do |Block|, recebendo
+|(q1, (q2, (q3, q4)))| teremos que retornar |Block q1 q2 q3 q4|.
+Esta função é definida como um ``either'' porque temos estas duas "hipóteses"
+de tipo de dados dentro do tipo de dados |QTree|.
+
+\vspace{0.2cm}
+
+No caso da função |outQTree| o raciocínio é o inverso. Uma vez que esta função
+recebe uma |QTree| podemos definir a função com dois casos diferentes, tal como
+se pode ver na solução por nós proposta.
+
+Os dois diagramas em seguida ajudam-nos a perceber melhor como tratar os dois
+casos de |QTree| na função |outQTree|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |(a, (Int, Int))|
+           \ar[d]_-{|i1|}
+\\
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\hfill \break
+
+e
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |(QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]_-{|i2|}
+\\
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+}
+\hfill \break
+
+Assim, quando recebemos uma |Cell e n1 n2| o objetivo será
+injetá-la à esquerda de modo a respeitar o tipo de dados, devolvendo
+então: |Left (e, (n1, n2))|. No caso de |Block q1 q2 q3 q4|, injetamos
+à direita retornando: |Right (q1, (q2, (q3, q4)))|.
+
+\vspace{0.5cm}
+
+Outras funções cruciais para a resolução deste problema são as seguintes:
+
+\begin{code}
 baseQTree f g = (f >< id) -|- (g >< (g >< (g >< g)))
 
 recQTree g = baseQTree id g
@@ -1031,32 +1405,638 @@ cataQTree g = g . (recQTree (cataQTree g)) . outQTree
 anaQTree g = inQTree . (recQTree (anaQTree g)) . g
 
 hyloQTree h g = cataQTree h . anaQTree g
+\end{code}
 
+
+Para melhor compreensão do intuito de cada uma delas desenhamos dois diagramas:
+
+O primeiro, mostra a função |baseQTree|. Atendendo ao seu tipo,
+já contido no enunciado, conseguimos perceber qual é o objetivo desta função.
+A título de exemplo, vamos considerar que f tem um tipo: |f :: A -> E|
+e que g tem um tipo: |g :: C -> D|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+           \ar[d]_-{baseQTree f g}
+\\
+    |Either (e, b) (d, (d, (d, d)))|
+}
+\hfill \break
+
+Assim, percebemos de imediata que a função |baseQTree| terá que ser definida como
+|(f >< id) + (g >< (g >< (g >< g)))|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+           \ar[d]_-{|(f >< id) + (g >< (g >< (g >< g)))|}
+\\
+    |Either (e, b) (d, (d, (d, d)))|
+}
+\hfill \break
+
+\vspace{0.4cm}
+
+O segundo, que é um pouco mais complexo, é apenas um exemplo do que se pode
+fazer com a combinação destas funções, nomedamente |inQTree|, |outQTree|,
+|recQTree|, |cataQTree|, |anaQTree| e |hyloQTree|. Vamos assumir que neste nosso diagrama
+as funções |g| e |h| mencionadas são funções que devolvem a identidade, ou seja,
+não alteram o conteúdo da |QTree|, mas respeitam os tipos de dados ideais:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |QTree a|
+          \ar[d]_-{|anaQTree g|}
+           \ar[r]^-{|g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+          \ar[d]^{|recQTree(anaQTree g)|}
+\\
+    |QTree a|
+       \ar[d]_-{|cataQTree h|}
+       \ar[r]^-{|outQTree|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+          \ar[l]^-{|inQTree|}
+           \ar[d]^{|recQTree(cataQTree h)|}
+\\
+   |QTree a|
+&
+   |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+A função |hyloQTree| é definida como sendo |hyloQTree h g = cataQTree h . anaQTree g|,
+ou seja, no diagrama anterior pode ser identificado por uma seta vertical que vai desde o
+argumento da função |anaQTree| até ao retorno da função |cataQTree|.
+
+Assim, com a ajuda destes diagramas, encontramos as definições procuradas.
+
+\vspace{0.5cm}
+
+Por fim, temos |fmap|, que tem como objetivo aplicar a função |f| a todas
+as |Cell| da |QTree|, mais especificamente ao conteúdo da |Cell| que diz respeito ao
+valor/ objeto da matriz (não à dimensão). A função simplesmente aplica a todos esses elementos
+a função |f|.
+
+Assim, decidimos definir a nossa função |fmap| da seguinte forma:
+\begin{code}
 instance Functor QTree where
     fmap f = cataQTree (inQTree . baseQTree f id)
+\end{code}
 
+No seguinte diagrama conseguimos perceber o que é que as funções
+|inQTree . baseQTree f id| fazem, considerando que f é uma função
+do tipo: |f :: A -> E|:
+
+\hfill \break
+\xymatrix@@C=20cm{
+    |Either (a, b) (c, (c, (c, c)))|
+       \ar[d]_-{|baseQTree f id|}
+\\
+    |Either (e, b) (c, (c, (c, c)))|
+       \ar[d]_-{|inQTree|}
+\\
+    |QTree e|
+}
+
+Ou seja, numa primeira fase a função |baseQTree f id| aplica a função |f| ao
+conteúdo da |Cell| e numa segunda fase a função |inQTree| junta o resultado
+da aplicação da função |baseQTree f id| numa |QTree|.
+
+
+Assim, aplicando um |cataQTree| a esta composição de funções construímos:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+    |QTree a|
+           \ar[d]_-{|cataQTree g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]^{|recQTree(cataQTree g)|}
+           \ar[l]_-{|inQTree|}
+\\
+     |QTree e|
+&
+     |Either (a, (Int, Int)) (QTree e, (QTree e, (QTree e, QTree e)))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+Sendo |g f = inQTree . baseQTree f id|.
+
+Em suma, tal como nos diz a própria definição de
+catamorfismo, na seta vertical mais à direita o mesmo é aplicado recursivamente
+à parte direita do |+| (o |Functor|, ou seja, |recQTree| encarrega-se disso) e,
+depois disso, temos então a "cauda" processada, tal como podemos ver no diagrama.
+O nosso gene |g|
+responsabiliza-se pelo último passo de transformar na |Cell| (lado
+esquerdo do |+| inferior) o seu conteúdo (através da função |f|) e de juntar tudo numa só
+|QTree|.
+
+\vspace{0.3cm}
+
+Agora reunimos todas as condições para nos concentrarmos no desenvolvimento das
+alíneas deste problema.
+
+\begin{enumerate}
+
+\item Função |rotateQTree|
+
+O objetivo desta função é rodar uma |QTree|.
+
+Optamos por utilizar um catamorfismo para definir
+esta função. Assim, temos que |rotateQTree = cataQTree g|.
+Tendo em conta a definição de |cataQTree| podemos definir |g|
+como um ``either'', onde um dos lados irá tratar a |Cell| e o outro
+o |Block|.
+
+Consequentemente, para perceber que impacto esta função |rotateQTree|
+terá na |QTree| analisamos a matriz de bits (Figura~\ref{fig:bm}) e a
+respetiva codificação em quadtrees (Figura~\ref{fig:qt}).
+
+Vamos agora exemplificar o nosso raciocínio com alguns exemplos:
+
+Numa primeira fase iremos analisar o que acontecerá numa |Cell|.
+Por exemplo, se tivermos a |Cell|:
+\begin{verbatim}
+( 0 0 0 0 )
+( 0 0 0 0 )
+\end{verbatim}
+
+Que é representada por |Cell 0 4 2|, rodando-a $90º$ fica:
+\begin{verbatim}
+( 0 0 )
+( 0 0 )
+( 0 0 )
+( 0 0 )
+\end{verbatim}
+Que é representada por |Cell 0 2 4|.
+
+Logo, fica implícito que no que diz respeito a rodar uma |Cell| o que
+acontece é que as suas dimensões verticais e horizontais trocam.
+
+Definimos então a função |rotateCell| que roda uma |Cell|:
+\begin{eqnarray*}
+|rotateCell (e, (n1, n2)) = Cell e n2 n1|
+\end{eqnarray*}
+
+O tipo desta função terá que ser o acima apresentado tendo em consideração
+os tipos da função |cataQTree| e |inQTree|.
+
+\vspace{0.5cm}
+
+Numa segunda fase analisamos o que acontece num |Block|.
+
+Procedendo da mesma forma, definimos um |Block| de exemplo:
+\begin{verbatim}
+( 0 0 0 0 )
+( 0 0 0 0 )
+( 1 1 1 1 )
+( 1 1 1 1 )
+\end{verbatim}
+
+Que é definida por |Block (Cell 0 2 2) (Cell 0 2 2) (Cell 1 2 2) (Cell 1 2 2)|.
+
+Rodando o |Block| $90º$:
+\begin{verbatim}
+( 1 1 0 0 )
+( 1 1 0 0 )
+( 1 1 0 0 )
+( 1 1 0 0 )
+\end{verbatim}
+
+Ficamos com uma |Block (Cell 1 2 2) (Cell 0 2 2) (Cell 1 2 2) (Cell 0 2 2)|.
+
+Assim, percebemos que os quatro parâmetros de |Block| rodam entre si.
+O primeiro parâmetro passará a ser o segundo parâmetro, o segundo passará
+a ser o último, o terceiro fica em primeiro e, por fim, o último parâmetro
+fica a ser o terceiro.
+
+Conseguimos então perceber a definição que trata o |Block|:
+\begin{eqnarray*}
+|rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2|
+\end{eqnarray*}
+
+Assim, temos todas as condições necessárias para definir a função
+pedida, |rotateQTree|:
+\begin{code}
 rotateQTree = cataQTree (either (rotateCell) (rotateBlock))
     where rotateCell (e, (n1, n2)) = Cell e n2 n1
           rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2
+\end{code}
 
+O diagrama desta função é o seguinte:
+\begin{eqnarray}
+\xymatrix@@C=2cm{
+    |QTree a|
+           \ar[d]_-{|cataQTree g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]^{|recQTree (cataQTree g)|}
+           \ar[l]_-{|inQTree|}
+\\
+     |QTree a|
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray}
+
+Onde:
+\begin{eqnarray*}
+\start
+|g = (either (rotateCell) (rotateBlock))|
+\more
+|where rotateCell (e, (n1, n2)) = Cell e n2 n1|
+\more
+|rotateBlock (q1, (q2, (q3, q4))) = Block q3 q1 q4 q2|
+\end{eqnarray*}
+
+
+\item Função |scaleQTree|
+
+Esta função redimensiona uma |Qtree| tendo em consideração o |Int| passado
+como parâmetro.
+
+Assim, intuitivamente percebemos que teremos que multiplicar o fator passado
+como parâmetro pela dimensão da matriz.
+
+Mais uma vez recorremos a um |cataQTree| para definir a função |scaleQTree|.
+Deste modo, utilizando o mesmo raciocínio da função anterior, precisamos de definir
+o gene |g| como um ``either'' onde a |Cell| e o |Block| serão tratados
+individualmente.
+
+O gene |g| terá a seguinte definição:
+\begin{eqnarray*}
+|g n = either (scaleCell n) (uncurryBlock)|
+\end{eqnarray*}
+
+Uma vez que as dimensões da matriz são somente responsabilidade da |Cell|
+não teremos que alterar nada no |Block|.
+
+De forma a respeitar os tipos, no que diz respeito a tratar o |Block|, utilizamos
+a função |uncurryBlock| já definida por nós, que apenas altera a forma como
+o |Block| é mostrado, não alterando o seu conteúdo.
+
+Para tratar a |Cell| vamos recorrer a uma função auxiliar, |scaleCell|,
+cujo único objetivo será multiplicar as dimensões da |Cell| pelo fator e devolvê-la
+no tipo de dados correto:
+\begin{eqnarray*}
+|scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)|
+\end{eqnarray*}
+
+O diagrama desta função é o mesmo da função anterior, diagrama (3),
+variando somente o gene |g|, que neste caso é o anteriormente referido.
+
+Assim, temos definida a função |scaleQTree|:
+\begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
 
+\end{code}
+
+
+\item Função |invertQTree|
+
+O intuito da função |invertQTree| é inverter as cores de uma quadtree. Assim,
+terá obrigatoriamente de se tratar de uma matriz de píxeis, neste caso de |PixelRGBA8|.
+É nos também dito que o pixel pode ser invertido calculando (255 - w), sendo w
+a componente de cor RGB.
+
+Logo, utilizando o mesmo raciocínio da função |scaleQTree|, vamos definir
+a função |invertQTree| como um |cataQTree| onde também somente a |Cell|
+precisa de ser modificada, tendo em conta que é a |Cell| que possui o contéudo
+da |QTree|, ou seja, o parâmetro que nos interessa alterar.
+
+Logo, teremos um gene |g| com a seguinte definição:
+\begin{eqnarray*}
+|g = either invertCell uncurryBlock|
+\end{eqnarray*}
+
+Precisamos então somente de definir a função |invertCell|, que poderá
+ser definida como:
+\begin{eqnarray*}
+\start
+|invertCell ((PixelRGBA8 a b c d), (n1, n2)) =|
+\more
+|Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2|
+\end{eqnarray*}
+
+Esta função pode também ser ilustrada através do diagrama (3), mas com um gene |g|
+definido como o mencionado anteriormente.
+
+Consequentemente, temos todas as condições necessárias para definir
+a função |invertQTree|:
+\begin{code}
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
                 Cell (PixelRGBA8 (255-a) (255-b) (255-c) (255-d)) n1 n2
+\end{code}
 
+\item Função |compressQTree|
+
+O objetivo desta função é comprimir a |QTree| cortando folhas da árvore de modo
+a reduzir a sua profundidade num dado número de níveis, passado como parâmetro na função.
+Basicamente, o que irá acontecer à imagem é perder informação e por isso ``desfocar''.
+
+Para o desenvolvimento desta função recorremos a uma |anaQTree| uma vez que
+consideramos que seria mais simples de tratar o problema usando esse
+conceito/ definição.
+
+De uma forma mais concreta, pensamos em utilizar uma |anaQTree| uma vez que sabiamos que
+ela se iria concentrar em cada nível da árvore gradualmente, começando
+da raiz até às folhas. Assim, de uma forma geral, pensamos
+que a nossa |anaQTree| deveria ter um gene que averigua-se se estamos no
+nível desejado e em caso afirmativa eliminasse toda a |QTree| a partir desse nível.
+
+
+Assim, passamos para o chamado desenvolvimento do problema:
+
+Temos por exemplo |QTree| da Figura~\ref{fig:qt},
+que é representada pela |QTree qt|, que já vinha também no enunciado:
+\begin{eqnarray*}
+\start
+|qt = Block|
+\more
+|(Cell 0 4 4)|
+\more
+|(Block (Cell 0 2 2) (Cell 0 2 2) (Cell 1 2 2) (Block (Cell 1 1 1) (Cell 0 1 1) (Cell 0 1 1) (Cell 0 1 1)))|
+\more
+|(Cell 1 4 4)|
+\more
+|(Block (Cell 1 2 2) (Cell 0 2 2) (Cell 0 2 2) (Block (Cell 0 1 1) (Cell 0 1 1) (Cell 0 1 1) (Cell 1 1 1)))|
+\end{eqnarray*}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{imgs/qt.png}
+\end{center}
+\caption{Esquema da |QTree qt|.}
+\label{fig:qt}
+\end{figure}
+
+
+Se quisermos aplicar a função |compressQTree 2|, ou seja, comprimir
+dois níveis, o esquema da |QTree| de retorno deverá ser o seguinte
+o esquema presenta na Figura~\ref{fig:qtcompress2}, representado por:
+\begin{eqnarray*}
+\start
+|qt_compress2 = Block|
+\more
+|(Cell 0 4 4)|
+\more
+|(Cell 0 4 4)|
+\more
+|(Cell 1 4 4)|
+\more
+|(Cell 1 4 4)|
+\end{eqnarray*}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{imgs/qtcompress2.png}
+\end{center}
+\caption{Esquema da |QTree qt| comprimida em 2 níveis.}
+\label{fig:qtcompress2}
+\end{figure}
+
+Deste modo, apercebemo-nos que teriamos que ter uma função que nos ``cortasse'' todos
+os ramos da |QTree| a abolir. Percebemos através da Figura~\ref{fig:qt}
+e da Figura~\ref{fig:qtcompress2} que
+se essa função, que poderá chamar-se |corta|, receber como parâmetro a parte da
+|Qtree| a eliminar deveremos transforma-la numa única |Cell|.
+
+Nesta fase, tivemos que perceber quais as dimensões da |Cell|
+resultado pelo que, por exemplo, se tivermos:
+\begin{eqnarray*}
+|Block (Cell 0 3 2) (Cell 1 2 2) (Cell 1 4 2) (Cell 0 1 2)|
+\end{eqnarray*}
+
+Representado por:
+\begin{verbatim}
+( 0 0 0 1 1 )
+( 0 0 0 1 1 )
+( 1 1 1 1 0 )
+( 1 1 1 1 0 )
+\end{verbatim}
+
+
+A |Cell| resultado deverá ser:
+\begin{eqnarray*}
+\start
+|Cell 0 5 4|
+\end{eqnarray*}
+
+E em modo matriz:
+Representado por:
+\begin{verbatim}
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+( 0 0 0 0 0 )
+\end{verbatim}
+
+Assim, percebemos que se o |Block a b c d| for então constítuido apenas com |Cell|,
+ou seja, |a, b, c, d :: Cell|, as dimensões resultado deverão ser calculadas da seguinte
+forma:
+\begin{eqnarray*}
+\start
+       |corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =|
+\more
+        |Cell (c1) (n1 + m1) (n2 + k2)|
+\end{eqnarray*}
+
+Optamos por dar como resultado o valor da primeira |Cell|, que no nosso caso é c1.
+
+
+No caso de o |Block| ainda não ser constituído por apenas |Cell|, tal como referimos
+anteriormente, aplicamos recursivamente a função |corta| a cada um dos "argumentos"
+de |Block|, e ao próprio |Block|, até conseguirmos chegar a um |Block| só com
+|Cell| e o convertermos para |Cell| da forma já referida.
+A recursividade irá tratar de nos fornecer a solução que desejamos.
+Para esta hipótese a função |corta| será então:
+\begin{eqnarray*}
+       |corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))|
+\end{eqnarray*}
+
+Pensando no caso de quando esta função é aplicada a somente uma |Cell| isolada a função deverá
+retornar a |Cell| argumento exatamente igual:
+\begin{eqnarray*}
+       |corta (Cell a b c) = Cell a b c|
+\end{eqnarray*}
+
+Juntando estas 3 hipóteses, temos então a função |corta| definida:
+\begin{eqnarray*}
+\start
+        |corta (Cell a b c) = Cell a b c|
+\more
+        |corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =|
+\more
+        |Cell (c1) (n1 + m1) (n2 + k2)|
+\more
+        |corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))|
+\end{eqnarray*}
+
+Assim, precisamos apenas de definir concretamente, e através de código,
+em que momento esta função será aplicada.
+
+Aproveitando a função |depthQTree|, que calcula a profundidade de uma |QTree|,
+podemos então contruir uma função auxiliar, por exemplo chamada |compress|,
+que irá receber o número de níveis a eliminar. Como sabemos que o nosso
+|anaQTree| irá olhar individualmente para cada nível, a nossa |compress n|
+averiguará se a profundidade do ramo atual é igual ao número de níveis a cortar.
+
+Podemos utilizar esta técnica pois o anamorfismo percorre cada ramo de cima (raiz)
+para baixo e não volta para cima, por isso, quando o sub-ramo tiver uma profundidade
+igual ao número de níveis a cortar sabemos que é esse o nível que procuramos,
+para podermos aplicar a nossa função |corta|. Se ainda não tivermos chegado
+ao nível que procuramos, a função |compress| deverá devolver a |QTree|, ou seja,
+o ramo, intacto.
+
+Tivemos que ter em consideração o caso em que o número de níveis a cortar
+é maior que toda a profundidade da árvore, sendo que neste caso toda a |QTree|
+deverá ser cortada (é aplicada à função |cortar|) ficando somente a |Cell|
+comprimida.
+
+É ainda mencionar que, tendo em conta o tipo de |anaQTree|, a nossa |compress|
+deverá retornar sempre uma |QTree| ``aberta'' e, assim, aplicamos
+a função |outQTree|.
+
+
+Finalmente, juntando todos estes passos, temos a função |compressQTree| definida:
+
+\begin{code}
 corta :: QTree a -> QTree a
 corta (Cell a b c) = Cell a b c
 corta (Block (Cell c1 n1 n2) (Cell c2 m1 m2) (Cell c3 k1 k2) (Cell c4 o1 o2)) =
                               Cell (c1) (n1 + m1) (n2 + k2)
 corta (Block q1 q2 q3 q4) = corta (Block (corta q1) (corta q2) (corta q3) (corta q4))
 
-compressQTree n a = anaQTree ((compress n) . outQTree) a
-    where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta (inQTree a))
-                       | otherwise = a
-          tam a = depthQTree (inQTree a)
+compressQTree n = anaQTree (compress n)
+    where compress n a | (n == (tam a) || n > (tam a)) = outQTree (corta a)
+                       | otherwise = outQTree a
+          tam a = depthQTree a
+\end{code}
 
+O anamorfismo que representa esta função é o seguinte:
+\begin{eqnarray}
+\xymatrix@@C=2cm{
+    |QTree a|
+        \ar[d]_-{|anaQTree g|}
+        \ar[r]^-{|g|}
+&
+    |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[d]^{|recQTree (anaQTree g)|}
+\\
+     |QTree a|
+&
+     |Either (a, (Int, Int)) (QTree a, (QTree a, (QTree a, QTree a)))|
+           \ar[l]^-{|inQTree|}
+}
+\end{eqnarray}
+
+
+Tal como dizia no enunciado, contruímos as |QTrees| com compressões 1, 2, 3 e 4,
+obtendo então, respetivamente, a Figura~\ref{fig:compress1},
+a Figura~\ref{fig:compress2}, a Figura~\ref{fig:compress3}
+e a Figura~\ref{fig:compress4}.
+
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/compress1.png}
+    \end{center}
+    \caption{Figura Person comprimida em 1 nível.}
+    \label{fig:compress1}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.23\textwidth]{imgs/compress2.png}
+    \end{center}
+    \caption{Figura Person comprimida em 2 níveis.}
+    \label{fig:compress2}
+\end{subfigure}
+\end{figure}
+
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/compress3.png}
+    \end{center}
+    \caption{Figura Person comprimida em 3 níveis.}
+    \label{fig:compress3}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.22\textwidth]{imgs/compress4.png}
+    \end{center}
+    \caption{Figura Person comprimida em 4 níveis.}
+    \label{fig:compress4}
+\end{subfigure}
+\end{figure}
+
+
+\item Função |outlineQTree|
+
+A função |outlineQTree| recebe uma função que determina quais os píxeis de
+fundo e converte uma quadtree numa matriz monocromática, de forma a desenhar o
+contorno de uma malha poligonal contina na imagem.
+
+Após analisar o problema e as funções que o enunciado já fornece percebemos
+que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
+Esta função é a função |qt2bm|, que converte uma |QTree a| em |Matrix a|.
+
+\begin{eqnarray*}
+\start
+|qt2bm :: (Eq a) => QTree a -> Matrix a|
+\more
+|qt2bm = cataQTree (either f g) where|
+\more
+|f (k,(i,j)) = matrix j i (const k)|
+\more
+|g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)|
+\end{eqnarray*}
+
+Assim, olhamos para o gene do |cataQTree (either f g)| e pensamos no que teremos
+que alterar para a nossa função |outlineQTree| retornar uma |Matrix Bool|.
+Sabemos que teremos que aplicar a função passada como parâmetro às |Cell|
+de modo a saber se a mesma se trata de um píxel (conjunto de píxeis) de fundo.
+
+Uma vez que é a |Cell| que contém os píxeis, no que diz respeito ao |Block|
+nada precisará de ser feito. Logo, a função |g| será exatamente a mesma.
+
+No caso das |Cell|, teremos então que dividir a função |f| em dois casos,
+um deles quando após aplicada a função dada como parâmetro ao conteúdo da |Cell|
+dá |True| e o segundo quando dá |False|:
+\begin{enumerate}
+\item |True|- contéudo da |Cell| ser um píxel de fundo:
+
+Neste caso, sabemos que teremos que devolver uma |Matrix Bool| onde
+o interior será |False| e o contorno |True|, por exemplo, para uma
+Matriz de 4x4:
+\begin{verbatim}
+( True True  True  True )
+( True False False True )
+( True False False True )
+( True True  True  True )
+\end{verbatim}
+
+Logo, aproveitando a função |matrix|, usamos uma expressão lambda
+onde se as coordenadas (x, y) da matriz pertencerem à borda da mesma,
+ou seja, isso acontece quando |x == 1| ou |y == 1| ou |x == largura maxima| ou
+|y == altura maxima|, o valor é |True|, caso contrário o valor será |False|.
+
+\item |False|- O contéudo da |Cell| não ser um píxel de fundo:
+
+Neste caso, basta aplicar a função |matrix| onde o conteúdo dos
+elementos é |False|.
+
+\end{enumerate}
+
+Consequentemente, temos todos os dados para definir a nossa função |outlineQTree|:
+
+\begin{code}
 outlineQTree magic a = cataQTree (either (f magic) g) a
     where f magic (k,(i,j))
             | (magic k) = matrix j i (\(x,y) -> if (x == 1 || y == 1 || x == j || y == i) then True else False)
@@ -1064,6 +2044,35 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
           g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)
 
 \end{code}
+
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/outline1.png}
+    \end{center}
+    \caption{Figura Person produzida com a função |outlineBMP|.}
+    \label{fig:outline1}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/outline2.png}
+    \end{center}
+    \caption{Figura Person produzida com a função |addOutlineBMP|.}
+    \label{fig:outline2}
+\end{subfigure}
+\end{figure}
+
+
+No enunciado desta função era ainda sugerido que produzissemos imagens
+com o auxílio de duas funções que utilizam a |outlineQTree|. As duas
+imagens que obtivemos estão presentes na Figura~\ref{fig:outline1}
+e a Figura~\ref{fig:outline2}.
+
+\end{enumerate}
+
+
+É ainda de salientar que todas as funções do problema passaram em todos os testes
+do QuickCheck e nos Testes Unitários.
 
 \subsection*{Problema 3}
 
@@ -1458,7 +2467,7 @@ Temos que:
 | base k = ( split (split (const 1) (const (succ k))) (split (const 1) (const 1)) ) |
 \end{eqnarray*}
 
-\item Derivar a definição de base k
+\item Derivar a definição de |base k|
 
 Focando em |base k|:
 \begin{eqnarray*}
@@ -1537,7 +2546,7 @@ Conseguimos ter a derivação desejada da função |base k|:
 |base k = (1, k + 1, 1, 1)|
 \end{eqnarray*}
 
-\item Derivar a definição de loop
+\item Derivar a definição de |loop|
 
 Por último, para derivar a definição de |loop| teremos que pensar da mesma forma, ou seja,
 inserir variáveis. Porém, ao contrário da função |base k|, as variáveis a inserir terão que ser
@@ -1656,6 +2665,11 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
 \end{code}
 
 \subsection*{Problema 5}
+
+Para a resolução do quinto e último problema
+
+
+
 
 \begin{code}
 
