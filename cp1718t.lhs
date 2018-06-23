@@ -2578,7 +2578,7 @@ Tendo agora em consideração o segundo split do split maior, temos:
     |(A >< B) >< (C >< D)|
            \ar[d]_-{|split (mul . p2) (succ . p2 . p2)|}
 \\
-    |(Z >< D|
+    |(Z >< D)|
 }
 \hfill \break
 
@@ -2643,26 +2643,138 @@ drawPTree = undefined
 
 \subsection*{Problema 5}
 
-O quinto e último problema diz respeito a |mónades|.
+O quinto e último problema diz respeito a |monades|. O mónade do
+problema é conhecido por \emph{bag}, \emph{saco}
+ou \emph{multi-conjunto}, permitindo que os elementos de um
+conjunto tenham multiplicidades associadas.
 
-O mónade do problema é conhecido por 
+Para este problema o objetivo é que completemos a definição
+de |Monad Bag|, nomeadamente no que diz respeito
+ao |muB| (multiplicação do mónade |Bag|) e a respetiva
+função auxiliar |singletonbag|. É também necessário definir
+a função |dist|.
 
+\vspace{0.4cm}
 
+Começando pela função |singletonbag|, tal como o próprio nome indica,
+o objetivo dela é ter um saco com apenas um elemento do valor passado como
+parâmetro, para ser o |return| do |Monad|.
 
-
-
-
-Tal como o nome da função indica, o objetivo dela é blabla.
-
+Assim, a sua definição é intuitiva e é a seguinte:
 \begin{code}
-
 singletonbag a = B[(a, 1)]
+\end{code}
 
+É o construtor |B| que se encarrega de alterar de fazer com que o
+tipo de retorno de |singletonbag| seja o desejado.
+
+\vspace{0.3cm}
+
+Quanto ao |muB|, temos que o seu tipo de dados deverá ser o seguinte:
+\begin{eqnarray*}
+|muB :: Bag (Bag a) -> Bag a|
+\end{eqnarray*}
+
+Deste modo, tendo ainda em consideração a definição de |Monad|
+sabemos que esta função recebe um Bag de Bags, como por
+exemplo:
+\begin{code}
+b2 :: Bag (Bag Marble)
+b2 = B [(B[(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)],5)
+      ,(B [(Pink,1),(Green,2),(Red,1),(Blue,1)],2)]
+\end{code}
+
+E que o objetivo é que a função retorne um Bag somente, que, no
+caso de correr |muB b2| deverá ser:
+\begin{code}
+b1 :: Bag Marble
+b1 = B[(Pink,12),(Green,19),(Red,12),(Blue,12),(White,5)]
+\end{code}
+
+O objetivo do |muB| é então que dado um Bag com Bags lá dentro
+todos os seus elementos se juntem num só Bag. Para tal, é necessário
+ter em atenção quantos Bags estão dentro do Bag maior e
+agrupar convenientemente os seus conteúdos,
+tal como vimos no exemplo anterior.
+
+Assim, com recurso a algumas funções auxiliares produzimos o código
+em seguida:
+\begin{code}
 muB b = B (concat (fmap unB (junta (unB b))))
     where junta ((ba, int) : bas) = (fmapSpecial (*int) ba) : (junta bas)
           junta [] = []
           fmapSpecial f = B . map (id >< f) . unB
+\end{code}
 
+O diagrama seguinte mostra as alterações nos tipos de dados que vão
+acontecendo no decorrer da definição de |muB| por nós proposta:
+\hfill \break
+\xymatrix@@C=5cm{
+    |Bag(Bag a)|
+        \ar[d]_-{|unB|}
+\\
+    |[(Bag a, Int)]|
+        \ar[d]_-{|junta|}
+\\
+    |[Bag a]|
+        \ar[d]_-{|fmap unB|}
+\\
+    |[[(a, Int)]]|
+        \ar[d]_-{|concat|}
+\\
+    |[(a, Int)]|
+        \ar[d]_-{|B|}
+\\
+    |Bag a|
+}
+\hfill \break
+
+
+Passando a explicar por palavras passo a passo
+o que acontece na função |muB|, temos que:
+\begin{enumerate}
+\item |un B|
+
+Numa primeira fase ``desembrulhamos'' o Bag de Bags, passando agora
+a ter uma lista com |(Bag a, Int)| onde poderemos iterar mais facilmente
+sobre os elementos.
+
+\item |junta|
+
+Esta função, com a ajuda de uma função auxiliar chamada |fmapSpecial|,
+transforma a lista de |(Bag a) >< Int|, sendo que este Int
+representa o número de ``sacos'' que existem de |Bag a|, numa só lista de |Bag a|.
+A função multiplica o número de sacos que existem daquele tipo pelo conteúdo
+dentro do |(Bag a)|. Ou seja, se temos 3 sacos com 2 berlindes azuis
+dentro de cada um sabemos que no total temos 6 berlindes azuis, e é exatamente
+isso que a função faz dentro de cada |(Bag a)| da lista.
+
+\item |fmap unB|
+
+Este passo ``abre'' todos os |Bag a| dentro de |[Bag a]|, ficando agora
+com o tipo |[[(a, Int)]]|. Mais uma vez, este passo é feito
+para facilitar o manuseamento dos elementos.
+
+\item |concat|
+
+Esta função, já predefinida, é responsável por concatenar a |[[(a, Int)]]|
+em |[(a, Int)]|. O que esta função faz é somente juntar os pares |(a, Int)|
+numa só lista.
+
+\item |B|
+
+Neste último passo é aplicado o construtor de |Bag| à lista de |(a, Int)| e com
+isso fica garantido que os |(a, Int)| repetidos se juntam, somando
+respetivos |Int| e que o tipo
+de dados de retorno é o tipo desejado, nomeadamente |Bag a|.
+
+\end{enumerate}
+
+\vspace{0.3cm}
+
+Para a função |dist|:
+
+\begin{code}
 dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
     where number [] = 0
           number ((_, int): cs) = int + number cs
