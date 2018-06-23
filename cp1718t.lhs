@@ -1044,32 +1044,21 @@ generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
         m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
 
-drawPTree a = toListP 1 (depthFTree a) (translates 1 (rotates ( bmap pol pol a )) )
-
-pol a = polygon [(-a/2,0), (-a/2,a), (a/2,a), (a/2,0)]
-
-rotates (Unit a) = Unit a
-rotates (Comp a (b,c)) = Comp a ( bmap (rotate(-45)) id (rotates b) , bmap (rotate(45)) id (rotates c) )
-
-translates _ (Unit a) = Unit a
-translates n (Comp a (b,c)) = Comp a
-                            ( bmap (translate (-((resizing n 0))/2)  (resizing n 1) ) id (translates (n+1) b) ,
-                              bmap (translate   ((resizing n 0) /2)  (resizing n 1) ) id (translates (n+1) c) )
-
-resizing n i | n == 0 = 0
-             | odd n  = if i == 0
-                            then fromIntegral(n) * 50 * ((sqrt(2) / 2) ^ n ) / 2
-                            else 50 * ((sqrt(2) / 2) ^ n ) * 5 / 4
-             | even n = if i == 0
-                            then (fromIntegral(n)/1.75) * 50 * (((sqrt(2) / 2) ^ n ) * (sqrt(2)/2) + ((sqrt(2) / 2) ^ n ))
-                            else (fromIntegral(n)/1.75) * 50 * ((sqrt(2) / 2) ^ n ) * (sqrt(2)/2)
-
-toListP n max a = if n > max
-                    then []
-                    else pictures (m n a) : toListP (n+1) max a
-
-m 0 _ = []
-m n (Comp a (b,c)) = a : m (n-1) b ++ m (n-1) c
+drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
+    where
+        list n = (foldMap lineLoop (squares n))
+        squares n = concat $ take (depthFTree a - n) $ iterateM mkBranches start
+        start = [(0,100),(100,100),(100,0),(0,0)]
+        iterateM f x = iterate (>>= f) (pure x)
+        mkBranches [a, b, c, d] =   let d = 0.5 <*> (b <+> ((-1) <*> a))
+                                        l1 = d <+> orth d
+                                        l2 = orth l1
+                                    in
+                                        [ [a <+> l2, b <+> (2 <*> l2), a <+> l1, a]
+                                        , [a <+> (2 <*> l1), b <+> l1, b, b <+> l2] ]
+        (a, b) <+> (c, d) = (a+c, b+d)
+        n <*> (a, b) = (a*n, b*n)
+        orth (a, b) = (-b, a)
 
 \end{code}
 
