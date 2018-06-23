@@ -1050,8 +1050,8 @@ cataFTree a = a . (recFTree (cataFTree a)) . outFTree
 anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
 hyloFTree a c = cataFTree a . anaFTree c
 
-instance BiFunctor FTree where
-    bmap f g = cataFTree ( inFTree . baseFTree f g id )
+instance Bifunctor FTree where
+    bimap f g = cataFTree ( inFTree . baseFTree f g id )
 
 generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
