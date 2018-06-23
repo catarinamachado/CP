@@ -1195,102 +1195,135 @@ allTransactions a = cataBlockchain ( either (p2.p2) joint ) a
 O objetivo desta função é calcular o valor disponível de cada entidade numa
 dada block chain.
 
+O tipo de retorno de |ledger| deverá ser o seguinte:
+\begin{eqnarray*}
+|[(Entity, Value)]|
+\end{eqnarray*}
+
+Para o desenvolvimento desta função aproveitamos a função |allTransactions|
+definida na alínea anterior, que nos dá a lista de todas as transações
+efetuadas.
+
+O tipo de uma Transação é o seguinte:
+\begin{eqnarray*}
+|(Entity, (Value, Entity))|
+\end{eqnarray*}
+Sendo o primeiro |Entity| a entidade que envia o valor a ser transacionado
+e o segundo o que diz respeito à entidade que recebe.
+
+Assim, após termos a |[Transaction]| aplicamos-lhe um |cataList|.
+Este catamorfismo tem um gene |g = either nil insert| que é responsável
+por olhar para cada |Transaction| e construir |[(Entity, Value)]|.
+Para cada |Transaction| são adicionados dois novos pares à lista: o primeiro
+com (Entidade que enviou, - Valor que enviou) e o segundo com (Entidade que
+recebeu, Valor que recebeu).
+
+
+Esse catamorfismo pode ser representado pelo seguinte diagrama:
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+    |[Transaction]|
+           \ar[d]_-{|cataList g|}
+&
+    |1 + (Transaction >< [Transaction])|
+           \ar[d]^{|id + (id >< (cataList g))|}
+           \ar[l]_-{|either nil cons|}
+\\
+     |[(Entity, Value)]|
+&
+     |1 + (Transaction >< [(Entity, Value)]|
+           \ar[l]^-{|g = either nil insert|}
+}
+\end{eqnarray*}
+
+
+Depois de termos a lista com todos os valores transacionados (tanto recebidos
+como enviados) e respetivas entidades aplicamos-lhe uma função chamada |groupL|.
+
+A função |groupL| ordena a |[(Entity, Value)]|, agrupa devidamente os
+seus elementos e por fim devolve |[(Entity, Value)]| mas sem repetições
+no que diz respeito às entidades, ou seja, a função soma todas as transações
+da entidade (quando se trata de um valor enviado o mesmo é negativo), ficando
+assim com os pares (Entidade, Valor Disponível).
+
+
+Consequentemente, temos a função |ledger| definida:
 
 \begin{code}
-groupL :: Ledger -> Ledger
-groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-    where mapFst f (a, b) = (f a, b)
-          sums [] = []
-          sums ((a,b):t) = (a, sum b) : sums t
-
-ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+ledger a = groupL (cataList (either nil insert) (allTransactions a))
     where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+          groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+          mapFst f (a, b) = (f a, b)
+          sums [] = [];
+          sums ((a,b):t) = (a, sum b) : sums t
 \end{code}
-
-
-
-
-TODOOOO
-
-|type Transaction = (Entity, (Value, Entity))|
-|type Transactions = [Transaction]|
-
-|type Ledger = [(Entity, Value)]|
-
-|type Block = (MagicNo, (Time, Transactions))|
-
-
-
-
-
-
-
 
 
 \item Função |isValidMagicNr|
 
-\end{enumerate}
+Esta função verifica se todos os números mágicos numa dada block chain são únicos,
+tendo portanto o seguinte tipo de dados:
+\begin{eqnarray*}
+|isValidMagicNr :: Blockchain -> Bool|
+\end{eqnarray*}
+
+Um número mágico é representado por: |MagicNo :: String|.
+
+E relembramos também o tipo de |Block|:
+\begin{eqnarray*}
+|type Block = (MagicNo, (Time, Transactions))|
+\end{eqnarray*}
 
 
+Assim, numa primeira fase o nosso intuito foi que a função |isValidMagicNr|,
+através de um cataBlockchain com um gene:
+\begin{eqnarray*}
+\start
+|g = either list insert|
+\more
+|list x = [p1 x]|
+\more
+|insert(x,y) = (p1 x) : y|
+\end{eqnarray*}
 
+obtivesse uma com lista de todos os números mágicos utilizados na |Blockchain|.
 
-
-
-
-
-
-
-----
-
+Este |cataBlockchain| pode ser definido pelo seguinte diagrama:
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
-    |Nat0|
-           \ar[d]_-{|cataNat g|}
+    |Blockchain|
+           \ar[d]_-{|cataBlockchain g|}
 &
-    |1 + Nat0|
-           \ar[d]^{|id + (cataNat g)|}
-           \ar[l]_-{|inNat|}
+    |Block + (Block >< Blockchain)|
+           \ar[d]^{|recBlockchain (cataBlockchain g)|}
+           \ar[l]_-{|inBlockchain|}
 \\
-     |B|
+     |[MagicNo]|
 &
-     |1 + B|
+     |Block + (Block >< [MagicNo])|
            \ar[l]^-{|g|}
 }
 \end{eqnarray*}
 
+Depois disso, ordenamos esta lista utilizando a função |sort|
+e aplicamos a função |group| que transforma a lista de números mágicos numa
+lista de listas de números mágicos. Ou seja, se um número mágico aparecer mais
+do que uma vez o mesmo fica agrupado na lista dentro da lista com os restantes
+números mágicos iguais a si.
 
+Por fim, aplicamos |all ( (==) 1 . length)|. O que acontece é que calculamos o comprimento
+de todas as listas dentro da lista maior e verificamos se os seus comprimentos são iguais a 1.
+Assim, caso haja uma lista com vários números mágicos a função retornará |False|, tal como
+é esperado.
 
-
-\begin{eqnarray*}
-\xymatrix@@C=3cm{
-   |A*|
-          \ar[d]_-{|ana lsplitBGene|}
-           \ar[r]^-{|lsplitBGene|}
-&
-   |1 + A* >< (A >< A above) above|
-          \ar[d]^{|id +((ana lsplitBGene) >< map(id >< ana lsplitBGene))|}
-\\
-    |B|
-       \ar[d]_-{|cata inordBGene|}
-       \ar[r]^-{|outB|}
-&
-    |1 + B >< (A >< B) above|
-          \ar[l]^-{|inB|}
-           \ar[d]^{|id +((cata inordBGene) >< map(id >< cata inordBGene))|}
-\\
-   |A above|
-&
-   |1 + A above >< (A >< A above) above|
-       \ar[l]^-{|inordBGene|}
-}
-\end{eqnarray*}
+A função |isValidMagicNr| pode ser então definida como:
 
 \begin{code}
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where   list x = [p1 x]
             insert(x,y) = (p1 x) : y
 \end{code}
-
+\end{enumerate}
 
 \subsection*{Problema 2}
 
