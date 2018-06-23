@@ -2916,11 +2916,9 @@ uma função de Pitágoras recorrendo à biblioteca gloss.
 
 
 
-...
-
-
-
-
+A função draw é um anamorfismo que recebe como argumento uma PTree e devolve
+como resultado uma lista de Picture que contém os níveis sucessivos de
+construção duma árvore de quadrados de Pitágoras.
 
 
 \begin{code}
@@ -2941,6 +2939,28 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
         orth (a, b) = (-b, a)
 
 \end{code}
+
+O gene do anamorfismo desconstrói o número natural resultante do cálculo da
+profundidade da PTree argumento. Em seguida é aplicado um Either que, caso o
+resultado da desconstrução seja "1" devolve uma lista vazia ou um Split da
+função que constrói uma picture correspondente a um passo da construção ou Id.
+
+Com o anamorfismo obtemos o seguinte diagrama:
+\begin{eqnarray}
+\xymatrix@@C=4cm{
+    |Int|
+        \ar[d]_-{|anaList g|}
+        \ar[r]^-{|g = nil + (split list id)|}
+&
+    |Either 1 (Picure x Int)|
+           \ar[d]^{|recList (anaList g)|}
+\\
+     |[Picture]|
+&
+     |Either nil (Picure, [Picture])|
+           \ar[l]^-{|inList|}
+}
+\end{eqnarray}
 
 Tal como sugere no enunciado, se corremos |animatePTree 3| os passos que vão aparecendo
 no ecrão encontram-se na Figura~\ref{fig:animate1}, Figura~\ref{fig:animate2} e
