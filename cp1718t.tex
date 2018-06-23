@@ -3020,6 +3020,7 @@ Deste modo, obtemos os dois resultados pretendidos:
 
 \subsection*{Problema 5}
 
+<<<<<<< HEAD
 O quinto e último problema diz respeito a \ensuremath{\Varid{monades}}. O mónade do
 problema é conhecido por \emph{bag}, \emph{saco}
 ou \emph{multi-conjunto}, permitindo que os elementos de um
@@ -3184,11 +3185,34 @@ Percebemos que \ensuremath{\Varid{dist}} divide o número de elementos de cada e
 pelo número total de elementos.
 
 Assim, definimos a função como:
+=======
+Para a resolução do quinto e último problema
+
+
+
+
+>>>>>>> 248516748b59f7b12702277c6666619b1586d8c1
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{11}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+<<<<<<< HEAD
+=======
+\>[B]{}\Varid{singletonbag}\;\Varid{a}\mathrel{=}\mathit B\;[\mskip1.5mu (\Varid{a},\mathrm{1})\mskip1.5mu]{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mu \;\Varid{b}\mathrel{=}\mathit B\;(\Varid{concat}\;(\mathsf{fmap}\;\Varid{unB}\;(\Varid{junta}\;(\Varid{unB}\;\Varid{b})))){}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}\;\Varid{junta}\;((\Varid{ba},\Varid{int})\mathbin{:}\Varid{bas})\mathrel{=}(\Varid{fmapSpecial}\;(\mathbin{*}\Varid{int})\;\Varid{ba})\mathbin{:}(\Varid{junta}\;\Varid{bas}){}\<[E]%
+\\
+\>[5]{}\hsindent{6}{}\<[11]%
+\>[11]{}\Varid{junta}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]{}\<[E]%
+\\
+\>[5]{}\hsindent{6}{}\<[11]%
+\>[11]{}\Varid{fmapSpecial}\;\Varid{f}\mathrel{=}\mathit B\comp \map \;(\Varid{id}\times\Varid{f})\comp \Varid{unB}{}\<[E]%
+\\[\blanklineskip]%
+>>>>>>> 248516748b59f7b12702277c6666619b1586d8c1
 \>[B]{}\Varid{dist}\;(\mathit B\;\Varid{a})\mathrel{=}\Conid{D}\;((\map \;(\lambda (\Varid{x},\Varid{y})\to (\Varid{x},(\mathbin{/})\;(\Varid{toFloat}\;\Varid{y})\;(\Varid{toFloat}\;(\Varid{number}\;\Varid{a})))))\;\Varid{a}){}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%

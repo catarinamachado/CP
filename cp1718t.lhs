@@ -1691,7 +1691,6 @@ Assim, temos definida a função |scaleQTree|:
 \begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
-
 \end{code}
 
 
@@ -1726,6 +1725,7 @@ definido como o mencionado anteriormente.
 
 Consequentemente, temos todas as condições necessárias para definir
 a função |invertQTree|:
+
 \begin{code}
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
@@ -1979,7 +1979,7 @@ e a Figura~\ref{fig:compress4}.
 
 A função |outlineQTree| recebe uma função que determina quais os píxeis de
 fundo e converte uma quadtree numa matriz monocromática, de forma a desenhar o
-contorno de uma malha poligonal contina na imagem.
+contorno de uma malha poligonal contida na imagem.
 
 Após analisar o problema e as funções que o enunciado já fornece percebemos
 que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
@@ -2626,19 +2626,40 @@ loop (a, b, c, d) = (a * b, b + 1, c * d, d + 1)
 \subsection*{Problema 4}
 
 \begin{code}
-inFTree = undefined
-outFTree = undefined
-baseFTree = undefined
-recFTree = undefined
-cataFTree = undefined
-anaFTree = undefined
-hyloFTree = undefined
+
+inFTree = either Unit (uncurryB Comp)
+    where uncurryB f (a,(t1,t2)) = f a t1 t2
+outFTree (Unit c)       = Left c
+outFTree (Comp a t1 t2) = Right(a,(t1,t2))
+baseFTree f g h  = g -|- (f  >< (h >< h))
+recFTree f = baseFTree id id f
+cataFTree a = a . (recFTree (cataFTree a)) . outFTree
+anaFTree f = inFTree . (recFTree (anaFTree f) ) . f
+hyloFTree a c = cataFTree a . anaFTree c
 
 instance Bifunctor FTree where
-    bimap = undefined
+    bimap f g = cataFTree ( inFTree . baseFTree f g id )
 
-generatePTree = undefined
-drawPTree = undefined
+generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
+    where
+        m x = 50 * (sqrt(2) / 2) ^ abs(x-a)
+
+drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
+    where
+        list n = (foldMap lineLoop (squares n))
+        squares n = concat $ take (depthFTree a - n) $ iterateM mkBranches start
+        start = [(-100,0),(0,0),(0,-100),(-100,-100)]
+        iterateM f x = iterate (>>= f) (pure x)
+        mkBranches [a, b, c, d] =   let d = 0.5 <*> (b <+> ((-1) <*> a))
+                                        l1 = d <+> orth d
+                                        l2 = orth l1
+                                    in
+                                        [ [a <+> l2, b <+> (2 <*> l2), a <+> l1, a]
+                                        , [a <+> (2 <*> l1), b <+> l1, b, b <+> l2] ]
+        (a, b) <+> (c, d) = (a+c, b+d)
+        n <*> (a, b) = (a*n, b*n)
+        orth (a, b) = (-b, a)
+
 \end{code}
 
 \subsection*{Problema 5}
