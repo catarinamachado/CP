@@ -995,11 +995,18 @@ groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y)
           sums ((a,b):t) = (a, sum b) : sums t
 
 ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
-    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+    where
+        insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
+        groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+        mapFst f (a, b) = (f a, b)
+        sums [] = [];
+        sums ((a,b):t) = (a, sum b) : sums t
 
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
-    where   list x = [p1 x]
-            insert(x,y) = (p1 x) : y
+    where
+        list x = [p1 x]
+        insert(x,y) = (p1 x) : y
+
 \end{code}
 
 
