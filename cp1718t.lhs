@@ -1943,14 +1943,14 @@ e a Figura~\ref{fig:compress4}.
 \begin{figure}
 \begin{subfigure}{0.4\textwidth}
     \begin{center}
-    \includegraphics[width=0.4\textwidth]{imgs/compress1.png}
+    \includegraphics[width=0.25\textwidth]{imgs/compress1.png}
     \end{center}
     \caption{Figura Person comprimida em 1 nível.}
     \label{fig:compress1}
 \end{subfigure}
 \begin{subfigure}{0.4\textwidth}
     \begin{center}
-    \includegraphics[width=0.4\textwidth]{imgs/compress2.png}
+    \includegraphics[width=0.23\textwidth]{imgs/compress2.png}
     \end{center}
     \caption{Figura Person comprimida em 2 níveis.}
     \label{fig:compress2}
@@ -1960,14 +1960,14 @@ e a Figura~\ref{fig:compress4}.
 \begin{figure}
 \begin{subfigure}{0.4\textwidth}
     \begin{center}
-    \includegraphics[width=0.4\textwidth]{imgs/compress3.png}
+    \includegraphics[width=0.25\textwidth]{imgs/compress3.png}
     \end{center}
     \caption{Figura Person comprimida em 3 níveis.}
     \label{fig:compress3}
 \end{subfigure}
 \begin{subfigure}{0.4\textwidth}
     \begin{center}
-    \includegraphics[width=0.4\textwidth]{imgs/compress4.png}
+    \includegraphics[width=0.22\textwidth]{imgs/compress4.png}
     \end{center}
     \caption{Figura Person comprimida em 4 níveis.}
     \label{fig:compress4}
@@ -1975,10 +1975,64 @@ e a Figura~\ref{fig:compress4}.
 \end{figure}
 
 
-
-
-
 \item Função |outlineQTree|
+
+A função |outlineQTree| recebe uma função que determina quais os píxeis de
+fundo e converte uma quadtree numa matriz monocromática, de forma a desenhar o
+contorno de uma malha poligonal contina na imagem.
+
+Após analisar o problema e as funções que o enunciado já fornece percebemos
+que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
+Esta função é a função |qt2bm|, que converte uma |QTree a| em |Matrix a|.
+
+\begin{eqnarray*}
+\start
+|qt2bm :: (Eq a) => QTree a -> Matrix a|
+\more
+|qt2bm = cataQTree (either f g) where|
+\more
+|f (k,(i,j)) = matrix j i (const k)|
+\more
+|g (a,(b,(c,d))) = (a <|> b) <-> (c <|> d)|
+\end{eqnarray*}
+
+Assim, olhamos para o gene do |cataQTree (either f g)| e pensamos no que teremos
+que alterar para a nossa função |outlineQTree| retornar uma |Matrix Bool|.
+Sabemos que teremos que aplicar a função passada como parâmetro às |Cell|
+de modo a saber se a mesma se trata de um píxel (conjunto de píxeis) de fundo.
+
+Uma vez que é a |Cell| que contém os píxeis, no que diz respeito ao |Block|
+nada precisará de ser feito. Logo, a função |g| será exatamente a mesma.
+
+No caso das |Cell|, teremos então que dividir a função |f| em dois casos,
+um deles quando após aplicada a função dada como parâmetro ao conteúdo da |Cell|
+dá |True| e o segundo quando dá |False|:
+\begin{enumerate}
+\item |True|- contéudo da |Cell| ser um píxel de fundo:
+
+Neste caso, sabemos que teremos que devolver uma |Matrix Bool| onde
+o interior será |False| e o contorno |True|, por exemplo, para uma
+Matriz de 4x4:
+\begin{verbatim}
+( True True  True  True )
+( True False False True )
+( True False False True )
+( True True  True  True )
+\end{verbatim}
+
+Logo, aproveitando a função |matrix|, usamos uma expressão lambda
+onde se as coordenadas (x, y) da matriz pertencerem à borda da mesma,
+ou seja, isso acontece quando |x == 1| ou |y == 1| ou |x == largura maxima| ou
+|y == altura maxima|, o valor é |True|, caso contrário o valor será |False|.
+
+\item |False|- O contéudo da |Cell| não ser um píxel de fundo:
+
+Neste caso, basta aplicar a função |matrix| onde o conteúdo dos
+elementos é |False|.
+
+\end{enumerate}
+
+Consequentemente, temos todos os dados para definir a nossa função |outlineQTree|:
 
 \begin{code}
 outlineQTree magic a = cataQTree (either (f magic) g) a
@@ -1989,8 +2043,30 @@ outlineQTree magic a = cataQTree (either (f magic) g) a
 
 \end{code}
 
-\end{enumerate}
+\begin{figure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/outline1.png}
+    \end{center}
+    \caption{Figura Person produzida com a função |outlineBMP|.}
+    \label{fig:outline1}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{imgs/outline2.png}
+    \end{center}
+    \caption{Figura Person produzida com a função |addOutlineBMP|.}
+    \label{fig:outline2}
+\end{subfigure}
+\end{figure}
 
+
+No enunciado desta função era ainda sugerido que produzissemos imagens
+com o auxílio de duas funções que utilizam a |outlineQTree|. As duas
+imagens que obtivemos estão presentes na Figura~\ref{fig:outline1}
+e a Figura~\ref{fig:outline2}.
+
+\end{enumerate}
 
 
 É ainda de salientar que todas as funções do problema passaram em todos os testes
