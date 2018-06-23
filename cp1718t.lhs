@@ -1042,7 +1042,6 @@ no enunciado e o significado e intuito de cada uma delas também já era sabido.
 
 A título de exemplo, através do diagrama em seguida conseguimos ter uma
 melhor perceção de qual deverá ser a definição de cada uma destas funções.
-
 Assumimos que as funções |g| e |h| mencionadas são funções que devolvem
 a identidade.
 
@@ -1112,8 +1111,8 @@ O diagrama desta função será:
 \end{eqnarray*}
 
 
-O objetivo é descobrir o gene |g|, para assim termos a definição final de como
-algo do género |allTransactions = cataBlockchain g|
+O objetivo é descobrir o gene |g|, para assim termos a definição final com
+algo do género |allTransactions = cataBlockchain g|.
 
 Assim, tendo em atenção o tipo de Block:
 \begin{eqnarray*}
