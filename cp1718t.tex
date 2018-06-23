@@ -2119,6 +2119,7 @@ definido como o mencionado anteriormente.
 
 Consequentemente, temos todas as condições necessárias para definir
 a função \ensuremath{\Varid{invertQTree}}:
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2399,7 +2400,7 @@ e a Figura~\ref{fig:compress4}.
 
 A função \ensuremath{\Varid{outlineQTree}} recebe uma função que determina quais os píxeis de
 fundo e converte uma quadtree numa matriz monocromática, de forma a desenhar o
-contorno de uma malha poligonal contina na imagem.
+contorno de uma malha poligonal contida na imagem.
 
 Após analisar o problema e as funções que o enunciado já fornece percebemos
 que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
@@ -2992,35 +2993,96 @@ Deste modo, obtemos os dois resultados pretendidos:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{25}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{30}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{37}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{41}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{inFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{inFTree}\mathrel{=}\alt{\Conid{Unit}}{\Varid{uncurryB}\;\Conid{Comp}}{}\<[E]%
 \\
-\>[B]{}\Varid{outFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}\;\Varid{uncurryB}\;\Varid{f}\;(\Varid{a},(\Varid{t1},\Varid{t2}))\mathrel{=}\Varid{f}\;\Varid{a}\;\Varid{t1}\;\Varid{t2}{}\<[E]%
 \\
-\>[B]{}\Varid{baseFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outFTree}\;(\Conid{Unit}\;\Varid{c}){}\<[25]%
+\>[25]{}\mathrel{=}i_1\;\Varid{c}{}\<[E]%
 \\
-\>[B]{}\Varid{recFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outFTree}\;(\Conid{Comp}\;\Varid{a}\;\Varid{t1}\;\Varid{t2})\mathrel{=}i_2\;(\Varid{a},(\Varid{t1},\Varid{t2})){}\<[E]%
 \\
-\>[B]{}\Varid{cataFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{h}{}\<[18]%
+\>[18]{}\mathrel{=}\Varid{g}+(\Varid{f}{}\<[30]%
+\>[30]{}\times(\Varid{h}\times\Varid{h})){}\<[E]%
 \\
-\>[B]{}\Varid{anaFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{recFTree}\;\Varid{f}\mathrel{=}\Varid{baseFTree}\;\Varid{id}\;\Varid{id}\;\Varid{f}{}\<[E]%
 \\
-\>[B]{}\Varid{hyloFTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{cataFTree}\;\Varid{a}\mathrel{=}\Varid{a}\comp (\Varid{recFTree}\;(\Varid{cataFTree}\;\Varid{a}))\comp \Varid{outFTree}{}\<[E]%
+\\
+\>[B]{}\Varid{anaFTree}\;\Varid{f}\mathrel{=}\Varid{inFTree}\comp (\Varid{recFTree}\;(\Varid{anaFTree}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
+\\
+\>[B]{}\Varid{hyloFTree}\;\Varid{a}\;\Varid{c}\mathrel{=}\Varid{cataFTree}\;\Varid{a}\comp \Varid{anaFTree}\;\Varid{c}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\mathbf{instance}\;\Conid{Bifunctor}\;\Conid{FTree}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
-\>[5]{}\Varid{bimap}\mathrel{=}\bot {}\<[E]%
+\>[5]{}\Varid{bimap}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataFTree}\;(\Varid{inFTree}\comp \Varid{baseFTree}\;\Varid{f}\;\Varid{g}\;\Varid{id}){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{generatePTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{generatePTree}\;\Varid{a}\mathrel{=}\Varid{anaFTree}\;((\underline{\mathrm{0}}+\conj{\Varid{m}}{\conj{\Varid{id}}{\Varid{id}}})\comp \Varid{outNat})\;\Varid{a}{}\<[E]%
 \\
-\>[B]{}\Varid{drawPTree}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}{}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{m}\;\Varid{x}\mathrel{=}\mathrm{50}\mathbin{*}(\Varid{sqrt}\;(\mathrm{2})\mathbin{/}\mathrm{2})\mathbin{\uparrow}\Varid{abs}\;(\Varid{x}\mathbin{-}\Varid{a}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{drawPTree}\;\Varid{a}\mathrel{=}\Varid{anaList}\;((\Varid{nil}+\conj{\Varid{list}}{\Varid{id}})\comp \Varid{outNat})\;(\Varid{depthFTree}\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}{}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{list}\;\Varid{n}\mathrel{=}(\Varid{foldMap}\;\Varid{lineLoop}\;(\Varid{squares}\;\Varid{n})){}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{squares}\;\Varid{n}\mathrel{=}\Varid{concat}\mathbin{\$}\Varid{take}\;(\Varid{depthFTree}\;\Varid{a}\mathbin{-}\Varid{n})\mathbin{\$}\Varid{iterateM}\;\Varid{mkBranches}\;\Varid{start}{}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{start}\mathrel{=}[\mskip1.5mu (\mathbin{-}\mathrm{100},\mathrm{0}),(\mathrm{0},\mathrm{0}),(\mathrm{0},\mathbin{-}\mathrm{100}),(\mathbin{-}\mathrm{100},\mathbin{-}\mathrm{100})\mskip1.5mu]{}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{iterateM}\;\Varid{f}\;\Varid{x}\mathrel{=}\Varid{iterate}\;(\bind \Varid{f})\;(\Varid{pure}\;\Varid{x}){}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{mkBranches}\;[\mskip1.5mu \Varid{a},\Varid{b},\Varid{c},\Varid{d}\mskip1.5mu]\mathrel{=}{}\<[37]%
+\>[37]{}\mathbf{let}\;\Varid{d}\mathrel{=}\mathrm{0.5}\mathbin{<*>}(\Varid{b}\mathbin{<+>}((\mathbin{-}\mathrm{1})\mathbin{<*>}\Varid{a})){}\<[E]%
+\\
+\>[37]{}\hsindent{4}{}\<[41]%
+\>[41]{}\Varid{l1}\mathrel{=}\Varid{d}\mathbin{<+>}\Varid{orth}\;\Varid{d}{}\<[E]%
+\\
+\>[37]{}\hsindent{4}{}\<[41]%
+\>[41]{}\Varid{l2}\mathrel{=}\Varid{orth}\;\Varid{l1}{}\<[E]%
+\\
+\>[37]{}\mathbf{in}{}\<[E]%
+\\
+\>[37]{}\hsindent{4}{}\<[41]%
+\>[41]{}[\mskip1.5mu [\mskip1.5mu \Varid{a}\mathbin{<+>}\Varid{l2},\Varid{b}\mathbin{<+>}(\mathrm{2}\mathbin{<*>}\Varid{l2}),\Varid{a}\mathbin{<+>}\Varid{l1},\Varid{a}\mskip1.5mu]{}\<[E]%
+\\
+\>[37]{}\hsindent{4}{}\<[41]%
+\>[41]{},[\mskip1.5mu \Varid{a}\mathbin{<+>}(\mathrm{2}\mathbin{<*>}\Varid{l1}),\Varid{b}\mathbin{<+>}\Varid{l1},\Varid{b},\Varid{b}\mathbin{<+>}\Varid{l2}\mskip1.5mu]\mskip1.5mu]{}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}(\Varid{a},\Varid{b})\mathbin{<+>}(\Varid{c},\Varid{d})\mathrel{=}(\Varid{a}\mathbin{+}\Varid{c},\Varid{b}\mathbin{+}\Varid{d}){}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{n}\mathbin{<*>}(\Varid{a},\Varid{b})\mathrel{=}(\Varid{a}\mathbin{*}\Varid{n},\Varid{b}\mathbin{*}\Varid{n}){}\<[E]%
+\\
+\>[5]{}\hsindent{4}{}\<[9]%
+\>[9]{}\Varid{orth}\;(\Varid{a},\Varid{b})\mathrel{=}(\mathbin{-}\Varid{b},\Varid{a}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 \subsection*{Problema 5}
 
-<<<<<<< HEAD
 O quinto e último problema diz respeito a \ensuremath{\Varid{monades}}. O mónade do
 problema é conhecido por \emph{bag}, \emph{saco}
 ou \emph{multi-conjunto}, permitindo que os elementos de um
@@ -3185,34 +3247,11 @@ Percebemos que \ensuremath{\Varid{dist}} divide o número de elementos de cada e
 pelo número total de elementos.
 
 Assim, definimos a função como:
-=======
-Para a resolução do quinto e último problema
-
-
-
-
->>>>>>> 248516748b59f7b12702277c6666619b1586d8c1
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{11}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-<<<<<<< HEAD
-=======
-\>[B]{}\Varid{singletonbag}\;\Varid{a}\mathrel{=}\mathit B\;[\mskip1.5mu (\Varid{a},\mathrm{1})\mskip1.5mu]{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mu \;\Varid{b}\mathrel{=}\mathit B\;(\Varid{concat}\;(\mathsf{fmap}\;\Varid{unB}\;(\Varid{junta}\;(\Varid{unB}\;\Varid{b})))){}\<[E]%
-\\
-\>[B]{}\hsindent{5}{}\<[5]%
-\>[5]{}\mathbf{where}\;\Varid{junta}\;((\Varid{ba},\Varid{int})\mathbin{:}\Varid{bas})\mathrel{=}(\Varid{fmapSpecial}\;(\mathbin{*}\Varid{int})\;\Varid{ba})\mathbin{:}(\Varid{junta}\;\Varid{bas}){}\<[E]%
-\\
-\>[5]{}\hsindent{6}{}\<[11]%
-\>[11]{}\Varid{junta}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]{}\<[E]%
-\\
-\>[5]{}\hsindent{6}{}\<[11]%
-\>[11]{}\Varid{fmapSpecial}\;\Varid{f}\mathrel{=}\mathit B\comp \map \;(\Varid{id}\times\Varid{f})\comp \Varid{unB}{}\<[E]%
-\\[\blanklineskip]%
->>>>>>> 248516748b59f7b12702277c6666619b1586d8c1
 \>[B]{}\Varid{dist}\;(\mathit B\;\Varid{a})\mathrel{=}\Conid{D}\;((\map \;(\lambda (\Varid{x},\Varid{y})\to (\Varid{x},(\mathbin{/})\;(\Varid{toFloat}\;\Varid{y})\;(\Varid{toFloat}\;(\Varid{number}\;\Varid{a})))))\;\Varid{a}){}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
