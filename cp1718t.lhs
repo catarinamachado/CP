@@ -2643,7 +2643,9 @@ drawPTree = undefined
 
 \subsection*{Problema 5}
 
-Para a resolução do quinto e último problema
+O quinto e último problema diz respeito a |mónades|.
+
+O mónade do problema é conhecido por 
 
 
 
