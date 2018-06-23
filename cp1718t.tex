@@ -3219,8 +3219,6 @@ Construindo o \ensuremath{\Varid{cataFTree}} aplicado ao gene referido anteriorm
 }
 \end{eqnarray*}
 
-aquifds
-
 Mais uma vez, as justificações do Problema 2 relaticamente à função \ensuremath{\mathsf{fmap}} fazem
 um ``match'' com a função \ensuremath{\Varid{bimap}}, pelo que uma explicação mais detalhada acerca desta
 última função pode ser encontrada no Problema 2.
@@ -3232,6 +3230,29 @@ Concentrando agora nas funções pedidas no enunciado:
 
 \begin{enumerate}
 \item Função \ensuremath{\Varid{generatePTree}}
+
+Esta função tem o objetivo de gerar uma árvore de Pitágoras para uma
+dada ordem.
+
+Tal como indica o enunciado, definimos esta função como uma \ensuremath{\Varid{anaFTree}}.
+Assim, através do seguinte diagrama conseguimos ver os
+tipos do gene:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{g}\mathrel{=}((\underline{\mathrm{0}}\mathbin{+}\conj{\Varid{m}}{\conj{\Varid{id}}{\Varid{id}}})\comp \Varid{outNat}}
+\more
+\ensuremath{\Varid{m}\;\Varid{x}\mathrel{=}\mathrm{50}\mathbin{*}(\Varid{sqrt}\;(\mathrm{2})\mathbin{/}\mathrm{2})\mathbin{\uparrow}\Varid{abs}\;(\Varid{x}\mathbin{-}\Varid{a})}
+\end{eqnarray*}
+
+
+... diagrama com setas para baixo
+
+Aplicando um \ensuremath{\Varid{anaFTree}} obtemos o seguinte diagrama:
+
+... diagrama padrão
+
+
+...
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -3251,6 +3272,19 @@ Concentrando agora nas funções pedidas no enunciado:
 
 
 \item Função \ensuremath{\Varid{drawPTree}}
+
+O objetivo de \ensuremath{\Varid{drawPTree}} animar incrementalmente os passos de construção de
+uma função de Pitágoras recorrendo à biblioteca gloss.
+
+
+
+
+...
+
+
+
+
+
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -3304,6 +3338,48 @@ Concentrando agora nas funções pedidas no enunciado:
 \>[9]{}\Varid{orth}\;(\Varid{a},\Varid{b})\mathrel{=}(\mathbin{-}\Varid{b},\Varid{a}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+Tal como sugere no enunciado, se corremos \ensuremath{\Varid{animatePTree}\;\mathrm{3}} os passos que vão aparecendo
+no ecrão encontram-se na Figura~\ref{fig:animate1}, Figura~\ref{fig:animate2} e
+Figura~\ref{fig:animate3}, respetivamente.
+
+\begin{figure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate1.png}
+\caption{Árvore de Pitágoras em construção momento $1$.}
+\label{fig:animate1}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate2.png}
+\caption{Árvore de Pitágoras em construção momento $2$.}
+\label{fig:animate1}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate3.png}
+\caption{Árvore de Pitágoras em construção momento $3$.}
+\label{fig:animate3}
+\end{subfigure}
+%
+\end{figure}
+
+Aplicando para um parâmetro maior, neste caso igual a 15, obtemos a
+árvore de Pitágoras representada na Figura~\ref{fig:animate15}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.25\textwidth]{imgs/animate15.png}
+\end{center}
+\caption{Árvore de Pitágoras de ordem $15$.}
+\label{fig:animate15}
+\end{figure}
+
+
 \end{enumerate}
 
 

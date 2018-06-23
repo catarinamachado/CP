@@ -2828,8 +2828,6 @@ Construindo o |cataFTree| aplicado ao gene referido anteriormente temos:
 }
 \end{eqnarray*}
 
-aquifds
-
 Mais uma vez, as justificações do Problema 2 relaticamente à função |fmap| fazem
 um ``match'' com a função |bimap|, pelo que uma explicação mais detalhada acerca desta
 última função pode ser encontrada no Problema 2.
@@ -2842,6 +2840,29 @@ Concentrando agora nas funções pedidas no enunciado:
 \begin{enumerate}
 \item Função |generatePTree|
 
+Esta função tem o objetivo de gerar uma árvore de Pitágoras para uma
+dada ordem.
+
+Tal como indica o enunciado, definimos esta função como uma |anaFTree|.
+Assim, através do seguinte diagrama conseguimos ver os
+tipos do gene:
+\begin{eqnarray*}
+\start
+|g = (((const 0) + (split m (split id id))) . outNat|
+\more
+|m x = 50 * (sqrt(2) / 2) ^ abs(x-a)|
+\end{eqnarray*}
+
+
+... diagrama com setas para baixo
+
+Aplicando um |anaFTree| obtemos o seguinte diagrama:
+
+... diagrama padrão
+
+
+...
+
 \begin{code}
 generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
     where
@@ -2851,6 +2872,19 @@ generatePTree a = anaFTree (((const 0) -|- (split m (split id id))) . outNat) a
 
 
 \item Função |drawPTree|
+
+O objetivo de |drawPTree| animar incrementalmente os passos de construção de
+uma função de Pitágoras recorrendo à biblioteca gloss.
+
+
+
+
+...
+
+
+
+
+
 
 \begin{code}
 drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
@@ -2870,6 +2904,48 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
         orth (a, b) = (-b, a)
 
 \end{code}
+
+Tal como sugere no enunciado, se corremos |animatePTree 3| os passos que vão aparecendo
+no ecrão encontram-se na Figura~\ref{fig:animate1}, Figura~\ref{fig:animate2} e
+Figura~\ref{fig:animate3}, respetivamente.
+
+\begin{figure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate1.png}
+\caption{Árvore de Pitágoras em construção momento $1$.}
+\label{fig:animate1}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate2.png}
+\caption{Árvore de Pitágoras em construção momento $2$.}
+\label{fig:animate1}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{imgs/animate3.png}
+\caption{Árvore de Pitágoras em construção momento $3$.}
+\label{fig:animate3}
+\end{subfigure}
+%
+\end{figure}
+
+Aplicando para um parâmetro maior, neste caso igual a 15, obtemos a
+árvore de Pitágoras representada na Figura~\ref{fig:animate15}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.25\textwidth]{imgs/animate15.png}
+\end{center}
+\caption{Árvore de Pitágoras de ordem $15$.}
+\label{fig:animate15}
+\end{figure}
+
+
 \end{enumerate}
 
 
