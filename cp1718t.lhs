@@ -1048,7 +1048,7 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
     where
         list n = (foldMap lineLoop (squares n))
         squares n = concat $ take (depthFTree a - n) $ iterateM mkBranches start
-        start = [(0,100),(100,100),(100,0),(0,0)]
+        start = [(-100,0),(0,0),(0,-100),(-100,-100)]
         iterateM f x = iterate (>>= f) (pure x)
         mkBranches [a, b, c, d] =   let d = 0.5 <*> (b <+> ((-1) <*> a))
                                         l1 = d <+> orth d
