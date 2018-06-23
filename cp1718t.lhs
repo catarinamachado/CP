@@ -1197,14 +1197,14 @@ dada block chain.
 
 
 \begin{code}
-ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
-    where
-        insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
-        groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
-        mapFst f (a, b) = (f a, b)
-        sums [] = [];
-        sums ((a,b):t) = (a, sum b) : sums t
+groupL :: Ledger -> Ledger
+groupL t = ( sums . map (mapFst head . unzip) . groupBy (\x y -> fst x == fst y) . sort) t
+    where mapFst f (a, b) = (f a, b)
+          sums [] = []
+          sums ((a,b):t) = (a, sum b) : sums t
 
+ledger a = groupL (cataList ( either nil insert ) (allTransactions a))
+    where insert(x,y) = (p1 x, -p1 (p2 x)) : (p2 (p2 x), p1 (p2 x)) : y
 \end{code}
 
 
@@ -1287,10 +1287,8 @@ TODOOOO
 
 \begin{code}
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
-    where
-        list x = [p1 x]
-        insert(x,y) = (p1 x) : y
-
+    where   list x = [p1 x]
+            insert(x,y) = (p1 x) : y
 \end{code}
 
 
@@ -1693,7 +1691,6 @@ Assim, temos definida a função |scaleQTree|:
 \begin{code}
 scaleQTree n = cataQTree (either (scaleCell n) (uncurryBlock))
     where scaleCell n (e, (n1, n2)) = Cell e (n1 * n) (n2 * n)
-
 \end{code}
 
 
@@ -1728,6 +1725,7 @@ definido como o mencionado anteriormente.
 
 Consequentemente, temos todas as condições necessárias para definir
 a função |invertQTree|:
+
 \begin{code}
 invertQTree = cataQTree (either (invertCell) (uncurryBlock))
     where invertCell ((PixelRGBA8 a b c d), (n1, n2)) =
@@ -1981,7 +1979,7 @@ e a Figura~\ref{fig:compress4}.
 
 A função |outlineQTree| recebe uma função que determina quais os píxeis de
 fundo e converte uma quadtree numa matriz monocromática, de forma a desenhar o
-contorno de uma malha poligonal contina na imagem.
+contorno de uma malha poligonal contida na imagem.
 
 Após analisar o problema e as funções que o enunciado já fornece percebemos
 que podemos aproveitar uma função já existente e adaptá-la ao nosso problema.
@@ -2580,7 +2578,7 @@ Tendo agora em consideração o segundo split do split maior, temos:
     |(A >< B) >< (C >< D)|
            \ar[d]_-{|split (mul . p2) (succ . p2 . p2)|}
 \\
-    |(Z >< D|
+    |(Z >< D)|
 }
 \hfill \break
 
@@ -2666,25 +2664,175 @@ drawPTree a = anaList ((nil -|- (split list id)) . outNat) (depthFTree a)
 
 \subsection*{Problema 5}
 
-Para a resolução do quinto e último problema
+O quinto e último problema diz respeito a |monades|. O mónade do
+problema é conhecido por \emph{bag}, \emph{saco}
+ou \emph{multi-conjunto}, permitindo que os elementos de um
+conjunto tenham multiplicidades associadas.
 
+Para este problema o objetivo é que completemos a definição
+de |Monad Bag|, nomeadamente no que diz respeito
+ao |muB| (multiplicação do mónade |Bag|) e a respetiva
+função auxiliar |singletonbag|. É também necessário definir
+a função |dist|.
 
+\vspace{0.4cm}
 
+Começando pela função |singletonbag|, tal como o próprio nome indica,
+o objetivo dela é ter um saco com apenas um elemento do valor passado como
+parâmetro, para ser o |return| do |Monad|.
 
+Assim, a sua definição é intuitiva e é a seguinte:
 \begin{code}
-
 singletonbag a = B[(a, 1)]
+\end{code}
 
+É o construtor |B| que se encarrega de fazer com que o
+tipo de retorno de |singletonbag| seja o desejado.
+
+\vspace{0.3cm}
+
+Quanto ao |muB|, sabemos que o seu tipo de dados deverá ser o seguinte:
+\begin{eqnarray*}
+|muB :: Bag (Bag a) -> Bag a|
+\end{eqnarray*}
+
+Deste modo, tendo ainda em consideração a definição de |Monad|
+sabemos que esta função recebe um Bag de Bags, como por
+exemplo:
+\begin{eqnarray*}
+\start
+|b2 :: Bag (Bag Marble)|
+\more
+|b2 = B [(B[(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)],5)|
+\more
+|,(B [(Pink,1),(Green,2),(Red,1),(Blue,1)],2)]|
+\end{eqnarray*}
+
+E que o objetivo é que a função retorne um Bag somente, que, no
+caso de correr |muB b2| deverá ser:
+\begin{eqnarray*}
+\start
+|b1 :: Bag Marble|
+\more
+|b1 = B[(Pink,12),(Green,19),(Red,12),(Blue,12),(White,5)]|
+\end{eqnarray*}
+
+Sucintamente, o objetivo do |muB| é que dado um Bag com Bags lá dentro
+todos os seus elementos se juntem num só Bag. Para tal, é necessário
+ter em atenção quantos Bags estão dentro do Bag maior e
+agrupar convenientemente os seus conteúdos,
+tal como vimos no exemplo anterior.
+
+Assim, com recurso a algumas funções auxiliares produzimos o código
+em seguida:
+\begin{code}
 muB b = B (concat (fmap unB (junta (unB b))))
     where junta ((ba, int) : bas) = (fmapSpecial (*int) ba) : (junta bas)
           junta [] = []
           fmapSpecial f = B . map (id >< f) . unB
+\end{code}
 
+O diagrama seguinte mostra as alterações nos tipos de dados que vão
+acontecendo no decorrer da definição de |muB| por nós proposta:
+\begin{eqnarray*}
+\xymatrix@@C=5cm{
+    |Bag(Bag a)|
+        \ar[d]_-{|unB|}
+\\
+    |[(Bag a, Int)]|
+        \ar[d]_-{|junta|}
+\\
+    |[Bag a]|
+        \ar[d]_-{|fmap unB|}
+\\
+    |[[(a, Int)]]|
+        \ar[d]_-{|concat|}
+\\
+    |[(a, Int)]|
+        \ar[d]_-{|B|}
+\\
+    |Bag a|
+}
+\end{eqnarray*}
+
+Passando a explicar por palavras passo a passo
+o que acontece na função |muB|, temos que:
+\begin{enumerate}
+\item |un B|
+
+Numa primeira fase ``desembrulhamos'' o Bag de Bags, passando agora
+a ter uma lista com |(Bag a, Int)| onde poderemos iterar mais facilmente
+sobre os elementos.
+
+\item |junta|
+
+Esta função, com a ajuda de uma função auxiliar chamada |fmapSpecial|,
+transforma a lista de |(Bag a) >< Int|, sendo que este Int
+representa o número de ``sacos'' que existem de |Bag a|, numa só lista de |Bag a|.
+A função multiplica o número de sacos que existem daquele tipo pelo conteúdo
+dentro do |Bag a|. Ou seja, se temos 3 sacos com 2 berlindes azuis
+dentro de cada um sabemos que no total temos 6 berlindes azuis, e é exatamente
+isso que a função faz dentro de cada |Bag a| da lista.
+
+\item |fmap unB|
+
+Este passo ``abre'' todos os |Bag a| dentro de |[Bag a]|, ficando agora
+com o tipo |[[(a, Int)]]|. Mais uma vez, este passo é feito
+para facilitar o manuseamento dos elementos.
+
+\item |concat|
+
+Esta função, já predefinida, é responsável por concatenar a |[[(a, Int)]]|
+em |[(a, Int)]|. O que esta função faz é somente juntar os pares |(a, Int)|
+numa só lista.
+
+\item |B|
+
+Neste último passo é aplicado o construtor de |Bag| à lista de |(a, Int)| e com
+isso fica garantido que os |(a, Int)| repetidos se juntam, somando
+os respetivos |Int|, e que o tipo
+de dados de retorno é o tipo desejado, nomeadamente |Bag a|.
+
+\end{enumerate}
+
+\vspace{0.3cm}
+
+Para a função |dist|, tendo em consideração o exemplo dado no enunciado, onde para o
+``saco'':
+\begin{eqnarray*}
+|B [(Pink,2),(Green,3),(Red,2),(Blue,2),(White,1)]|
+\end{eqnarray*}
+O resultado da aplicação desta função deverá ser:
+\begin{verbatim}
+Green  30.0%
+  Red  20.0%
+ Pink  20.0%
+ Blue  20.0%
+White  10.0%
+\end{verbatim}
+Percebemos que |dist| divide o número de elementos de cada elemento
+pelo número total de elementos.
+
+Assim, definimos a função como:
+\begin{code}
 dist (B a) = D ((map (\(x,y) -> (x, (/) (toFloat y) (toFloat (number a))))) a)
     where number [] = 0
           number ((_, int): cs) = int + number cs
 
 \end{code}
+
+A função percorre todos os elementos de |B a| (|[a, Int]|, mais especificamente,
+uma vez que é este o parâmetro que passamos ao |map|)
+e divide cada Int pelo número total de elementos do conjunto, que é calculado
+com a ajuda da função auxiliar |number|.
+
+De modo a retornarmos o resultado da forma correta, nomeadamente |Dist a|,
+tivemos que fazer duas pequenas alterações no código: a primeira foi converter
+o |y| e o |number a| (numero total de berlindes) de cada par para |Float| antes de os
+dividirmos. A segunda é aplicar o construtor |D|, do módulo |Probability|,
+ao resultado do |map|
+para assim conseguirmos obter o tipo de dados desejado.
+
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
 Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}
