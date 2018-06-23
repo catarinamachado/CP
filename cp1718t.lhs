@@ -1259,41 +1259,71 @@ ledger a = groupL (cataList (either nil insert) (allTransactions a))
 \end{code}
 
 
-
-
-|type Transaction = (Entity, (Value, Entity))|
-|type Transactions = [Transaction]|
-
-
-
-|type Block = (MagicNo, (Time, Transactions))|
-
-
-
-
-
-
-
-
-
 \item Função |isValidMagicNr|
 
-\end{enumerate}
+Esta função verifica se todos os números mágicos numa dada block chain são únicos,
+tendo portanto o seguinte tipo de dados:
+\begin{eqnarray*}
+|isValidMagicNr :: Blockchain -> Bool|
+\end{eqnarray*}
+
+Um número mágico é representado por: |MagicNo :: String|.
+
+E relembramos também o tipo de |Block|:
+\begin{eqnarray*}
+|type Block = (MagicNo, (Time, Transactions))|
+\end{eqnarray*}
 
 
+Assim, numa primeira fase o nosso intuito foi que a função |isValidMagicNr|,
+através de um cataBlockchain com um gene:
+\begin{eqnarray*}
+\start
+|g = either list insert|
+\more
+|list x = [p1 x]|
+\more
+|insert(x,y) = (p1 x) : y|
+\end{eqnarray*}
 
+obtivesse uma com lista de todos os números mágicos utilizados na |Blockchain|.
 
+Este |cataBlockchain| pode ser definido pelo seguinte diagrama:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Blockchain|
+           \ar[d]_-{|cataBlockchain g|}
+&
+    |Block + (Block >< Blockchain)|
+           \ar[d]^{|recBlockchain (cataBlockchain g)|}
+           \ar[l]_-{|inBlockchain|}
+\\
+     |[MagicNo]|
+&
+     |Block + (Block >< [MagicNo])|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
 
+Depois disso, ordenamos esta lista utilizando a função |sort|
+e aplicamos a função |group| que transforma a lista de números mágicos numa
+lista de listas de números mágicos. Ou seja, se um número mágico aparecer mais
+do que uma vez o mesmo fica agrupado na lista dentro da lista com os restantes
+números mágicos iguais a si.
 
+Por fim, aplicamos |all ( (==) 1 . length)|. O que acontece é que calculamos o comprimento
+de todas as listas dentro da lista maior e verificamos se os seus comprimentos são iguais a 1.
+Assim, caso haja uma lista com vários números mágicos a função retornará |False|, tal como
+é esperado.
 
-
+A função |isValidMagicNr| pode ser então definida como:
 
 \begin{code}
 isValidMagicNr a = all ( (==) 1 . length) . group . sort $ cataBlockchain ( either list insert ) a
     where   list x = [p1 x]
             insert(x,y) = (p1 x) : y
 \end{code}
-
+\end{enumerate}
 
 \subsection*{Problema 2}
 

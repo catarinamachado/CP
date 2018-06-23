@@ -1613,34 +1613,64 @@ Consequentemente, temos a função \ensuremath{\Varid{ledger}} definida:
 \end{hscode}\resethooks
 
 
-
-
-\ensuremath{\mathbf{type}\;\Conid{Transaction}\mathrel{=}(\Conid{Entity},(\Conid{Value},\Conid{Entity}))}
-\ensuremath{\mathbf{type}\;\Conid{Transactions}\mathrel{=}[\mskip1.5mu \Conid{Transaction}\mskip1.5mu]}
-
-
-
-\ensuremath{\mathbf{type}\;\Conid{Block}\mathrel{=}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
-
-
-
-
-
-
-
-
-
 \item Função \ensuremath{\Varid{isValidMagicNr}}
 
-\end{enumerate}
+Esta função verifica se todos os números mágicos numa dada block chain são únicos,
+tendo portanto o seguinte tipo de dados:
+\begin{eqnarray*}
+\ensuremath{\Varid{isValidMagicNr}\mathbin{::}\Conid{Blockchain}\to \Conid{Bool}}
+\end{eqnarray*}
+
+Um número mágico é representado por: \ensuremath{\Conid{MagicNo}\mathbin{::}\Conid{String}}.
+
+E relembramos também o tipo de \ensuremath{\Conid{Block}}:
+\begin{eqnarray*}
+\ensuremath{\mathbf{type}\;\Conid{Block}\mathrel{=}(\Conid{MagicNo},(\Conid{Time},\Conid{Transactions}))}
+\end{eqnarray*}
 
 
+Assim, numa primeira fase o nosso intuito foi que a função \ensuremath{\Varid{isValidMagicNr}},
+através de um cataBlockchain com um gene:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{g}\mathrel{=}\alt{\Varid{list}}{\Varid{insert}}}
+\more
+\ensuremath{\Varid{list}\;\Varid{x}\mathrel{=}[\mskip1.5mu \p1\;\Varid{x}\mskip1.5mu]}
+\more
+\ensuremath{\Varid{insert}\;(\Varid{x},\Varid{y})\mathrel{=}(\p1\;\Varid{x})\mathbin{:}\Varid{y}}
+\end{eqnarray*}
 
+obtivesse uma com lista de todos os números mágicos utilizados na \ensuremath{\Conid{Blockchain}}.
 
+Este \ensuremath{\Varid{cataBlockchain}} pode ser definido pelo seguinte diagrama:
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+    \ensuremath{\Conid{Blockchain}}
+           \ar[d]_-{\ensuremath{\Varid{cataBlockchain}\;\Varid{g}}}
+&
+    \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times\Conid{Blockchain})}
+           \ar[d]^{\ensuremath{\Varid{recBlockchain}\;(\Varid{cataBlockchain}\;\Varid{g})}}
+           \ar[l]_-{\ensuremath{\Varid{inBlockchain}}}
+\\
+     \ensuremath{[\mskip1.5mu \Conid{MagicNo}\mskip1.5mu]}
+&
+     \ensuremath{\Conid{Block}\mathbin{+}(\Conid{Block}\times[\mskip1.5mu \Conid{MagicNo}\mskip1.5mu])}
+           \ar[l]^-{\ensuremath{\Varid{g}}}
+}
+\end{eqnarray*}
 
+Depois disso, ordenamos esta lista utilizando a função \ensuremath{\Varid{sort}}
+e aplicamos a função \ensuremath{\Varid{group}} que transforma a lista de números mágicos numa
+lista de listas de números mágicos. Ou seja, se um número mágico aparecer mais
+do que uma vez o mesmo fica agrupado na lista dentro da lista com os restantes
+números mágicos iguais a si.
 
+Por fim, aplicamos \ensuremath{\Varid{all}\;((\equiv )\;\mathrm{1}\comp \length )}. O que acontece é que calculamos o comprimento
+de todas as listas dentro da lista maior e verificamos se os seus comprimentos são iguais a 1.
+Assim, caso haja uma lista com vários números mágicos a função retornará \ensuremath{\Conid{False}}, tal como
+é esperado.
 
-
+A função \ensuremath{\Varid{isValidMagicNr}} pode ser então definida como:
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1656,7 +1686,7 @@ Consequentemente, temos a função \ensuremath{\Varid{ledger}} definida:
 \>[13]{}\Varid{insert}\;(\Varid{x},\Varid{y})\mathrel{=}(\p1\;\Varid{x})\mathbin{:}\Varid{y}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-
+\end{enumerate}
 
 \subsection*{Problema 2}
 
